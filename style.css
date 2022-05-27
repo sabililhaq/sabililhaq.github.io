@@ -1,43 +1,43 @@
 p {
     font-size: 0.9rem;
     padding-top: 5pt;
-  }
-  
-  a {
+}
+
+a {
     font-size: 0.9rem;
     color: #3c027d;
     text-decoration: none;
-  }
-  
-  a:visited {
+}
+
+a:visited {
     font-size: 0.9rem;
     color: #3c027d;
     text-decoration: none;
-  }
-  
-  a:active {
+}
+
+a:active {
     font-size: 0.9rem;
     color: #3c027d;
     text-decoration: none;
-  }
-  
-  a:hover {
+}
+
+a:hover {
     font-size: 0.9rem;
     background-color: #3c027d;
     color: #ffffff;
-  /*   font-weight: bold; */
-  }
-  
-  img {
+    /*   font-weight: bold; */
+}
+
+/* img {
     border-radius: 50%;
-    width: 10%;
+    max-width: 50%;
     justify-content: center;
-  }
-  
-  
-  /* Our default values set as CSS variables */
-  :root {
-  /*   --color-bg: #FFFFFF;
+} */
+
+
+/* Our default values set as CSS variables */
+:root {
+    /*   --color-bg: #FFFFFF;
     --color-text-main: #000000;
     --color-primary: #FFFF00; */
     --wrapper-height: 87vh;
@@ -45,62 +45,62 @@ p {
     --image-margin: 3rem;
     --font-family: "HK Grotesk";
     --font-family-header: "HK Grotesk";
-  }
-  
-  /* Basic page style resets */
-  * {
+}
+
+/* Basic page style resets */
+* {
     box-sizing: border-box;
-  }
-  [hidden] {
+}
+
+[hidden] {
     display: none !important;
-  }
-  
-  /* Import fonts */
-  @font-face {
+}
+
+/* Import fonts */
+@font-face {
     font-family: HK Grotesk;
-    src: url("https://cdn.glitch.me/605e2a51-d45f-4d87-a285-9410ad350515%2FHKGrotesk-Regular.otf?v=1603136326027")
-      format("opentype");
-  }
-  @font-face {
+    src: url("https://cdn.glitch.me/605e2a51-d45f-4d87-a285-9410ad350515%2FHKGrotesk-Regular.otf?v=1603136326027") format("opentype");
+}
+
+@font-face {
     font-family: HK Grotesk;
     font-weight: bold;
-    src: url("https://cdn.glitch.me/605e2a51-d45f-4d87-a285-9410ad350515%2FHKGrotesk-Bold.otf?v=1603136323437")
-      format("opentype");
-  }
-  
-  
-  .divider {
+    src: url("https://cdn.glitch.me/605e2a51-d45f-4d87-a285-9410ad350515%2FHKGrotesk-Bold.otf?v=1603136323437") format("opentype");
+}
+
+
+.divider {
     padding: 0 1rem;
-  }
-  
-  body {
+}
+
+body {
     font-family: "HK Grotesk", sans-serif;
     background-color: #ffffff;
     color: #434343;
-  }
-  
-  
-  .dark-mode {
+}
+
+
+.dark-mode {
     background-color: black;
     color: white;
-  }
-  
-  /* Page structure */
-  .wrapper {
+}
+
+/* Page structure */
+.wrapper {
     min-height: var(--wrapper-height);
     display: grid;
-    place-items: center;
     margin: 0 1rem;
-  }
-  .content {
+}
+
+.content {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  }
-  
-  /* Very light scaling for our illustration */
-  .title {
+}
+
+/* Very light scaling for our illustration */
+.title {
     color: #000000;
     font-family: "HK Grotesk", sans-serif;
     font-style: normal;
@@ -108,23 +108,23 @@ p {
     font-size: 100px;
     line-height: 105%;
     margin: 0;
-  }
-  
-  /* Very light scaling for our illustration */
-  .illustration {
+}
+
+/* Very light scaling for our illustration */
+.illustration {
     max-width: 100%;
     max-height: var(--image-max-width);
     margin-top: var(--image-margin);
-  }
-  
-  /* Instructions */
-  .instructions {
+}
+
+/* Instructions */
+.instructions {
     margin: 1rem auto 0;
-  }
-  
-  /* Button - Add it from the README instructions */
-  button,
-  input {
+}
+
+/* Button - Add it from the README instructions */
+button,
+input {
     font-family: inherit;
     font-size: 100%;
     background: #FFFFFF;
@@ -133,33 +133,19 @@ p {
     border-radius: 4px;
     padding: 0.5rem 1rem;
     transition: 500ms;
-  }
-  
-  /* Subheading */
-  h2 {
+}
+
+/* Subheading */
+h2 {
     color: #000000;
-  }
-  
-  /* Interactive image */
-  .illustration:active {
+}
+
+/* Interactive image */
+.illustration:active {
     transform: translateY(5px);
-  }
-  
-  /* Button dip
-  - Toggling this class on and off will move it down and up again
-  - The button transition property above determines the speed of the translate (500ms)
-  */
-  .dipped {
-    transform: translateY(5px);
-  }
-  
-  
-  .img-div {
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .column {
+}
+
+.column {
     float: center;
     width: 100%;
     align-items: center;
@@ -167,10 +153,10 @@ p {
     padding-bottom: 20px;
     text-align: justify;
     text-justify: inter-word;
-  }
-  
-  /* Clear floats after the columns */
-  .row {
+}
+
+/* Clear floats after the columns */
+.row {
     content: "";
     display: table;
     clear: both;
@@ -181,13 +167,61 @@ p {
     padding: 10px;
     align-items: center;
     justify-content: center;
-  }
-  
-  .centerimg {
+}
+
+.centerimg {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 30%;
+    width: 20%;
     margin-bottom: 30px;
-  }
-  
+    border-radius: 50%;
+}
+
+.footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.kiri a {
+    margin-right: 10px;
+}
+
+@media only screen and (max-width: 576px) {
+    .row {
+        width: 100%;
+    }
+
+    .centerimg {
+        width: 40%;
+    }
+
+    .centerimg {
+        margin-bottom: 0;
+    }
+
+    .column {
+        padding: 0;
+    }
+
+    p {
+        margin-bottom: .1em;
+    }
+
+    .content {
+        display: block;
+    }
+
+    .footer {
+        flex-direction: column;
+    }
+
+    h2 {
+        margin: 10px 0 0 0;
+    }
+
+    p {
+        margin: 0;
+    }
+}
