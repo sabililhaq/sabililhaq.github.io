@@ -2,77 +2,475 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="images/favicon.png" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Muhammad Furqony Sabililhaq</title>
-    <meta name="description" content="my website landing page.">
-    <meta name="robots" content="noindex, nofollow" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="layouts/assets/favicon.png" />
+    <link rel="stylesheet" href="layouts/css/styles.css">
+    <title>M. Furqony Sabililhaq</title>
 </head>
 
-<body>
-    <div class="wrapper">
-        <div class="content" role="main">
-            <div class="row">
-                <div class="column">
-                    <div>
-                        <img src="images/display_picture.jpg" class="centerimg" />
-                    </div>
-                </div>
-                <div class="column">
-                    <h2>Hi! I'm Sabililhaq.</h2>
-                    <p>
-                        I am a final-year computer science student at
-                        <a href="https://ub.ac.id" target="_blank">Brawijaya University</a>
-                        with a deep interest in software engineering and data.
-                        I'm currently studying software engineering (primarily backend), data analysis, and machine
-                        learning (deep learning focuses on computer vision and NLP).
-                        Has worked on various projects from software development to data science projects.
-                        I am very passionate about coding also enjoys doing competitive programming.
-                    </p>
+<body class="bg-primary" id="top">
 
-                    <p>In semester 6 of college, I was selected to be part of the
-                        <a href="https://grow.google/intl/id_id/bangkit/" target="_blank">Google Bangkit Academy</a>,
+    <!-- Navbar -->
+    <header class="font-poppins font-medium text-lg top-0">
+        <!-- sticky -->
+        <nav class="bg-primary shadow-lg flex justify-between items-center mx-auto px-8 md:px-14 py-6 lg:px-24 w-full">
+            <div class="text-3xl font-bold text-white">Muhammad Furqony Sabililhaq</div>
+            <div class="hidden md:flex space-x-12 items-center text-white ">
+                <a href="#" class="text-selected-text">Home</a>
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#skills">Skills</a>
+                <a href="#contact">
+                    <button class="px-6 py-2 bg-button font-bold rounded-xl hover:border-2 hover:bg-slate-800">
+                        Contact
+                    </button>
+                </a>
+            </div>
+
+            <!-- Mobile menu -->
+            <div class="mobile-menu hidden md:hidden text-white mt-4">
+                <a href="#about" class="block py-2 px-16 rounded text-lg hover:bg-gray-700">About</a>
+                <a href="#projects" class="block py-2 px-16 rounded text-lg hover:bg-gray-700">Projects</a>
+                <a href="#skills" class="block py-2 px-16 rounded text-lg hover:bg-gray-700">Skills</a>
+                <a href="#contact" class="block py-2 px-16 rounded text-sm hover:bg-gray-700">
+                    <button class="px-6 py-2 bg-button font-bold rounded-xl hover:bg-[#F80095]">
+                        Contact
+                    </button>
+                </a>
+            </div>
+
+            <!-- Mobile button -->
+            <div class="md:hidden ">
+                <button class="mobile-menu-button">
+                    <svg class="w-10 h-10 bg-[#F80095] rounded text-white" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- About section -->
+    <section class="container pt-24 md:pt-26 mx-auto flex flex-wrap flex-col md:flex-row items-center" id="about">
+
+        <!-- Left column -->
+        <div class="w-full xl:w-2/5 p-12 overflow-hidden" data-aos="fade-right">
+            <img src="/layouts/assets/sabililhaq2.jpg" alt="your name" class="rounded-3xl mx-auto w-full md:w-4/5 " />
+            <div class="flex mt-16 mb-16 flex-row space-x-6 justify-center ">
+                <a href="https://www.linkedin.com/in/sabililhaq/" target="_blank" class="">
+                    <img width="46" height="45" src="/layouts/assets/linkedin-icon.svg" alt="Linkedin"
+                        class="text-white -mt-1 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+                <a href="https://github.com/sabililhaq" target="_blank"  class="">
+                    <img width="47" height="40" src="/layouts/assets/github-icon.svg" alt="GitHub"
+                        class=" text-white p-2 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+                <a href="https://sabililhaq.medium.com/" target="_blank"  class="">
+                    <img width="45" height="35" src="/layouts/assets/medium.svg" alt="Medium"
+                        class="text-white  p-2 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+                <a href="mailto:sabililhaq.furqony@gmail.com" class="">
+                    <img width="48" height="40" src="/layouts/assets/email-icon.svg" alt="Email"
+                        class="text-white p-1 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+            </div>
+            <!-- <div class="flex mt-16 mb-16 flex-row space-x-6 justify-center ">
+                <a href="#" class="">
+                    <img width="45" height="35" src="/layouts/assets/twitter-icon.svg" alt="Twitter"
+                        class="text-white  p-2 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+                <a href="#" class="">
+                    <img width="45" height="35" src="/layouts/assets/leetcode.png" alt="LeetCode"
+                        class="text-white  p-2 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+                <a href="#" class="">
+                    <img width="45" height="35" src="/layouts/assets/hackerrank.png" alt="HackerRank"
+                        class="text-white  p-2 hover:bg-[#F62BA5] rounded-md" />
+                </a>
+            </div> -->
+        </div>
+
+        <!-- Right column -->
+        <div class="flex flex-col w-full p-2 xl:w-3/5 justify-center lg:items-start overflow-y-hidden"
+            data-aos="fade-left">
+            <h1
+                class="font-semibold font-poppins text-4xl text-white md:text-2xl lg:text-5xl text-center md:text-center">
+                Hi! I'm <span class="main-font">Sabililhaq</span></h1>
+
+            <p
+                class="font-thin font-montserra text-white mt-20 text-2xl md:text-2xl lg:text-2xl text-center md:text-left">
+                Final year computer science student with deep interest in Software Engineering and Data Fields. Very passionate about coding also enjoys doing competitive programming. Sometimes writes tech-related stuff.<span id="dots">...</span>
+                <span id="more">
+                    <br><br>
+                    
+                    Currently studying <b>Backend Engineering</b>, <b>Data Analysis</b>, and <b>Machine Learning</b> (Deep Learning focuses on <b>CV</b> and <b>NLP</b>). Having prior experience working on software development and data science projects.
+                    <br><br>
+                    In third year of college, I was selected to be part of
+                        <b><a href="https://grow.google/intl/id_id/bangkit/" target="_blank">Google Bangkit Academy</a></b>,
                         an intensive technology apprenticeship initiated by the
                         <a href="https://www.kemdikbud.go.id" target="_blank">Indonesian Ministry of Education and
                             Culture</a>,
                         Google, GoTo, and Traveloka as Machine Learning Engineer trainee.
-                        At the end of the academy, i was also chosen to be one those working on
-                        <a href="https://github.com/capstone-bangkit-c22-ky01" target="_blank">company's capstone
-                            project organized by Traveloka</a>
-                        as Machine Learning Engineer.
-                    </p>
-
-                    <p>
-                        I am very enthusiastic about technology especially about the development of artificial
+                        At the end of the program, i was also chosen to be one of the students that working on
+                        <a href="https://github.com/capstone-bangkit-c22-ky01" target="_blank">company-based capstone
+                            project hosted by <b>Traveloka</b></a>
+                        as <b>Machine Learning Engineer</b>.
+                    
+                    <br><br>
+                    I am very enthusiastic about technology especially about the development of artificial
                         intelligence
                         and
-                        human space exploration. I sometimes write tech-related stuff and am an active member of a tech
+                        human space exploration. I'm also an active member of a tech
                         community,
-                        <a href="https://www.linkedin.com/company/bccfilkomub/" target="_blank">BCC</a>.
+                        <a href="https://www.linkedin.com/company/bccfilkomub/" target="_blank"><b>BCC</b></a>.
+                    
+                </span>
+            </p>
+
+            <br>
+            <button onclick="myFunction()"
+                class="p-3 rounded-xl text-white font-bold font-poppins border-solid border-2 border-[#F62BA5] hover:bg-slate-800"
+                id="myBtn">
+                <span class="text-white text-sm font-montserrat font-thin">Read more</span>
+            </button>
+
+            <br>
+
+            <div class="flex space-x-10 my-2 md:items-center justify-center mb-16">
+                <a href="#projects" rel="noopener noreferrer">
+                    <button
+                        class="px-8 py-3 rounded-xl text-white font-bold font-poppins mt-20 flex items-center space-x-3 border-solid border-2 border-white text-xl hover:bg-slate-800">
+                        Projects
+                    </button>
+                </a>
+                <!-- <a href="#" target="_blank" rel="noopener noreferrer">
+                    <button
+                        class="px-8 py-4 bg-button rounded-xl text-white font-bold font-poppins mt-20 flex items-center text-xl hover:border-2 hover:bg-slate-800">
+                        Resume
+                    </button>
+                </a> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects section -->
+    <section class="bg-section-two" id="projects">
+        <!-- Project One -->
+        <div class="container pt-24 md:pt-26 mx-auto flex flex-wrap flex-col md:flex-row items-center" data-aos="fade-up-right">
+            <!-- Left column -->
+            <div class="flex flex-col w-full p-4 xl:w-3/5 justify-center lg:items-start overflow-y-hidden">
+                <h1 class="font-semibold font-poppins text-4xl text-white md:text-2xl lg:text-5xl text-left md:text-left ">Projects</h1>
+                <h1 class="font-semibold font-poppins text-xl text-white md:text-xl lg:text-3xl text-left md:text-left mt-12 underline decoration-slate-500">TravelokaOCR</h1>
+                    <p class="main-font font-semibold font-montserrat text-xl mt-16">Overview</p>
+                    <p class="font-thin font-montserra text-white mt-8 text-2xl md:text-2xl lg:text-2xl text-left md:text-left">
+                        Building mobile apps to scan user's ID (KTP) for faster administration (KYC). Implementing computer
+                    vision machine learning algorithm, OCR (Optical Character Recognition)
                     </p>
-                    <br />
-                    <div class="footer">
-                        <div class="kiri">
-                            <a href="https://www.linkedin.com/in/sabililhaq" target="_blank">linkedin</a>
-                            <a href="https://www.github.com/sabililhaq" target="_blank">github</a>
-                            <a href="https://sabililhaq.medium.com/" target="_blank">medium</a>
-                            <a href="https://leetcode.com/sabililhaq/" target="_blank">leetcode</a>
-                            <a href="https://www.hackerrank.com/sabililhaqq" target="_blank">hackerrank</a>
+                    <p class="font-thin font-montserra text-white mt-8 text-2xl md:text-2xl lg:text-2xl text-left md:text-left">
+                        Google Bangkit Academy 2022 company based capstone project, hosted by Traveloka
+                    </p>
+                    <p class="main-font font-semibold font-montserrat text-xl mt-16">Tech Stack</p>
+                    <p class="font-thin font-montserra text-white mt-8 text-2xl md:text-2xl lg:text-2xl text-left md:text-left">TensorFlow &nbsp GCP &nbsp Kotlin &nbsp Firebase &nbsp PostgreSQL</p>
+                <div class="flex space-x-8 my-2 md:items-center justify-center mb-16">
+                    <a href="https://capstone-bangkit-c22-ky01.github.io/traveloka-ocr-landingpage/" target="_blank" rel="noopener noreferrer">
+                        <button class="px-8 py-3 rounded-xl text-white font-bold font-poppins mt-16 flex items-center space-x-3 border-solid border-2 border-white text-xl sm:w-auto hover:border-2 hover:bg-slate-800"> 
+                            Live Demo
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <!-- Right column -->
+            <div class="w-full xl:w-2/5 p-12 overflow-hidden md:pt-1" data-aos="fade-up-left">
+                <img src="/layouts/assets/travelokaocr.jpg" alt="project name" class="rounded-3xl text-white" />
+                <div class="flex items-center mt-10 justify-center">
+                    <div>
+                        <!-- scrolls to the second project -->
+                        <a href="#project-two"> 
+                            <button class="p-3 rounded-xl text-white font-bold font-poppins border-solid border-2 border-[#F62BA5] hover:bg-slate-800"> 
+                                <span class="text-white text-sm font-montserrat font-thin">Next</span>
+                            </button>
+                        </a>
+                        <div class="mx-5 mt-2">
+                            <span class="m_scroll_arrows one"></span>
+                            <span class="m_scroll_arrows two"></span>
+                            <span class="m_scroll_arrows three"></span>
                         </div>
-
-                        <span style="font-size:0.9rem; float:right">email:<a href="mailto:sabililhaq.furqony@gmail.com">
-                                sabililhaq.furqony [at] gmail.com</a></span>
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+            <!-- Project Two -->
+        <div class="container pt-24 md:pt-26 mx-auto flex flex-wrap flex-col md:flex-row items-center " id="project-two">
+            <!-- Left column -->
+            <div class="flex flex-col w-full p-4 xl:w-3/5 justify-center lg:items-start overflow-y-hidden" data-aos="fade-up-right">
+                <h1 class="font-semibold font-poppins text-xl text-white md:text-xl lg:text-3xl text-left md:text-left mt-5 underline decoration-slate-500">DASS Analytics</h1>
+                    <p class="main-font font-semibold font-montserrat text-xl mt-16 ">Overview</p>
+                    <p class="font-thin font-montserra text-white mt-8 text-2xl md:text-2xl lg:text-2xl text-left md:text-left">
+                        Website-based application to predict person's level of Depression, Anxiety, and Stress. 
+                    </p>
+                    <p class="font-thin font-montserra text-white mt-8 text-2xl md:text-2xl lg:text-2xl text-left md:text-left">
+                        Building machine learning models based on DASS public dataset as data science course final project, includes data dashboarding.
+                    </p>
+                    <p class="main-font font-semibold font-montserrat text-xl mt-16">Tech Stack</p>
+                    <p class="font-thin font-montserra text-white mt-8 text-2xl md:text-2xl lg:text-2xl text-left md:text-left">Python &nbsp Scikit-learn &nbsp Streamlit &nbsp</p>
+                <div class="flex space-x-8 my-2 md:items-center justify-center mb-16">
+                    <a href="https://stressanalyticsapp.herokuapp.com/" target="_blank" rel="noopener noreferrer">
+                        <button class="px-8 py-3 rounded-xl text-white font-bold font-poppins mt-16 flex items-center space-x-3 border-solid border-2 border-white text-xl sm:w-auto hover:border-2 hover:bg-slate-800"> 
+                            <span>Live Demo</span>
+                        </button>
+                    </a>
+                    <a href="https://github.com/Erland366/Streamlit-Stress-Analytics" target="_blank" rel="noopener noreferrer">
+                        <button class="px-8 py-4 bg-button rounded-xl text-white font-bold font-poppins mt-16 flex items-center text-xl w-full sm:w-auto hover:border-2 hover:bg-slate-800"> 
+                            <span class="">Source Code</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <!-- Right column -->
+            <div class="w-full xl:w-2/5 p-12 overflow-hidden md:pt-1">
+                <img src="/layouts/assets/dass.jpg" alt="project name" class="rounded-3xl text-white" data-aos="fade-up-left"/>
+                    <div class="flex items-center mt-10 justify-center">
+                    <!-- <div>
+                        <button class="p-3 rounded-xl text-white font-bold font-poppins border-solid border-2 border-[#F62BA5] hover:bg-slate-800"> 
+                            <span class="text-white text-sm font-montserrat font-thin">Next</span>
+                        </button>
+                        <div class="mx-5 mt-2">
+                            <span class="m_scroll_arrows one"></span>
+                            <span class="m_scroll_arrows two"></span>
+                            <span class="m_scroll_arrows three"></span>
+                        </div>
+                    </div> -->
+                    </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Skills section -->
+    <section class="bg-primary mb-20" id="skills">
+        <div class="container pt-24 md:pt-26 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+            <div class="flex flex-col w-full p-4 xl:w-2/5 justify-center lg:items-start">
+                <h1
+                    class="font-semibold font-poppins text-4xl text-white mb-20 md:text-2xl lg:text-5xl text-left md:text-left">
+                    Technical Skills</h1>
+                <p class="text-[#F62BA5] font-medium font-montserrat text-3xl">Programming Languages</p>
+                <div class="flex justify-between" data-aos="fade-down">
+                    <div class="grid grid-rows-3 md:grid-rows-1 grid-flow-col gap-y-10 gap-x-16 mt-10 shrink-0 mx-auto">
+                        <!-- Skills icons -->
+                        <div>
+                            <img width="50" height="50" src="/layouts/assets/python.svg" alt="Python"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/java.svg" alt="Java"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/html.svg" alt="HTML"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/js.svg" alt="JavaScript"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/php.svg" alt="PHP"/>
+                        </div>
+
+                    </div>
+                </div>
+                <p class="text-[#F62BA5] font-medium font-montserrat text-3xl mt-20">Technology</p>
+                <div class="flex justify-between" data-aos="fade-down">
+                    <div class="grid grid-rows-3 md:grid-rows-1 grid-flow-col gap-y-10 gap-x-16 mt-10 shrink-0 mx-auto">
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/node.svg" alt="NodeJS"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/tensorflow.svg" alt="TensorFlow"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/mysql.svg" alt="MySQL"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/golang.svg" alt="GOLANG"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/kotlin.svg" alt="Kotlin"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/laravel.png" alt="Laravel"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/r.png" alt="R"/>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-[#F62BA5] font-medium font-montserrat text-3xl mt-20">Others</p>
+                <div class="flex justify-between" data-aos="fade-down">
+                    <div class="grid grid-rows-3 md:grid-rows-1 grid-flow-col gap-y-10 gap-x-16 mt-10 shrink-0 mx-auto">
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/tableau.svg" alt="Tableau"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/docker.svg" alt="Docker"/>
+                        </div>
+                        <div>
+                            <img width="50" height="70" src="/layouts/assets/aws.svg" alt="AWS"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Contact section -->
+    <section class="bg-section-two" id="contact">
+        <div class="container pt-24 md:pt-26 mx-auto flex flex-wrap flex-col md:flex-row items-center" >
+            <div class="flex flex-col w-full xl:w-3/5 p-5 pb-24 justify-center lg:items-start overflow-y-hidden" data-aos="zoom-in-up">
+                <h1
+                    class="font-semibold font-poppins text-4xl text-white md:text-2xl lg:text-5xl text-left md:text-left ">
+                    Contact</h1>
+                <form class="w-full" name = 'contact-form'>
+                    <div class="mb-6 mt-20">
+                        <label for="name" class="block mb-2 font-bold text-lg font-poppins main-font">Full Name</label>
+                        <input type="name" id="email" name = "nama" style='color:#FFF'
+                            class="bg-primary text-gray-900 text-sm rounded-lg block w-full p-5 dark:text-white focus:outline-none focus:ring focus:border-main-font"
+                            required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="email" class="block mb-2 text-lg font-bold font-poppins main-font">Email</label>
+                        <input type="email" id="password" name = "email" style='color:#FFF'
+                            class="bg-primary text-gray-900 text-sm rounded-lg  block w-full p-5  dark:text-white focus:outline-none focus:ring focus:border-main-font"
+                            placeholder="you@email.com" required>
+                    </div>
+                    <div class="flex items-start mb-6">
+                        <div class="container">
+                            <label for="message"
+                                class="block mb-2 text-lg font-bold font-poppins main-font">Message</label>
+                            <textarea id="message" rows="5" name = "pesan" style='color:#FFF'
+                                class=" block rounded-lg bg-primary dark:text-white w-full p-3 focus:outline-none focus:ring focus:border-main-font"></textarea>
+                        </div>
+                    </div>
+                        <button type="submit" onClick = "refreshPage()"
+                        class="text-white text-xl bg-button rounded-lg w-full sm:w-auto px-8 py-3 mt-8 bg-button text-center font-bold font-poppins hover:border-2 hover:bg-slate-800">Send</button>
+                       
+                     
+
+                </form>
+            </div>
+            <div class="w-full xl:w-2/5 p-12 overflow-hidden" data-aos="flip-up">
+                <img src="/layouts/assets/sabililhaq.jpg" alt="Reporting" class="rounded-3xl mx-auto w-full md:w-2/5" />
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwOt2N1nIcr3RT7boNdSV_qnJ3OHGNCaeGANWnH3is48Sd0jh2qVoK5xkGkzBXfgy9B/exec'
+        const form = document.forms['contact-form']
+      
+        form.addEventListener('submit', e => {
+          e.preventDefault()
+          fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => console.log('Success!', response))
+            .catch(error => console.error('Error!', error.message))
+        })
+      </script>
+
+
+    <!-- Footer -->
+    <footer class="bg-primary p-10">
+        <div class="container flex flex-row flex-wrap justify-evenly" data-aos="fade-up">
+            <div class="flex flex-row flex-wrap  md:flex-col justify-center items-center">
+                <div class="flex mt-16 mb-6 flex-row space-x-6 justify-center">
+                    <a href="#" class="">
+                        <img width="36" height="45" src="/layouts/assets/linkedin-icon.svg" alt="Linkedin"
+                            class="text-white -mt-1" />
+                    </a>
+                    <a href="#" class="">
+                        <img width="24" height="40" src="/layouts/assets/github-icon.svg" alt="GitHub"
+                            class=" text-white mt-1" />
+                    </a>
+                    <a href="#" class="">
+                        <img width="25" height="35" src="/layouts/assets/medium.svg" alt="Medium"
+                            class="text-white mt-1" />
+                    </a>
+                    <a href="http://hackerrank.com/sabililhaqq" target="_blank" class="">
+                        <img width="25" height="35" src="/layouts/assets/hackerrank.png" alt="Hackerrank"
+                            class="text-white mt-1" />
+                    </a>
+                    <a href="https://leetcode.com/sabililhaq/" target="_blank" class="">
+                        <img width="25" height="35" src="/layouts/assets/leetcode.png" alt="LeetCode"
+                            class="text-white mt-1" />
+                    </a>
+                    <!-- <a href="#" class="">
+                        <img width="25" height="35" src="/layouts/assets/twitter-icon.svg" alt="Twitter"
+                            class="text-white mt-1" />
+                    </a> -->
+                    <a href="#" class="">
+                        <img width="32" height="40" src="/layouts/assets/email-icon.svg" alt="Email"
+                            class="text-white" />
+                    </a>
+                </div>
+                <div class="mt-6 mb-16">
+                    <p class="main-font text-lg font-montserrat">
+                        @sabililhaq 2022
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="flex relative">
+            <a class="flex absolute bottom-0 right-0" href="#top">
+                <button
+                    class="p-3 rounded-xl text-white font-bold font-poppins border-solid border-2 border-[#F62BA5] hover:border-2 hover:bg-slate-800 absolute bottom-0 right-0">
+                    Top
+                </button>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // mobile menu
+        const btn = document.querySelector("button.mobile-menu-button");
+        const menu = document.querySelector(".mobile-menu");
+
+        // mobile menu event listeners
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+        });
+
+        function myFunction() {
+            var dots = document.getElementById("dots");
+            var moreText = document.getElementById("more");
+            var btnText = document.getElementById("myBtn");
+
+            if (dots.style.display === "none") {
+                dots.style.display = "inline";
+                btnText.innerHTML = "Read more";
+                moreText.style.display = "none";
+            } else {
+                dots.style.display = "none";
+                btnText.innerHTML = "Read less";
+                moreText.style.display = "inline";
+            }
+        }
+    </script>
+
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
+    <script>
+        function refreshPage(){
+            alert("Succesfully sending the message");
+            window.location.reload();
+        } 
+    </script>
 </body>
 
 </html>
