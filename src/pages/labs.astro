@@ -1,0 +1,99 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+
+const labs = [
+  {
+    label: 'Excalidraw',
+    url: 'https://draw.sabililhaq.com', // TODO configurable
+    description: 'My self-hosted whiteboard playground',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Labs | ${SITE_TITLE}`}
+      description={`Labs and playgrounds by ${SITE_SHORT_NAME}.`}
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <article class="prose">
+        <h1>Labs</h1>
+        <p class="intro">My playgrounds.</p>
+        <ul class="link-list">
+          {
+            labs.map((lab) => (
+              <li>
+                <a
+                  href={lab.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {lab.label}
+                </a>
+                {lab.description && (
+                  <span class="desc"> — {lab.description}</span>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .prose h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .intro {
+    margin: 0 0 1.5rem;
+    color: rgb(var(--gray));
+    font-size: 1rem;
+  }
+
+  .link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .link-list li {
+    font-size: 1rem;
+    border-bottom: 1px solid rgb(var(--gray-light));
+    padding-bottom: 0.85rem;
+  }
+
+  .link-list li:last-child {
+    border-bottom: none;
+  }
+
+  .link-list a {
+    font-weight: 600;
+    color: rgb(var(--black));
+    text-decoration: none;
+  }
+
+  .link-list a:hover {
+    text-decoration: underline;
+    color: var(--accent);
+  }
+
+  .desc {
+    color: rgb(var(--gray));
+    font-size: 0.9rem;
+  }
+</style>
