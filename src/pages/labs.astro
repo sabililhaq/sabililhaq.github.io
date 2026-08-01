@@ -6,14 +6,24 @@ import { SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
 const labs = [
   {
+    label: 'Files',
+    url: 'https://files.sabililhaq.com',
+    description: 'My public read only file system',
+  },
+  {
     label: 'Excalidraw',
     url: 'https://draw.sabililhaq.com', // TODO configurable
-    description: 'My self-hosted whiteboard playground',
+    description: 'Whiteboard playground',
   },
   {
     label: 'URL Shortener',
     url: 'https://go.sabililhaq.com',
-    description: 'My personal URL shortener',
+    description: 'Personal URL shortener',
+  },
+  {
+    label: 'QR Code Generator',
+    url: '/qr',
+    description: 'Generate QR codes instantly from URL',
   },
 ];
 ---
@@ -38,8 +48,8 @@ const labs = [
               <li>
                 <a
                   href={lab.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={lab.url.startsWith('http') ? '_blank' : undefined}
+                  rel={lab.url.startsWith('http') ? 'noopener noreferrer' : undefined}
                 >
                   {lab.label}
                 </a>
@@ -60,13 +70,11 @@ const labs = [
   .prose h1 {
     margin-bottom: 0.5rem;
   }
-
   .intro {
     margin: 0 0 1.5rem;
     color: rgb(var(--gray));
     font-size: 1rem;
   }
-
   .link-list {
     list-style: none;
     margin: 0;
@@ -75,28 +83,23 @@ const labs = [
     flex-direction: column;
     gap: 0.85rem;
   }
-
   .link-list li {
     font-size: 1rem;
     border-bottom: 1px solid rgb(var(--gray-light));
     padding-bottom: 0.85rem;
   }
-
   .link-list li:last-child {
     border-bottom: none;
   }
-
   .link-list a {
     font-weight: 600;
     color: rgb(var(--black));
     text-decoration: none;
   }
-
   .link-list a:hover {
     text-decoration: underline;
     color: var(--accent);
   }
-
   .desc {
     color: rgb(var(--gray));
     font-size: 0.9rem;

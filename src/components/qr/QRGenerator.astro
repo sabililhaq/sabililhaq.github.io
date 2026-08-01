@@ -1,0 +1,196 @@
+---
+// Client-side only
+---
+
+<div class="qr-generator">
+  <!-- Input -->
+  <div class="field">
+    <label for="qr-input">Text / URL</label>
+    <textarea
+      id="qr-input"
+      rows="3"
+      placeholder="https://sabililhaq.com"
+    ></textarea>
+  </div>
+
+  <!-- Options -->
+  <div class="options">
+    <div class="field">
+      <label for="qr-size">Size (px)</label>
+      <input id="qr-size" type="number" value="300" min="100" max="1000" />
+    </div>
+
+    <div class="field">
+      <label for="qr-ec">Error Correction</label>
+      <select id="qr-ec">
+        <option value="L">Low (L)</option>
+        <option value="M" selected>Medium (M)</option>
+        <option value="Q">Quartile (Q)</option>
+        <option value="H">High (H)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="qr-color">Color</label>
+      <input id="qr-color" type="color" value="#000000" />
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="preview">
+    <div id="qr-code"></div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button id="download-png">Download PNG</button>
+    <button id="download-svg" class="secondary">Download SVG</button>
+  </div>
+</div>
+
+<style>
+  .qr-generator {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .field textarea,
+  .field input[type="number"],
+  .field select {
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  .field textarea:focus,
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: #333;
+  }
+
+  .field input[type="color"] {
+    height: 42px;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 600px) {
+    .options {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  .preview {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem;
+    background: #f7f7f7;
+    border-radius: 12px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .actions button {
+    padding: 0.65rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    background: #111;
+    color: white;
+  }
+
+  .actions button:hover {
+    opacity: 0.85;
+  }
+
+  .actions button.secondary {
+    background: #444;
+  }
+</style>
+
+<script>
+  import QRCodeStyling from "qr-code-styling";
+
+  const qrCode = new QRCodeStyling({
+    width: 300,
+    height: 300,
+    type: "svg",
+    data: "https://sabililhaq.com",
+    dotsOptions: {
+      color: "#000000",
+      type: "rounded"
+    },
+    backgroundOptions: {
+      color: "#ffffff",
+    },
+    qrOptions: {
+      errorCorrectionLevel: "M"
+    }
+  });
+
+  const input = document.getElementById("qr-input");
+  const sizeInput = document.getElementById("qr-size");
+  const ecSelect = document.getElementById("qr-ec");
+  const colorInput = document.getElementById("qr-color");
+  const container = document.getElementById("qr-code");
+
+  qrCode.append(container);
+
+  function updateQR() {
+    const data = input.value.trim() || "https://sabililhaq.com";
+    const size = parseInt(sizeInput.value) || 300;
+    const color = colorInput.value;
+    const ec = ecSelect.value;
+
+    qrCode.update({
+      width: size,
+      height: size,
+      data: data,
+      dotsOptions: { color },
+      qrOptions: { errorCorrectionLevel: ec }
+    });
+  }
+
+  input.addEventListener("input", updateQR);
+  sizeInput.addEventListener("input", updateQR);
+  ecSelect.addEventListener("change", updateQR);
+  colorInput.addEventListener("input", updateQR);
+
+  document.getElementById("download-png").addEventListener("click", () => {
+    qrCode.download({ name: "qr-code", extension: "png" });
+  });
+
+  document.getElementById("download-svg").addEventListener("click", () => {
+    qrCode.download({ name: "qr-code", extension: "svg" });
+  });
+</script>
