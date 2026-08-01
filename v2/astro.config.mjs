@@ -4,9 +4,14 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 
+// Site URL is injected at build time via the SITE_URL environment variable.
+// Set it in GitHub Actions as a repository variable/secret, or in a local .env file.
+// Falls back to the default GitHub Pages URL when unset.
+const site = process.env.SITE_URL ?? 'https://sabililhaq.github.io';
+
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
+	site,
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{
