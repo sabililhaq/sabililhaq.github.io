@@ -1,0 +1,81 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { EMAIL, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../consts';
+
+const links = [
+	{ label: 'GitHub', url: SOCIALS.github, description: 'Open source projects and code' },
+	{ label: 'LinkedIn', url: SOCIALS.linkedin, description: 'Professional profile' },
+	{ label: 'Medium', url: SOCIALS.medium, description: 'Writings' },
+	{ label: 'LeetCode', url: SOCIALS.leetcode, description: 'Programming' },
+	{ label: 'HackerRank', url: SOCIALS.hackerrank, description: 'Programming' },
+	{ label: 'Email', url: SOCIALS.email, description: EMAIL },
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Links | ${SITE_TITLE}`}
+			description={`Links and social profiles for ${SITE_SHORT_NAME}.`}
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<article class="prose">
+				<h1>Links</h1>
+				<ul class="link-list">
+					{
+						links.map((link) => (
+							<li>
+								<a href={link.url} target={link.url.startsWith('mailto') ? undefined : '_blank'} rel={link.url.startsWith('mailto') ? undefined : 'noopener noreferrer'}>
+									{link.label}
+								</a>
+								{link.description && <span class="desc"> — {link.description}</span>}
+							</li>
+						))
+					}
+				</ul>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.prose h1 {
+		margin-bottom: 1.5rem;
+	}
+	.link-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+	.link-list li {
+		font-size: 1rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		padding-bottom: 0.85rem;
+	}
+	.link-list li:last-child {
+		border-bottom: none;
+	}
+	.link-list a {
+		font-weight: 600;
+		color: rgb(var(--black));
+		text-decoration: none;
+	}
+	.link-list a:hover {
+		text-decoration: underline;
+		color: var(--accent);
+	}
+	.desc {
+		color: rgb(var(--gray));
+		font-size: 0.9rem;
+	}
+</style>

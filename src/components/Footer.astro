@@ -1,0 +1,49 @@
+---
+import { SITE_TITLE, SOCIALS } from '../consts';
+
+const today = new Date();
+---
+
+<footer>
+	<div class="footer-inner">
+		<span>&copy; {today.getFullYear()} <a href="/">{SITE_TITLE}</a></span>
+		<div class="footer-links">
+			<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a> 
+			<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a> 
+			<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a> 
+			<a href={SOCIALS.email}>Email</a>
+		</div>
+	</div>
+</footer>
+
+<style>
+	footer {
+		padding: 3em 1em 4em;
+		color: rgb(var(--gray));
+		font-size: 0.9rem;
+		border-top: 1px solid rgb(var(--gray-light));
+		margin-top: 4rem;
+	}
+	.footer-inner {
+		max-width: 720px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+	footer a {
+		color: rgb(var(--gray));
+		text-decoration: none;
+	}
+	footer a:hover {
+		color: rgb(var(--black));
+		text-decoration: underline;
+	}
+	.footer-links {
+		display: flex;
+		gap: 1.25rem;
+	}
+</style>
+

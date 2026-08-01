@@ -1,0 +1,156 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 5);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<!-- Intro -->
+			<section class="intro">
+				<h1>Hi, I'm <span class="name">{SITE_SHORT_NAME}</span></h1>
+				<p>
+					Computer science graduate with deep interest in Software Engineering and Data.
+					Currently focused on Backend Engineering, Data Analysis, and Machine Learning.
+					Sometimes writes tech-related stuff.
+				</p>
+				<p class="intro-links">
+					<a href="/about">More about me →</a>
+				</p>
+			</section>
+
+			<!-- Recent posts -->
+			{posts.length > 0 && (
+				<section class="recent-posts">
+					<h2>Recent posts</h2>
+					<ul>
+						{posts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								<span class="post-date"><FormattedDate date={post.data.pubDate} /></span>
+							</li>
+						))}
+					</ul>
+					<a class="all-posts" href="/blog">All posts →</a>
+				</section>
+			)}
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		max-width: 680px;
+	}
+
+	/* Intro */
+	.intro {
+		margin-bottom: 3rem;
+		padding-top: 2rem;
+	}
+
+	.intro h1 {
+		font-size: 1.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.name {
+		color: var(--accent);
+	}
+
+	.intro p {
+		margin-bottom: 0.75rem;
+		font-size: 0.95rem;
+		color: rgb(var(--gray-dark));
+		line-height: 1.65;
+	}
+
+	.intro-links a {
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		text-decoration: none;
+	}
+
+	.intro-links a:hover {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
+	/* Recent posts */
+	.recent-posts h2 {
+		font-size: 1rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--gray));
+		margin-bottom: 1rem;
+		border-bottom: none;
+	}
+
+	.recent-posts ul {
+		list-style: none;
+		margin: 0 0 1rem;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.recent-posts li {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		padding: 0.6rem 0;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		font-size: 0.95rem;
+	}
+
+	.recent-posts li a {
+		color: rgb(var(--black));
+		text-decoration: none;
+	}
+
+	.recent-posts li a:hover {
+		text-decoration: underline;
+		color: var(--accent);
+	}
+
+	.post-date {
+		color: rgb(var(--gray));
+		font-size: 0.8rem;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.all-posts {
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		text-decoration: none;
+	}
+
+	.all-posts:hover {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
+	@media (max-width: 480px) {
+		.intro {
+			gap: 1rem;
+		}
+	}
+</style>
