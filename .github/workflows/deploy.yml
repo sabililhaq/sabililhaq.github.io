@@ -1,8 +1,8 @@
-name: Deploy v2 to GitHub Pages
+name: Deploy Astro to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -12,11 +12,12 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,32 +27,29 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: v2/package-lock.json
 
       - name: Install dependencies
-        working-directory: v2
         run: npm ci
 
       - name: Build
-        working-directory: v2
         env:
-          # Set SITE_URL as a repository variable (Settings → Variables → Actions)
-          # or as a secret (Settings → Secrets → Actions) in your GitHub repo.
-          # Example value: https://sabililhaq.com  or  https://sabililhaq.github.io
-          SITE_URL: ${{ vars.SITE_URL || secrets.SITE_URL || 'https://sabililhaq.github.io' }}
+          SITE_URL: https://sabililhaq.github.io
         run: npm run build
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: v2/dist
+          path: ./dist
 
   deploy:
     needs: build
+
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
