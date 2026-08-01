@@ -17,6 +17,7 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../const
 		<Header />
 		<main>
 			<article class="prose">
+				<img class="avatar" src="/images/sabililhaq2.jpg" alt={SITE_TITLE} />
 				<h1>About Me</h1>
 				<p>
 					Hi! I'm <strong>Muhammad Furqony Sabililhaq</strong> — usually just{' '}
@@ -233,5 +234,14 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../const
 		width: 20px;
 		height: 20px;
 		object-fit: contain;
+	}
+
+	.avatar {
+		width: 120px;
+		height: 120px;
+		object-fit: cover;
+		border-radius: 0.75rem;
+		margin-bottom: 1.5rem;
+		display: block;
 	}
 </style>

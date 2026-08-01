@@ -1,62 +1,49 @@
 ---
-import { SITE_SHORT_NAME, SOCIALS } from '../consts';
+import { SITE_TITLE, SOCIALS } from '../consts';
 
 const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} @{SITE_SHORT_NAME.toLowerCase()}. All rights reserved.
-	<div class="social-links">
-		<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">
-			<span class="sr-only">LinkedIn</span>
-			<img src="/images/skills/linkedin-icon.svg" width="28" height="28" alt="" />
-		</a>
-		<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">
-			<span class="sr-only">GitHub</span>
-			<img src="/images/skills/github-icon.svg" width="28" height="28" alt="" />
-		</a>
-		<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">
-			<span class="sr-only">Medium</span>
-			<img src="/images/skills/medium.svg" width="28" height="28" alt="" />
-		</a>
-		<a href={SOCIALS.hackerrank} target="_blank" rel="noopener noreferrer">
-			<span class="sr-only">HackerRank</span>
-			<img src="/images/skills/hackerrank.png" width="28" height="28" alt="" />
-		</a>
-		<a href={SOCIALS.leetcode} target="_blank" rel="noopener noreferrer">
-			<span class="sr-only">LeetCode</span>
-			<img src="/images/skills/leetcode.png" width="28" height="28" alt="" />
-		</a>
-		<a href={SOCIALS.email}>
-			<span class="sr-only">Email</span>
-			<img src="/images/skills/email-icon.svg" width="28" height="28" alt="" />
-		</a>
+	<div class="footer-inner">
+		<span>&copy; {today.getFullYear()} <a href="/">{SITE_TITLE}</a></span>
+		<div class="footer-links">
+			<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a> 
+			<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a> 
+			<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a> 
+			<a href={SOCIALS.email}>Email</a>
+		</div>
 	</div>
 </footer>
+
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
+		padding: 3em 1em 4em;
 		color: rgb(var(--gray));
-		text-align: center;
+		font-size: 0.9rem;
+		border-top: 1px solid rgb(var(--gray-light));
+		margin-top: 4rem;
 	}
-	.social-links {
+	.footer-inner {
+		max-width: 720px;
+		margin: 0 auto;
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
-		gap: 1em;
-		margin-top: 1em;
+		flex-wrap: wrap;
+		gap: 0.75rem;
 	}
-	.social-links a {
-		text-decoration: none;
+	footer a {
 		color: rgb(var(--gray));
+		text-decoration: none;
+	}
+	footer a:hover {
+		color: rgb(var(--black));
+		text-decoration: underline;
+	}
+	.footer-links {
 		display: flex;
-	}
-	.social-links a:hover {
-		opacity: 0.75;
-	}
-	.social-links img {
-		border-radius: 0;
-		display: block;
+		gap: 1.25rem;
 	}
 </style>
+

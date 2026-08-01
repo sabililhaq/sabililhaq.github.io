@@ -1,102 +1,69 @@
 ---
-import { SITE_SHORT_NAME, SOCIALS } from '../consts';
+import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 ---
 
 <header>
-	<nav>
-		<h2><a href="/">{SITE_SHORT_NAME}</a></h2>
-		<div class="internal-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/#projects">Projects</HeaderLink>
-			<HeaderLink href="/#skills">Skills</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
-			<HeaderLink href="/#contact">Contact</HeaderLink>
+	<div class="header-inner">
+		<div class="site-name">
+			<a href="/">{SITE_TITLE}</a>
 		</div>
-		<div class="social-links">
-			<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">
-				<span class="sr-only">LinkedIn</span>
-				<img src="/images/skills/linkedin-icon.svg" width="28" height="28" alt="" />
-			</a>
-			<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">
-				<span class="sr-only">GitHub</span>
-				<img src="/images/skills/github-icon.svg" width="28" height="28" alt="" />
-			</a>
-			<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">
-				<span class="sr-only">Medium</span>
-				<img src="/images/skills/medium.svg" width="28" height="28" alt="" />
-			</a>
-			<a href={SOCIALS.email}>
-				<span class="sr-only">Email</span>
-				<img src="/images/skills/email-icon.svg" width="28" height="28" alt="" />
-			</a>
-		</div>
-	</nav>
+		<nav>
+			<HeaderLink href="/about">about</HeaderLink>
+			<span class="sep">|</span>
+			<HeaderLink href="/blog">blogs</HeaderLink>
+			<span class="sep">|</span>
+			<HeaderLink href="/links">links</HeaderLink>
+		</nav>
+	</div>
 </header>
+
 <style>
 	header {
 		margin: 0;
 		padding: 0 1em;
 		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
-		position: sticky;
-		top: 0;
-		z-index: 50;
 	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
+	.header-inner {
+		max-width: 720px;
+		margin: 0 auto;
+		padding-top: 1.25rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
-
-	h2 a,
-	h2 a.active {
+	.site-name {
+		font-size: 1.6rem;
+		font-family: 'Georgia', 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+		font-weight: normal;
+		margin-bottom: 0.5rem;
+	}
+	.site-name a {
 		text-decoration: none;
+		color: inherit;
+	}
+	.site-name a:hover {
+		text-decoration: underline;
+		color: inherit;
 	}
 	nav {
 		display: flex;
+		flex-direction: row;
 		align-items: center;
-		justify-content: space-between;
-		max-width: 960px;
-		margin: 0 auto;
+		justify-content: center;
+		width: 100%;
+		border-top: 1px solid rgb(var(--gray-light));
+		border-bottom: 1px solid rgb(var(--gray-light));
+		padding: 0.4rem 0;
+		gap: 0.6rem;
 	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
-	}
-	.internal-links {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-	}
-	.social-links,
-	.social-links a {
-		display: flex;
-		align-items: center;
-	}
-	.social-links {
-		gap: 0.35em;
-	}
-	.social-links a {
-		padding: 0.5em;
-	}
-	.social-links img {
-		border-radius: 0;
-		display: block;
+	.sep {
+		color: rgb(var(--gray-light));
+		user-select: none;
 	}
 	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
-		.internal-links a {
-			padding: 0.75em 0.35em;
-			font-size: 0.9em;
+		.site-name {
+			font-size: 1.35rem;
 		}
 	}
 </style>

@@ -1,16 +1,13 @@
 // Place any global data in this file.
 // You can import this data from anywhere in your site by using the `import` keyword.
 
-export const SITE_TITLE = 'M. Furqony Sabililhaq';
+export const SITE_TITLE = 'Sabililhaq';
 export const SITE_DESCRIPTION =
 	'Computer science graduate with deep interest in Software Engineering and Data. Passionate about coding, competitive programming, and writing about tech.';
-export const SITE_AUTHOR = 'Muhammad Furqony Sabililhaq';
+export const SITE_AUTHOR = 'Sabililhaq';
 export const SITE_SHORT_NAME = 'Sabililhaq';
 export const EMAIL = 'sabililhaq.furqony@gmail.com';
 
-/** Google Apps Script endpoint used by the contact form (from the previous site). */
-export const CONTACT_FORM_URL =
-	'https://script.google.com/macros/s/AKfycbwOt2N1nIcr3RT7boNdSV_qnJ3OHGNCaeGANWnH3is48Sd0jh2qVoK5xkGkzBXfgy9B/exec';
 
 export const SOCIALS = {
 	linkedin: 'https://www.linkedin.com/in/sabililhaq/',

@@ -4,7 +4,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../consts';
+import { SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -21,18 +21,15 @@ const posts = (await getCollection('blog'))
 		<main>
 			<!-- Intro -->
 			<section class="intro">
-				<img class="avatar" src="/images/sabililhaq2.jpg" alt={SITE_TITLE} />
-				<div class="intro-text">
-					<h1>Hi, I'm <span class="name">{SITE_SHORT_NAME}</span></h1>
-					<p>
-						Computer science graduate with deep interest in Software Engineering and Data.
-						Currently focused on Backend Engineering, Data Analysis, and Machine Learning.
-						Sometimes writes tech-related stuff.
-					</p>
-					<p class="intro-links">
-						<a href="/about">More about me →</a>
-					</p>
-				</div>
+				<h1>Hi, I'm <span class="name">{SITE_SHORT_NAME}</span></h1>
+				<p>
+					Computer science graduate with deep interest in Software Engineering and Data.
+					Currently focused on Backend Engineering, Data Analysis, and Machine Learning.
+					Sometimes writes tech-related stuff.
+				</p>
+				<p class="intro-links">
+					<a href="/about">More about me →</a>
+				</p>
 			</section>
 
 			<!-- Recent posts -->
@@ -62,23 +59,11 @@ const posts = (await getCollection('blog'))
 
 	/* Intro */
 	.intro {
-		display: flex;
-		gap: 2rem;
-		align-items: flex-start;
-		margin-bottom: 3.5rem;
+		margin-bottom: 3rem;
 		padding-top: 2rem;
 	}
 
-	.avatar {
-		width: 96px;
-		height: 96px;
-		border-radius: 50%;
-		object-fit: cover;
-		flex-shrink: 0;
-		border-radius: 0.75rem;
-	}
-
-	.intro-text h1 {
+	.intro h1 {
 		font-size: 1.5rem;
 		margin-bottom: 0.5rem;
 	}
@@ -87,7 +72,7 @@ const posts = (await getCollection('blog'))
 		color: var(--accent);
 	}
 
-	.intro-text p {
+	.intro p {
 		margin-bottom: 0.75rem;
 		font-size: 0.95rem;
 		color: rgb(var(--gray-dark));
@@ -165,13 +150,7 @@ const posts = (await getCollection('blog'))
 
 	@media (max-width: 480px) {
 		.intro {
-			flex-direction: column;
-			gap: 1.25rem;
-		}
-
-		.avatar {
-			width: 72px;
-			height: 72px;
+			gap: 1rem;
 		}
 	}
 </style>
