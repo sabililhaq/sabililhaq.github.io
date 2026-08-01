@@ -2,7 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { EMAIL, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../consts';
+import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 ---
 
 <!doctype html>
@@ -62,32 +62,63 @@ import { EMAIL, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../consts';
 					</a>.
 				</p>
 
+				<h2>Projects</h2>
+				<div class="projects">
+					{
+						PROJECTS.map((project) => (
+							<div class="project">
+								<div class="project-header">
+									<h3>{project.title}</h3>
+									<div class="project-links">
+										{project.liveDemo && (
+											<a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
+												Live Demo ↗
+											</a>
+										)}
+										{project.sourceCode && (
+											<a href={project.sourceCode} target="_blank" rel="noopener noreferrer">
+												Source ↗
+											</a>
+										)}
+									</div>
+								</div>
+								{project.overview.map((para) => (
+									<p>{para}</p>
+								))}
+								<p class="tech-stack">{project.techStack}</p>
+							</div>
+						))
+					}
+				</div>
+
+				<h2>Skills</h2>
+				<div class="skills">
+					{
+						SKILLS.map((group) => (
+							<div class="skill-group">
+								<h3>{group.label}</h3>
+								<ul class="skill-list">
+									{group.items.map((skill) => (
+										<li>
+											<img src={skill.icon} alt="" width="24" height="24" />
+											<span>{skill.name}</span>
+										</li>
+									))}
+								</ul>
+							</div>
+						))
+					}
+				</div>
+
 				<h2>Find me online</h2>
 				<ul>
-					<li>
-						<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-					</li>
-					<li>
-						<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-					</li>
-					<li>
-						<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a>
-					</li>
-					<li>
-						<a href={SOCIALS.leetcode} target="_blank" rel="noopener noreferrer">LeetCode</a>
-					</li>
-					<li>
-						<a href={SOCIALS.hackerrank} target="_blank" rel="noopener noreferrer">HackerRank</a>
-					</li>
-					<li>
-						<a href={SOCIALS.email}>{EMAIL}</a>
-					</li>
+					<li><a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+					<li><a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
+					<li><a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a></li>
+					<li><a href={SOCIALS.leetcode} target="_blank" rel="noopener noreferrer">LeetCode</a></li>
+					<li><a href={SOCIALS.hackerrank} target="_blank" rel="noopener noreferrer">HackerRank</a></li>
+					<li><a href={SOCIALS.email}>Email</a></li>
 				</ul>
-
-				<p>
-					Or jump to the <a href="/#projects">projects</a>, <a href="/#skills">skills</a>, or
-					<a href="/#contact">contact</a> sections on the home page.
-				</p>
 			</article>
 		</main>
 		<Footer />
@@ -99,8 +130,108 @@ import { EMAIL, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../consts';
 		margin-bottom: 1rem;
 	}
 	.prose h2 {
-		margin-top: 2rem;
-		margin-bottom: 0.75rem;
-		font-size: 1.5rem;
+		margin-top: 2.5rem;
+		margin-bottom: 1rem;
+		font-size: 1.35rem;
+		padding-bottom: 0.4rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	/* Projects */
+	.projects {
+		display: flex;
+		flex-direction: column;
+		gap: 1.75rem;
+	}
+
+	.project {
+		padding-bottom: 1.75rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	.project:last-child {
+		border-bottom: none;
+	}
+
+	.project-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		flex-wrap: wrap;
+		margin-bottom: 0.5rem;
+	}
+
+	.project h3 {
+		font-size: 1.05rem;
+		margin: 0;
+	}
+
+	.project-links {
+		display: flex;
+		gap: 0.75rem;
+		flex-shrink: 0;
+	}
+
+	.project-links a {
+		font-size: 0.85rem;
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.project-links a:hover {
+		text-decoration: underline;
+	}
+
+	.project p {
+		font-size: 0.9rem;
+		margin-bottom: 0.4rem;
+		color: rgb(var(--gray-dark));
+	}
+
+	.tech-stack {
+		font-size: 0.8rem !important;
+		color: rgb(var(--gray)) !important;
+		font-style: italic;
+	}
+
+	/* Skills */
+	.skills {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.skill-group h3 {
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: rgb(var(--gray));
+		margin-bottom: 0.6rem;
+	}
+
+	.skill-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+	}
+
+	.skill-list li {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.9rem;
+		color: rgb(var(--gray-dark));
+	}
+
+	.skill-list img {
+		border-radius: 0;
+		width: 20px;
+		height: 20px;
+		object-fit: contain;
 	}
 </style>
