@@ -84,7 +84,7 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../const
 									</div>
 								</div>
 								{project.overview.map((para) => (
-									<p>{para}</p>
+									<p set:html={para} />
 								))}
 								<p class="tech-stack">{project.techStack}</p>
 							</div>
