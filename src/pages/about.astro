@@ -244,4 +244,28 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../const
 		margin-bottom: 1.5rem;
 		display: block;
 	}
+
+	@media (max-width: 640px) {
+		.prose h2 {
+			font-size: 1.2rem;
+		}
+
+		.project-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+		}
+
+		.project-links {
+			gap: 0.5rem;
+		}
+
+		.skill-list {
+			gap: 0.3rem 0.75rem;
+		}
+
+		.skill-list li {
+			font-size: 0.85rem;
+		}
+	}
 </style>

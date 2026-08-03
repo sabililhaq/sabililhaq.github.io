@@ -29,10 +29,11 @@ body {
 	line-height: 1.7;
 }
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
+	width: 100%;
+	max-width: 720px;
 	margin: auto;
 	padding: 2em 1em 3em;
+	box-sizing: border-box;
 }
 h1,
 h2,
@@ -84,6 +85,8 @@ input {
 }
 table {
 	width: 100%;
+	overflow-x: auto;
+	display: block;
 }
 img {
 	max-width: 100%;
@@ -94,10 +97,13 @@ code {
 	padding: 2px 5px;
 	background-color: rgb(var(--gray-light));
 	border-radius: 2px;
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
+	overflow-x: auto;
 }
 pre > code {
 	all: unset;
@@ -118,6 +124,24 @@ hr {
 	}
 	main {
 		padding: 1em;
+	}
+}
+
+@media (max-width: 480px) {
+	body {
+		font-size: 16px;
+	}
+	h1 {
+		font-size: 2rem;
+	}
+	h2 {
+		font-size: 1.5rem;
+	}
+	h3 {
+		font-size: 1.25rem;
+	}
+	main {
+		padding: 0.75em;
 	}
 }
 

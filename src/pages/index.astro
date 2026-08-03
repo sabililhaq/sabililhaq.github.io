@@ -148,9 +148,19 @@ const posts = (await getCollection('blog'))
 		text-decoration: underline;
 	}
 
-	@media (max-width: 480px) {
-		.intro {
-			gap: 1rem;
+	@media (max-width: 640px) {
+		.intro h1 {
+			font-size: 1.25rem;
+		}
+
+		.recent-posts li {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+
+		.post-date {
+			font-size: 0.75rem;
 		}
 	}
 </style>

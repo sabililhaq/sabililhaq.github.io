@@ -18,7 +18,9 @@ const posts = (await getCollection('blog')).sort(
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			main {
-				width: 960px;
+				width: 100%;
+				max-width: 960px;
+				box-sizing: border-box;
 			}
 			ul {
 				display: flex;
@@ -77,6 +79,9 @@ const posts = (await getCollection('blog')).sort(
 				margin-bottom: 0.75rem;
 			}
 			@media (max-width: 720px) {
+				main {
+					padding: 1em;
+				}
 				ul {
 					gap: 0.5em;
 				}
@@ -89,6 +94,18 @@ const posts = (await getCollection('blog')).sort(
 				}
 				ul li:first-child .title {
 					font-size: 1.563em;
+				}
+			}
+
+			@media (max-width: 480px) {
+				ul {
+					gap: 0.25rem;
+				}
+				ul li:first-child .title {
+					font-size: 1.25rem;
+				}
+				ul li h4 {
+					font-size: 0.95rem;
 				}
 			}
 		</style>
