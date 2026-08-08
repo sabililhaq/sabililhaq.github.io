@@ -3,12 +3,14 @@
 const PROD_ALLOWED = ["https://sabililhaq.com", "https://www.sabililhaq.com"];
 
 // During local development include common localhost origins so the browser
-// can successfully upgrade the WebSocket connection. You can override by
-// setting ALLOW_LOCALHOST=0 in your environment if you want stricter checks.
+// can successfully upgrade the WebSocket connection. Ensure your production
+// service unit explicitly sets `NODE_ENV=production` so localhost origins are
+// never permitted in production. Outside production, localhost origins are
+// permitted unless `ALLOW_LOCALHOST` is explicitly set to "0".
 const DEV_ALLOWED =
-  process.env.NODE_ENV === "production" && process.env.ALLOW_LOCALHOST !== "1"
-    ? []
-    : ["http://localhost:4321", "http://127.0.0.1:4321"];
+  process.env.NODE_ENV !== "production" && process.env.ALLOW_LOCALHOST !== "0"
+    ? ["http://localhost:4321", "http://127.0.0.1:4321"]
+    : [];
 
 export const CONFIG = {
   // How long a message stays visible / replayable to new joiners.

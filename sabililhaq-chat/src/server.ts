@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { randomUUID } from "node:crypto";
 import { WebSocketServer, WebSocket, type RawData } from "ws";
+import { censorMessage as censorServerMessage } from "./censor.js";
 import { CONFIG, toPublicConfig } from "./config.js";
 import { generateNickname } from "./nickname.js";
 import {
@@ -33,7 +34,10 @@ const httpServer = createServer((req, res) => {
   res.end();
 });
 
-const wss = new WebSocketServer({ noServer: true });
+// Limit frame payloads to a conservative size (64 KiB) so a single frame
+// cannot approach the default 100 MiB limit. This comfortably allows JSON
+// payloads and escaped UTF-8 while protecting memory.
+const wss = new WebSocketServer({ noServer: true, maxPayload: 64 * 1024 });
 
 httpServer.on("upgrade", (req, socket, head) => {
   const origin = req.headers.origin;
@@ -101,13 +105,13 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // Raw `text` exists here only, briefly, in this closure — never stored,
-    // never broadcast. Only the censored version below leaves this scope.
+    // Apply server-side censoring before storing/broadcasting.
+    const { censored } = censorServerMessage(text);
 
     const msg: ChatMessage = {
       id: randomUUID(),
       nickname: meta.nickname,
-      text,
+      text: censored,
       ts: Date.now(),
     };
     addMessage(msg);

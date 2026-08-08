@@ -233,9 +233,23 @@
 	let isConnected = false;
 	const widgetEl = document.querySelector('.chat-widget');
 	let connectTimer = null;
+	let retryTimer = null;
 	let reconnectAttempts = 0;
 	const maxReconnectAttempts = 8;
 	let permanentlyDisabled = false;
+
+	// Wire info-panel toggle behavior: keep `aria-expanded` and `hidden` in sync.
+	if (infoToggle && infoPanel) {
+		infoToggle.addEventListener('click', () => {
+			const expanded = infoToggle.getAttribute('aria-expanded') === 'true';
+			infoToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+			if (expanded) {
+				infoPanel.hidden = true;
+			} else {
+				infoPanel.hidden = false;
+			}
+		});
+	}
 
 	function setStatus(message) {
 		if (statusEl) {
@@ -264,6 +278,20 @@
 		messagesEl.scrollTop = messagesEl.scrollHeight;
 	}
 
+	function upsertMessage(msg) {
+		// Deduplicate by message id: replace existing, otherwise append.
+		const existing = messagesEl.querySelector(`li[data-id="${msg.id}"]`);
+		if (existing) {
+			existing.dataset.ts = String(msg.ts);
+			const who = existing.querySelector('.who');
+			const text = existing.querySelector('.text');
+			if (who) who.textContent = msg.nickname + ': ';
+			if (text) text.textContent = msg.text.length > MAX_MESSAGE_CHARS ? msg.text.slice(0, MAX_MESSAGE_CHARS) + '...' : msg.text;
+			return;
+		}
+		renderMessage(msg);
+	}
+
 	function sweepExpired() {
 		const cutoff = Date.now() - expirationSeconds * 1000;
 		for (const li of Array.from(messagesEl.children)) {
@@ -274,10 +302,13 @@
 
 	function connect() {
 		if (permanentlyDisabled) return;
+		// Prevent creating multiple sockets simultaneously.
+		if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
 		setStatus('Connecting…');
 		isConnected = false;
 		widgetEl?.classList.add('inactive');
 		if (connectTimer) clearTimeout(connectTimer);
+		if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 		widgetEl?.classList.remove('offline');
 		connectTimer = setTimeout(() => {
 			if (!isConnected) {
@@ -288,6 +319,7 @@
 			}
 		}, 5000);
 		ws = new WebSocket(WS_URL);
+		let socketHandled = false;
 
 		ws.addEventListener('open', () => {
 			isConnected = true;
@@ -314,9 +346,12 @@
 					if (expirationEl) {
 						expirationEl.textContent = String(expirationSeconds);
 					}
-					if (data.messages) {
+					break;
+
+				case 'backlog':
+					if (Array.isArray(data.messages)) {
 						for (const msg of data.messages) {
-							renderMessage(msg);
+							upsertMessage(msg);
 						}
 					}
 					break;
@@ -326,7 +361,12 @@
 					break;
 
 				case 'message':
-					renderMessage(data.message);
+					upsertMessage(data.message);
+					break;
+
+				case 'error':
+					// Surface server-side rejection reason to users in the widget.
+					setStatus(String(data.reason ?? 'Server error'));
 					break;
 
 				default:
@@ -335,15 +375,17 @@
 		});
 
 		ws.addEventListener('close', (event) => {
+			if (socketHandled) return; socketHandled = true;
 			console.warn('[chat] closed:', event);
 			ws = null;
 			isConnected = false;
-			reconnectAttempts += 1;
 			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
 			widgetEl?.classList.add('inactive');
 
+			reconnectAttempts += 1;
 			if (reconnectAttempts >= maxReconnectAttempts) {
 				permanentlyDisabled = true;
+				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
 				statusEl?.classList.remove('offline');
 				setStatus('Chat unavailable — server appears disabled.');
@@ -353,18 +395,21 @@
 			}
 
 			setStatus('Disconnected. Reconnecting…');
-			setTimeout(connect, 5000);
+			if (retryTimer) { clearTimeout(retryTimer); }
+			retryTimer = setTimeout(connect, 5000);
 		});
 
 		ws.addEventListener('error', (error) => {
+			if (socketHandled) return; socketHandled = true;
 			console.error('[chat] error:', error);
 			isConnected = false;
-			reconnectAttempts += 1;
 			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
 			widgetEl?.classList.add('inactive');
 
+			reconnectAttempts += 1;
 			if (reconnectAttempts >= maxReconnectAttempts) {
 				permanentlyDisabled = true;
+				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
 				statusEl?.classList.remove('offline');
 				setStatus('Chat unavailable — server appears disabled.');
@@ -374,7 +419,8 @@
 			}
 
 			setStatus('Error. Reconnecting…');
-			setTimeout(connect, 5000);
+			if (retryTimer) { clearTimeout(retryTimer); }
+			retryTimer = setTimeout(connect, 5000);
 		});
 	}
 
