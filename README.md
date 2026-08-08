@@ -1,4 +1,4 @@
-# TODO: remove this section if merging to master
+# Chat
 Update /c URL: sabililhaq.com/chat
 Purpose: Simple, anonymous, temporary chat for personal/peer use.
 No accounts / login

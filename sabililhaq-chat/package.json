@@ -9,7 +9,6 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
-    "obscenity": "^0.4.6",
     "ws": "^8.18.0"
   },
   "devDependencies": {

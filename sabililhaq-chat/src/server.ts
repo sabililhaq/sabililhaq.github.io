@@ -1,11 +1,15 @@
-import { createServer } from 'node:http';
-import { randomUUID } from 'node:crypto';
-import { WebSocketServer, WebSocket, type RawData } from 'ws';
-import { CONFIG, toPublicConfig } from './config.js';
-import { generateNickname } from './nickname.js';
-import { censorMessage } from './filter.js';
-import { addMessage, getLiveMessages, pruneExpired, type ChatMessage } from './store.js';
-import { TokenBucket } from './rateLimit.js';
+import { createServer } from "node:http";
+import { randomUUID } from "node:crypto";
+import { WebSocketServer, WebSocket, type RawData } from "ws";
+import { CONFIG, toPublicConfig } from "./config.js";
+import { generateNickname } from "./nickname.js";
+import {
+  addMessage,
+  getLiveMessages,
+  pruneExpired,
+  type ChatMessage,
+} from "./store.js";
+import { TokenBucket } from "./rateLimit.js";
 
 type ClientMeta = {
   nickname: string;
@@ -16,11 +20,11 @@ const clients = new Map<WebSocket, ClientMeta>();
 
 // --- HTTP: just the /config endpoint. Everything else is WS. ---
 const httpServer = createServer((req, res) => {
-  if (req.method === 'GET' && req.url === '/config') {
+  if (req.method === "GET" && req.url === "/config") {
     res.writeHead(200, {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       // Public, static-ish config — fine to cache briefly client-side.
-      'Cache-Control': 'public, max-age=30',
+      "Cache-Control": "public, max-age=30",
     });
     res.end(JSON.stringify(toPublicConfig()));
     return;
@@ -31,9 +35,12 @@ const httpServer = createServer((req, res) => {
 
 const wss = new WebSocketServer({ noServer: true });
 
-httpServer.on('upgrade', (req, socket, head) => {
+httpServer.on("upgrade", (req, socket, head) => {
   const origin = req.headers.origin;
-  if (!origin || !(CONFIG.allowedOrigins as readonly string[]).includes(origin)) {
+  if (
+    !origin ||
+    !(CONFIG.allowedOrigins as readonly string[]).includes(origin)
+  ) {
     socket.destroy();
     return;
   }
@@ -44,7 +51,7 @@ httpServer.on('upgrade', (req, socket, head) => {
   }
 
   wss.handleUpgrade(req, socket, head, (ws) => {
-    wss.emit('connection', ws, req);
+    wss.emit("connection", ws, req);
   });
 });
 
@@ -61,54 +68,53 @@ function broadcast(payload: unknown): void {
   }
 }
 
-wss.on('connection', (ws) => {
+wss.on("connection", (ws) => {
   const nickname = generateNickname();
   clients.set(ws, { nickname, bucket: new TokenBucket() });
 
   // Welcome frame: tell the client who they are + replay recent history.
-  send(ws, { type: 'welcome', nickname, config: toPublicConfig() });
-  send(ws, { type: 'backlog', messages: getLiveMessages() });
+  send(ws, { type: "welcome", nickname, config: toPublicConfig() });
+  send(ws, { type: "backlog", messages: getLiveMessages() });
 
-  ws.on('message', (raw: RawData) => {
+  ws.on("message", (raw: RawData) => {
     const meta = clients.get(ws);
     if (!meta) return;
 
     if (!meta.bucket.tryConsume()) {
-      send(ws, { type: 'error', reason: 'rate_limited' });
+      send(ws, { type: "error", reason: "rate_limited" });
       return;
     }
 
     let text: string;
     try {
       const parsed = JSON.parse(raw.toString());
-      text = String(parsed?.text ?? '');
+      text = String(parsed?.text ?? "");
     } catch {
-      send(ws, { type: 'error', reason: 'invalid_payload' });
+      send(ws, { type: "error", reason: "invalid_payload" });
       return;
     }
 
     text = text.trim();
     if (text.length === 0) return;
     if (text.length > CONFIG.maxMessageLength) {
-      send(ws, { type: 'error', reason: 'message_too_long' });
+      send(ws, { type: "error", reason: "message_too_long" });
       return;
     }
 
     // Raw `text` exists here only, briefly, in this closure — never stored,
     // never broadcast. Only the censored version below leaves this scope.
-    const { censored } = censorMessage(text);
 
     const msg: ChatMessage = {
       id: randomUUID(),
       nickname: meta.nickname,
-      text: censored,
+      text,
       ts: Date.now(),
     };
     addMessage(msg);
-    broadcast({ type: 'message', message: msg });
+    broadcast({ type: "message", message: msg });
   });
 
-  ws.on('close', () => {
+  ws.on("close", () => {
     clients.delete(ws);
   });
 });

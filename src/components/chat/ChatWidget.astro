@@ -12,7 +12,7 @@
     <div id="info-panel" class="info-panel" hidden>
         <ul>
             <li><strong>For fun only</strong> — this is a small personal project, not intended for important or private communication.</li>
-            <li><strong>Swearing filter</strong> — messages are automatically checked for configured swear words before being delivered.</li>
+            <li><strong>Swearing filter</strong> — messages are filtered in the browser before they are sent.</li>
             <li><strong>Temporary chat</strong> — messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
             <li><strong>Built with WebSockets</strong> — this chat is a small demonstration of real-time WebSocket communication.</li>
             <li>
@@ -186,13 +186,14 @@
     }
 </style>
 
-<script>
+<script type="module">
+    import { censorMessage } from './filter.ts';
+
     const WS_URL = (() => {
         try {
             const host = location.hostname;
-            if (host === 'localhost' || host === '127.0.0.1') {
-                const port = 8080;
-                return `ws://${host}:${port}`;
+            if (host === 'localhost' || host === '127.0.0.1' || host === '[::1]') {
+                return 'ws://127.0.0.1:8080';
             }
             return 'wss://ws.sabililhaq.com';
         } catch {
@@ -211,6 +212,12 @@
 
     let expirationSeconds = 30;
     let ws = null;
+
+    function setStatus(message) {
+        if (statusEl) {
+            statusEl.textContent = message;
+        }
+    }
 
     function renderMessage(msg) {
         const li = document.createElement('li');
@@ -238,10 +245,12 @@
     setInterval(sweepExpired, 1000);
 
     function connect() {
+        console.info('[chat] connecting to', WS_URL);
+        setStatus('Connecting…');
         ws = new WebSocket(WS_URL);
 
         ws.addEventListener('open', () => {
-            statusEl.textContent = '';
+            setStatus('');
         });
 
         ws.addEventListener('message', (event) => {
@@ -249,50 +258,57 @@
 
             switch (data.type) {
                 case 'welcome':
-                    nicknameEl.textContent = data.nickname;
+                    if (nicknameEl) {
+                        nicknameEl.textContent = data.nickname;
+                    }
                     expirationSeconds = data.config.expirationSeconds;
-                    expirationEl.textContent = String(expirationSeconds);
-                    input.maxLength = data.config.maxMessageLength;
+                    if (expirationEl) {
+                        expirationEl.textContent = String(expirationSeconds);
+                    }
+                    if (data.messages) {
+                        for (const msg of data.messages) {
+                            renderMessage(msg);
+                        }
+                    }
                     break;
-                case 'backlog':
-                    messagesEl.innerHTML = '';
-                    for (const m of data.messages) renderMessage(m);
+
+                case 'ping':
+                    ws.send(JSON.stringify({ type: 'pong' }));
                     break;
+
                 case 'message':
                     renderMessage(data.message);
                     break;
-                case 'error':
-                    statusEl.textContent = data.reason === 'rate_limited'
-                        ? "You're sending messages too fast."
-                        : 'Message not sent.';
-                    break;
+
+                default:
+                    console.warn('[chat] unknown message type:', data);
             }
         });
 
-        ws.addEventListener('close', () => {
-            nicknameEl.textContent = 'disconnected — reconnecting…';
-            statusEl.textContent = '';
-            setTimeout(connect, 1500);
+        ws.addEventListener('close', (event) => {
+            console.warn('[chat] closed:', event);
+            ws = null;
+            setStatus('Disconnected. Reconnecting…');
+            setTimeout(connect, 2000);
         });
 
-        ws.addEventListener('error', () => {
-            if (ws) ws.close();
-        });
-    }
-
-    if (infoToggle && infoPanel) {
-        infoToggle.addEventListener('click', () => {
-            const isOpen = infoPanel.hidden === false;
-            infoPanel.hidden = isOpen;
-            infoToggle.setAttribute('aria-expanded', String(!isOpen));
+        ws.addEventListener('error', (error) => {
+            console.error('[chat] error:', error);
+            setStatus('Error. Reconnecting…');
+            setTimeout(connect, 2000);
         });
     }
 
-    composer.addEventListener('submit', (e) => {
-        e.preventDefault();
+    composer.addEventListener('submit', (event) => {
+        event.preventDefault();
+
         const text = input.value.trim();
-        if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
-        ws.send(JSON.stringify({ text }));
+        if (!text) return;
+
+        const { censored } = censorMessage(text);
+        setStatus('');
+        const message = { type: 'message', text: censored };
+        ws.send(JSON.stringify(message));
         input.value = '';
     });
 
