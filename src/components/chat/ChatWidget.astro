@@ -4,313 +4,403 @@
 ---
 
 <div class="chat-widget">
-    <div class="chat-topbar">
-        <span class="nickname" id="nickname">connecting…</span>
-        <button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel">ⓘ</button>
-    </div>
+	<div class="chat-topbar">
+		<span class="nickname" id="nickname">connecting…</span>
+		<button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel">ⓘ</button>
+	</div>
 
-    <div id="info-panel" class="info-panel" hidden>
-        <ul>
-            <li><strong>For fun only</strong> — this is a small personal project, not intended for important or private communication.</li>
-            <li><strong>Swearing filter</strong> — messages are filtered in the browser before they are sent.</li>
-            <li><strong>Temporary chat</strong> — messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
-            <li><strong>Built with WebSockets</strong> — this chat is a small demonstration of real-time WebSocket communication.</li>
-            <li>
-                <strong>For developers</strong> — curious how it works? Open your browser's Network inspector, filter for WS,
-                and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
-            </li>
-        </ul>
-    </div>
+	<div id="info-panel" class="info-panel" hidden>
+		<ul>
+			<li><strong>For fun only</strong> — this is a small personal project, not intended for important or private communication.</li>
+			<li><strong>Swearing filter</strong> — messages are filtered in the browser before they are sent.</li>
+			<li><strong>Temporary chat</strong> — messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
+			<li><strong>Built with WebSockets</strong> — this chat is a small demonstration of real-time WebSocket communication.</li>
+			<li>
+				<strong>For developers</strong> — curious how it works? Open your browser's Network inspector, filter for WS,
+				and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
+			</li>
+		</ul>
+	</div>
 
-    <ul id="messages" class="messages" aria-live="polite"></ul>
+	<ul id="messages" class="messages" aria-live="polite"></ul>
 
-    <form id="composer" class="composer">
-        <input
-            id="message-input"
-            type="text"
-            placeholder="Say something…"
-            autocomplete="off"
-            maxlength="500"
-        />
-        <button type="submit">Send</button>
-    </form>
-    
-    <p id="status" class="status" role="status"></p>
+	<form id="composer" class="composer">
+		<input
+			id="message-input"
+			type="text"
+			placeholder="Say something…"
+			autocomplete="off"
+			maxlength="500"
+		/>
+		<button type="submit">Send</button>
+	</form>
+
+	<p id="status" class="status" role="status"></p>
 </div>
 
 <style>
-    .chat-widget {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        border: 1px solid #dde1e7;
-        border-radius: 1rem;
-        padding: 0.85rem;
-        background: #fff;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
-    }
-    .chat-topbar {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-    .nickname {
-        font-weight: 700;
-        font-size: 0.98rem;
-        color: #111827;
-        line-height: 1.2;
-    }
-    #info-toggle {
-        appearance: none;
-        background: #f8fafc;
-        border: 1px solid #d1d5db;
-        border-radius: 9999px;
-        width: 2rem;
-        height: 2rem;
-        display: grid;
-        place-items: center;
-        color: #111827;
-        cursor: pointer;
-        transition: background 0.2s ease, border-color 0.2s ease;
-    }
-    #info-toggle:hover,
-    #info-toggle:focus-visible {
-        background: #eff6ff;
-        border-color: #93c5fd;
-        outline: none;
-    }
-    .info-panel {
-        position: relative;
-        z-index: 1;
-        background: #f8fafc;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.85rem;
-        padding: 0.85rem 1rem;
-        font-size: 0.92rem;
-        color: #374151;
-    }
-    .info-panel ul {
-        margin: 0;
-        padding-left: 1.1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.45rem;
-    }
-    .messages {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        min-height: 220px;
-        max-height: 360px;
-        overflow-y: auto;
-    }
-    .messages li {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 0.5rem;
-        padding: 0.75rem 0.85rem;
-        border-radius: 0.85rem;
-        background: #f8fafc;
-        border: 1px solid #e5e7eb;
-        font-size: 0.94rem;
-    }
-    .messages .who {
-        font-weight: 700;
-        color: #111827;
-        white-space: nowrap;
-    }
-    .messages span:last-child {
-        color: #334155;
-        word-break: break-word;
-    }
-    .composer {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 0.5rem;
-    }
-    .composer input {
-        flex: 1;
-        padding: 0.75rem 0.9rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.85rem;
-        font-size: 0.95rem;
-        color: #0f172a;
-        background: #fff;
-    }
-    .composer input:focus {
-        outline: none;
-        border-color: #8b5cf6;
-        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
-    }
-    .composer button {
-        padding: 0 1rem;
-        border: none;
-        border-radius: 0.85rem;
-        background: #111827;
-        color: #fff;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.15s ease;
-    }
-    .composer button:hover {
-        background: #1f2937;
-    }
-    .composer button:disabled {
-        background: #cbd5e1;
-        cursor: not-allowed;
-    }
-    .status {
-        min-height: 1.2em;
-        font-size: 0.85rem;
-        color: #b91c1c;
-        margin: 0;
-    }
-    @media (max-width: 520px) {
-        .chat-widget {
-            padding: 0.85rem;
-        }
-        .chat-topbar {
-            gap: 0.5rem;
-        }
-        .nickname {
-            font-size: 0.92rem;
-        }
-        .composer input {
-            min-width: 0;
-        }
-    }
+	.chat-widget {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		border: 1px solid #dde1e7;
+		border-radius: 1rem;
+		padding: 0.85rem;
+		background: #fff;
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+	}
+	.chat-topbar {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+	.nickname {
+		font-weight: 700;
+		font-size: 0.98rem;
+		color: #111827;
+		line-height: 1.2;
+	}
+	#info-toggle {
+		appearance: none;
+		background: #f8fafc;
+		border: 1px solid #d1d5db;
+		border-radius: 9999px;
+		width: 2rem;
+		height: 2rem;
+		display: grid;
+		place-items: center;
+		color: #111827;
+		cursor: pointer;
+		transition: background 0.2s ease, border-color 0.2s ease;
+	}
+	#info-toggle:hover,
+	#info-toggle:focus-visible {
+		background: #eff6ff;
+		border-color: #93c5fd;
+		outline: none;
+	}
+	.info-panel {
+		position: relative;
+		z-index: 1;
+		background: #f8fafc;
+		border: 1px solid #e5e7eb;
+		border-radius: 0.85rem;
+		padding: 0.85rem 1rem;
+		font-size: 0.92rem;
+		color: #374151;
+	}
+	.info-panel ul {
+		margin: 0;
+		padding-left: 1.1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+	.messages {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		min-height: 220px;
+		max-height: 360px;
+		overflow-y: auto;
+	}
+	.messages li {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.5rem;
+		padding: 0.75rem 0.85rem;
+		border-radius: 0.85rem;
+		background: #f8fafc;
+		border: 1px solid #e5e7eb;
+		font-size: 0.94rem;
+		align-items: center;
+	}
+	.messages .who {
+		font-weight: 700;
+		color: #111827;
+		white-space: nowrap;
+	}
+	.messages .text {
+		color: #334155;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.composer {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.5rem;
+	}
+	.composer input {
+		flex: 1;
+		padding: 0.75rem 0.9rem;
+		border: 1px solid #d1d5db;
+		border-radius: 0.85rem;
+		font-size: 0.95rem;
+		color: #0f172a;
+		background: #fff;
+	}
+	.composer input:focus {
+		outline: none;
+		border-color: #8b5cf6;
+		box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
+	}
+	.composer button {
+		padding: 0 1rem;
+		border: none;
+		border-radius: 0.85rem;
+		background: #111827;
+		color: #fff;
+		font-weight: 700;
+		cursor: pointer;
+		transition: background 0.15s ease;
+	}
+	.composer button:hover {
+		background: #1f2937;
+	}
+	.composer button:disabled {
+		background: #cbd5e1;
+		cursor: not-allowed;
+	}
+	.status {
+		min-height: 1.2em;
+		font-size: 0.85rem;
+		color: #b91c1c;
+		margin: 0;
+	}
+	.chat-widget.inactive {
+		opacity: 0.65;
+		filter: grayscale(20%);
+		transition: opacity 0.18s ease, filter 0.18s ease;
+	}
+	.chat-widget.offline {
+		border-color: #fbbf24;
+		background: #fffbeb;
+	}
+	.status.offline {
+		color: #b45309;
+	}
+	@media (max-width: 520px) {
+		.chat-widget {
+			padding: 0.85rem;
+		}
+		.chat-topbar {
+			gap: 0.5rem;
+		}
+		.nickname {
+			font-size: 0.92rem;
+		}
+		.composer input {
+			min-width: 0;
+		}
+	}
 </style>
 
 <script type="module">
-    import { censorMessage } from './filter.ts';
+	import { censorMessage } from './filter.ts';
 
-    const WS_URL = (() => {
-        try {
-            const host = location.hostname;
-            if (host === 'localhost' || host === '127.0.0.1' || host === '[::1]') {
-                return 'ws://127.0.0.1:8080';
-            }
-            return 'wss://ws.sabililhaq.com';
-        } catch {
-            return 'wss://ws.sabililhaq.com';
-        }
-    })();
+	const WS_URL = (() => {
+		try {
+			const host = location.hostname;
+			if (host === 'localhost' || host === '127.0.0.1' || host === '[::1]') {
+				return 'ws://127.0.0.1:8080';
+			}
+			return 'wss://ws.sabililhaq.com';
+		} catch {
+			return 'wss://ws.sabililhaq.com';
+		}
+	})();
 
-    const nicknameEl = document.getElementById('nickname');
-    const infoToggle = document.getElementById('info-toggle');
-    const infoPanel = document.getElementById('info-panel');
-    const expirationEl = document.getElementById('expiration-seconds');
-    const messagesEl = document.getElementById('messages');
-    const composer = document.getElementById('composer');
-    const input = document.getElementById('message-input');
-    const statusEl = document.getElementById('status');
+	const nicknameEl = document.getElementById('nickname');
+	const infoToggle = document.getElementById('info-toggle');
+	const infoPanel = document.getElementById('info-panel');
+	const expirationEl = document.getElementById('expiration-seconds');
+	const messagesEl = document.getElementById('messages');
+	const composer = document.getElementById('composer');
+	const input = document.getElementById('message-input');
+	const sendButton = composer?.querySelector('button');
+	const statusEl = document.getElementById('status');
 
-    let expirationSeconds = 30;
-    let ws = null;
+	const MAX_MESSAGE_CHARS = 40;
+	let expirationSeconds = 30;
+	let ws = null;
+	let isConnected = false;
+	const widgetEl = document.querySelector('.chat-widget');
+	let connectTimer = null;
+	let reconnectAttempts = 0;
+	const maxReconnectAttempts = 8;
+	let permanentlyDisabled = false;
 
-    function setStatus(message) {
-        if (statusEl) {
-            statusEl.textContent = message;
-        }
-    }
+	function setStatus(message) {
+		if (statusEl) {
+			statusEl.textContent = message;
+		}
+	}
 
-    function renderMessage(msg) {
-        const li = document.createElement('li');
-        li.dataset.ts = String(msg.ts);
-        li.dataset.id = msg.id;
+	function renderMessage(msg) {
+		const li = document.createElement('li');
+		li.dataset.ts = String(msg.ts);
+		li.dataset.id = msg.id;
 
-        const who = document.createElement('span');
-        who.className = 'who';
-        who.textContent = msg.nickname + ':';
+		const who = document.createElement('span');
+		who.className = 'who';
+		who.textContent = msg.nickname + ': ';
 
-        const text = document.createElement('span');
-        text.textContent = msg.text;
+		const text = document.createElement('span');
+		text.className = 'text';
+		const displayText = msg.text.length > MAX_MESSAGE_CHARS
+			? msg.text.slice(0, MAX_MESSAGE_CHARS) + '...'
+			: msg.text;
+		text.textContent = displayText;
 
-        li.append(who, text);
-        messagesEl.appendChild(li);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
+		li.append(who, text);
+		messagesEl.appendChild(li);
+		messagesEl.scrollTop = messagesEl.scrollHeight;
+	}
 
-    function sweepExpired() {
-        const cutoff = Date.now() - expirationSeconds * 1000;
-        for (const li of Array.from(messagesEl.children)) {
-            if (Number(li.dataset.ts) < cutoff) li.remove();
-        }
-    }
-    setInterval(sweepExpired, 1000);
+	function sweepExpired() {
+		const cutoff = Date.now() - expirationSeconds * 1000;
+		for (const li of Array.from(messagesEl.children)) {
+			if (Number(li.dataset.ts) < cutoff) li.remove();
+		}
+	}
+	setInterval(sweepExpired, 1000);
 
-    function connect() {
-        console.info('[chat] connecting to', WS_URL);
-        setStatus('Connecting…');
-        ws = new WebSocket(WS_URL);
+	function connect() {
+		if (permanentlyDisabled) return;
+		setStatus('Connecting…');
+		isConnected = false;
+		widgetEl?.classList.add('inactive');
+		if (connectTimer) clearTimeout(connectTimer);
+		widgetEl?.classList.remove('offline');
+		connectTimer = setTimeout(() => {
+			if (!isConnected) {
+				setStatus('Offline mode — you can still chat.');
+				widgetEl?.classList.remove('inactive');
+				widgetEl?.classList.add('offline');
+				statusEl?.classList.add('offline');
+			}
+		}, 5000);
+		ws = new WebSocket(WS_URL);
 
-        ws.addEventListener('open', () => {
-            setStatus('');
-        });
+		ws.addEventListener('open', () => {
+			isConnected = true;
+			reconnectAttempts = 0;
+			permanentlyDisabled = false;
+			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
+			widgetEl?.classList.remove('inactive');
+			widgetEl?.classList.remove('offline');
+			statusEl?.classList.remove('offline');
+			setStatus('');
+			if (input) input.disabled = false;
+			if (sendButton) sendButton.disabled = false;
+		});
 
-        ws.addEventListener('message', (event) => {
-            const data = JSON.parse(event.data);
+		ws.addEventListener('message', (event) => {
+			const data = JSON.parse(event.data);
 
-            switch (data.type) {
-                case 'welcome':
-                    if (nicknameEl) {
-                        nicknameEl.textContent = data.nickname;
-                    }
-                    expirationSeconds = data.config.expirationSeconds;
-                    if (expirationEl) {
-                        expirationEl.textContent = String(expirationSeconds);
-                    }
-                    if (data.messages) {
-                        for (const msg of data.messages) {
-                            renderMessage(msg);
-                        }
-                    }
-                    break;
+			switch (data.type) {
+				case 'welcome':
+					if (nicknameEl) {
+						nicknameEl.textContent = data.nickname;
+					}
+					expirationSeconds = data.config.expirationSeconds;
+					if (expirationEl) {
+						expirationEl.textContent = String(expirationSeconds);
+					}
+					if (data.messages) {
+						for (const msg of data.messages) {
+							renderMessage(msg);
+						}
+					}
+					break;
 
-                case 'ping':
-                    ws.send(JSON.stringify({ type: 'pong' }));
-                    break;
+				case 'ping':
+					ws.send(JSON.stringify({ type: 'pong' }));
+					break;
 
-                case 'message':
-                    renderMessage(data.message);
-                    break;
+				case 'message':
+					renderMessage(data.message);
+					break;
 
-                default:
-                    console.warn('[chat] unknown message type:', data);
-            }
-        });
+				default:
+					console.warn('[chat] unknown message type:', data);
+			}
+		});
 
-        ws.addEventListener('close', (event) => {
-            console.warn('[chat] closed:', event);
-            ws = null;
-            setStatus('Disconnected. Reconnecting…');
-            setTimeout(connect, 2000);
-        });
+		ws.addEventListener('close', (event) => {
+			console.warn('[chat] closed:', event);
+			ws = null;
+			isConnected = false;
+			reconnectAttempts += 1;
+			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
+			widgetEl?.classList.add('inactive');
 
-        ws.addEventListener('error', (error) => {
-            console.error('[chat] error:', error);
-            setStatus('Error. Reconnecting…');
-            setTimeout(connect, 2000);
-        });
-    }
+			if (reconnectAttempts >= maxReconnectAttempts) {
+				permanentlyDisabled = true;
+				widgetEl?.classList.remove('offline');
+				statusEl?.classList.remove('offline');
+				setStatus('Chat unavailable — server appears disabled.');
+				if (input) input.disabled = true;
+				if (sendButton) sendButton.disabled = true;
+				return;
+			}
 
-    composer.addEventListener('submit', (event) => {
-        event.preventDefault();
+			setStatus('Disconnected. Reconnecting…');
+			setTimeout(connect, 5000);
+		});
 
-        const text = input.value.trim();
-        if (!text) return;
+		ws.addEventListener('error', (error) => {
+			console.error('[chat] error:', error);
+			isConnected = false;
+			reconnectAttempts += 1;
+			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
+			widgetEl?.classList.add('inactive');
 
-        const { censored } = censorMessage(text);
-        setStatus('');
-        const message = { type: 'message', text: censored };
-        ws.send(JSON.stringify(message));
-        input.value = '';
-    });
+			if (reconnectAttempts >= maxReconnectAttempts) {
+				permanentlyDisabled = true;
+				widgetEl?.classList.remove('offline');
+				statusEl?.classList.remove('offline');
+				setStatus('Chat unavailable — server appears disabled.');
+				if (input) input.disabled = true;
+				if (sendButton) sendButton.disabled = true;
+				return;
+			}
 
-    connect();
+			setStatus('Error. Reconnecting…');
+			setTimeout(connect, 5000);
+		});
+	}
+
+	composer.addEventListener('submit', (event) => {
+		event.preventDefault();
+
+		const text = input.value.trim();
+		if (!text) return;
+
+		const { censored } = censorMessage(text);
+		setStatus('');
+		const message = { type: 'message', text: censored };
+		if (ws && ws.readyState === WebSocket.OPEN) {
+			ws.send(JSON.stringify(message));
+		} else {
+			const localMsg = {
+				id: 'local-' + Math.random().toString(36).slice(2, 9),
+				ts: Date.now(),
+				nickname: (nicknameEl && nicknameEl.textContent) || 'You',
+				text: censored,
+			};
+			renderMessage(localMsg);
+			setStatus('Not connected — message shown locally.');
+		}
+		input.value = '';
+	});
+
+	connect();
 </script>
