@@ -1,0 +1,234 @@
+---
+// No server-side logic needed — this is a pure client:load island, same
+// pattern as QRGenerator. Nothing here touches a server at build/SSR time.
+---
+
+<div class="chat-widget">
+    <div class="chat-topbar">
+        <span class="nickname" id="nickname">connecting…</span>
+        <button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel">ⓘ</button>
+    </div>
+
+    <div id="info-panel" class="info-panel" hidden>
+        <ul>
+            <li><strong>For fun only</strong> — this is a small personal project, not intended for important or private communication.</li>
+            <li><strong>Swearing filter</strong> — messages are automatically checked for configured swear words before being delivered.</li>
+            <li><strong>Temporary chat</strong> — messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
+            <li><strong>Built with WebSockets</strong> — this chat is a small demonstration of real-time WebSocket communication.</li>
+            <li>
+                <strong>For developers</strong> — curious how it works? Open your browser's Network inspector, filter for WS,
+                and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
+            </li>
+        </ul>
+    </div>
+
+    <ul id="messages" class="messages" aria-live="polite"></ul>
+
+    <form id="composer" class="composer">
+        <input
+            id="message-input"
+            type="text"
+            placeholder="Say something…"
+            autocomplete="off"
+            maxlength="500"
+        />
+        <button type="submit">Send</button>
+    </form>
+    <p id="status" class="status" role="status"></p>
+</div>
+
+<style>
+    .chat-widget {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    .chat-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .nickname {
+        font-weight: 600;
+    }
+    #info-toggle {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        width: 1.75rem;
+        height: 1.75rem;
+        cursor: pointer;
+    }
+    .info-panel {
+        background: #f7f7f7;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    .info-panel ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    .messages {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-height: 200px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .messages li {
+        font-size: 0.95rem;
+    }
+    .messages .who {
+        font-weight: 600;
+        margin-right: 0.4rem;
+    }
+    .composer {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .composer input {
+        flex: 1;
+        padding: 0.5rem;
+    }
+    .status {
+        min-height: 1.2em;
+        font-size: 0.85rem;
+        color: #b00;
+        margin: 0;
+    }
+</style>
+
+<script>
+    type ServerMessage =
+        | { type: 'welcome'; nickname: string; config: { expirationSeconds: number; maxMessageLength: number } }
+        | { type: 'backlog'; messages: ChatMessage[] }
+        | { type: 'message'; message: ChatMessage }
+        | { type: 'error'; reason: string };
+
+    type ChatMessage = { id: string; nickname: string; text: string; ts: number };
+
+    const WS_URL = (() => {
+        try {
+            const host = location.hostname;
+            // When developing locally, prefer a local ws:// server.
+            if (host === 'localhost' || host === '127.0.0.1') {
+                const port = 8080; // matches chat-service default
+                return `ws://${host}:${port}`;
+            }
+            return 'wss://ws.sabililhaq.com';
+        } catch {
+            return 'wss://ws.sabililhaq.com';
+        }
+    })();
+
+    const nicknameEl = document.getElementById('nickname')!;
+    const infoToggle = document.getElementById('info-toggle')!;
+    const infoPanel = document.getElementById('info-panel')!;
+    const expirationEl = document.getElementById('expiration-seconds')!;
+    const messagesEl = document.getElementById('messages')!;
+    const composer = document.getElementById('composer') as HTMLFormElement;
+    const input = document.getElementById('message-input') as HTMLInputElement;
+    const statusEl = document.getElementById('status')!;
+
+    let expirationSeconds = 30; // overwritten by backend's `welcome` frame
+    let ws: WebSocket | null = null;
+
+    infoToggle.addEventListener('click', () => {
+        const isOpen = !infoPanel.hidden;
+        infoPanel.hidden = isOpen;
+        infoToggle.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    function renderMessage(msg: ChatMessage) {
+        const li = document.createElement('li');
+        li.dataset.ts = String(msg.ts);
+        li.dataset.id = msg.id;
+
+        const who = document.createElement('span');
+        who.className = 'who';
+        who.textContent = msg.nickname + ':';
+
+        const text = document.createElement('span');
+        // textContent, never innerHTML — messages are untrusted user input.
+        text.textContent = msg.text;
+
+        li.append(who, text);
+        messagesEl.appendChild(li);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    // Locally hide messages once they age past expirationSeconds. The
+    // server also prunes its own store — this just keeps the UI in sync
+    // without waiting for a server-pushed "expire" event.
+    function sweepExpired() {
+        const cutoff = Date.now() - expirationSeconds * 1000;
+        for (const li of Array.from(messagesEl.children) as HTMLLIElement[]) {
+            if (Number(li.dataset.ts) < cutoff) li.remove();
+        }
+    }
+    setInterval(sweepExpired, 1000);
+
+    function connect() {
+        ws = new WebSocket(WS_URL);
+
+        ws.addEventListener('open', () => {
+            statusEl.textContent = '';
+        });
+
+        ws.addEventListener('message', (event) => {
+            const data: ServerMessage = JSON.parse(event.data);
+
+            switch (data.type) {
+                case 'welcome':
+                    nicknameEl.textContent = data.nickname;
+                    expirationSeconds = data.config.expirationSeconds;
+                    expirationEl.textContent = String(expirationSeconds);
+                    input.maxLength = data.config.maxMessageLength;
+                    break;
+                case 'backlog':
+                    messagesEl.innerHTML = '';
+                    for (const m of data.messages) renderMessage(m);
+                    break;
+                case 'message':
+                    renderMessage(data.message);
+                    break;
+                case 'error':
+                    statusEl.textContent =
+                        data.reason === 'rate_limited' ? "You're sending messages too fast." : 'Message not sent.';
+                    break;
+            }
+
+        });
+
+        ws.addEventListener('close', () => {
+            nicknameEl.textContent = 'disconnected — reconnecting…';
+            statusEl.textContent = '';
+            setTimeout(connect, 1500);
+        });
+
+        ws.addEventListener('error', () => {
+            ws?.close();
+        });
+    }
+
+    composer.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+        ws.send(JSON.stringify({ text }));
+        input.value = '';
+    });
+
+    connect();
+</script>
