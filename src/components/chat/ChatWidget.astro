@@ -34,6 +34,7 @@
         />
         <button type="submit">Send</button>
     </form>
+    
     <p id="status" class="status" role="status"></p>
 </div>
 
@@ -42,38 +43,60 @@
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 1rem;
+        border: 1px solid #dde1e7;
+        border-radius: 1rem;
+        padding: 0.85rem;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     }
     .chat-topbar {
         display: flex;
+        align-items: flex-start;
         justify-content: space-between;
-        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
     }
     .nickname {
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 0.98rem;
+        color: #111827;
+        line-height: 1.2;
     }
     #info-toggle {
-        background: none;
-        border: 1px solid #ccc;
-        border-radius: 50%;
-        width: 1.75rem;
-        height: 1.75rem;
+        appearance: none;
+        background: #f8fafc;
+        border: 1px solid #d1d5db;
+        border-radius: 9999px;
+        width: 2rem;
+        height: 2rem;
+        display: grid;
+        place-items: center;
+        color: #111827;
         cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    #info-toggle:hover,
+    #info-toggle:focus-visible {
+        background: #eff6ff;
+        border-color: #93c5fd;
+        outline: none;
     }
     .info-panel {
-        background: #f7f7f7;
-        border-radius: 6px;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
+        position: relative;
+        z-index: 1;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.85rem;
+        padding: 0.85rem 1rem;
+        font-size: 0.92rem;
+        color: #374151;
     }
     .info-panel ul {
         margin: 0;
         padding-left: 1.1rem;
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.45rem;
     }
     .messages {
         list-style: none;
@@ -81,49 +104,94 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
-        min-height: 200px;
-        max-height: 400px;
+        gap: 0.5rem;
+        min-height: 220px;
+        max-height: 360px;
         overflow-y: auto;
     }
     .messages li {
-        font-size: 0.95rem;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.5rem;
+        padding: 0.75rem 0.85rem;
+        border-radius: 0.85rem;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        font-size: 0.94rem;
     }
     .messages .who {
-        font-weight: 600;
-        margin-right: 0.4rem;
+        font-weight: 700;
+        color: #111827;
+        white-space: nowrap;
+    }
+    .messages span:last-child {
+        color: #334155;
+        word-break: break-word;
     }
     .composer {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr auto;
         gap: 0.5rem;
     }
     .composer input {
         flex: 1;
-        padding: 0.5rem;
+        padding: 0.75rem 0.9rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.85rem;
+        font-size: 0.95rem;
+        color: #0f172a;
+        background: #fff;
+    }
+    .composer input:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
+    }
+    .composer button {
+        padding: 0 1rem;
+        border: none;
+        border-radius: 0.85rem;
+        background: #111827;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s ease;
+    }
+    .composer button:hover {
+        background: #1f2937;
+    }
+    .composer button:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
     }
     .status {
         min-height: 1.2em;
         font-size: 0.85rem;
-        color: #b00;
+        color: #b91c1c;
         margin: 0;
+    }
+    @media (max-width: 520px) {
+        .chat-widget {
+            padding: 0.85rem;
+        }
+        .chat-topbar {
+            gap: 0.5rem;
+        }
+        .nickname {
+            font-size: 0.92rem;
+        }
+        .composer input {
+            min-width: 0;
+        }
     }
 </style>
 
 <script>
-    type ServerMessage =
-        | { type: 'welcome'; nickname: string; config: { expirationSeconds: number; maxMessageLength: number } }
-        | { type: 'backlog'; messages: ChatMessage[] }
-        | { type: 'message'; message: ChatMessage }
-        | { type: 'error'; reason: string };
-
-    type ChatMessage = { id: string; nickname: string; text: string; ts: number };
-
     const WS_URL = (() => {
         try {
             const host = location.hostname;
-            // When developing locally, prefer a local ws:// server.
             if (host === 'localhost' || host === '127.0.0.1') {
-                const port = 8080; // matches chat-service default
+                const port = 8080;
                 return `ws://${host}:${port}`;
             }
             return 'wss://ws.sabililhaq.com';
@@ -132,25 +200,19 @@
         }
     })();
 
-    const nicknameEl = document.getElementById('nickname')!;
-    const infoToggle = document.getElementById('info-toggle')!;
-    const infoPanel = document.getElementById('info-panel')!;
-    const expirationEl = document.getElementById('expiration-seconds')!;
-    const messagesEl = document.getElementById('messages')!;
-    const composer = document.getElementById('composer') as HTMLFormElement;
-    const input = document.getElementById('message-input') as HTMLInputElement;
-    const statusEl = document.getElementById('status')!;
+    const nicknameEl = document.getElementById('nickname');
+    const infoToggle = document.getElementById('info-toggle');
+    const infoPanel = document.getElementById('info-panel');
+    const expirationEl = document.getElementById('expiration-seconds');
+    const messagesEl = document.getElementById('messages');
+    const composer = document.getElementById('composer');
+    const input = document.getElementById('message-input');
+    const statusEl = document.getElementById('status');
 
-    let expirationSeconds = 30; // overwritten by backend's `welcome` frame
-    let ws: WebSocket | null = null;
+    let expirationSeconds = 30;
+    let ws = null;
 
-    infoToggle.addEventListener('click', () => {
-        const isOpen = !infoPanel.hidden;
-        infoPanel.hidden = isOpen;
-        infoToggle.setAttribute('aria-expanded', String(!isOpen));
-    });
-
-    function renderMessage(msg: ChatMessage) {
+    function renderMessage(msg) {
         const li = document.createElement('li');
         li.dataset.ts = String(msg.ts);
         li.dataset.id = msg.id;
@@ -160,7 +222,6 @@
         who.textContent = msg.nickname + ':';
 
         const text = document.createElement('span');
-        // textContent, never innerHTML — messages are untrusted user input.
         text.textContent = msg.text;
 
         li.append(who, text);
@@ -168,12 +229,9 @@
         messagesEl.scrollTop = messagesEl.scrollHeight;
     }
 
-    // Locally hide messages once they age past expirationSeconds. The
-    // server also prunes its own store — this just keeps the UI in sync
-    // without waiting for a server-pushed "expire" event.
     function sweepExpired() {
         const cutoff = Date.now() - expirationSeconds * 1000;
-        for (const li of Array.from(messagesEl.children) as HTMLLIElement[]) {
+        for (const li of Array.from(messagesEl.children)) {
             if (Number(li.dataset.ts) < cutoff) li.remove();
         }
     }
@@ -187,7 +245,7 @@
         });
 
         ws.addEventListener('message', (event) => {
-            const data: ServerMessage = JSON.parse(event.data);
+            const data = JSON.parse(event.data);
 
             switch (data.type) {
                 case 'welcome':
@@ -204,11 +262,11 @@
                     renderMessage(data.message);
                     break;
                 case 'error':
-                    statusEl.textContent =
-                        data.reason === 'rate_limited' ? "You're sending messages too fast." : 'Message not sent.';
+                    statusEl.textContent = data.reason === 'rate_limited'
+                        ? "You're sending messages too fast."
+                        : 'Message not sent.';
                     break;
             }
-
         });
 
         ws.addEventListener('close', () => {
@@ -218,7 +276,15 @@
         });
 
         ws.addEventListener('error', () => {
-            ws?.close();
+            if (ws) ws.close();
+        });
+    }
+
+    if (infoToggle && infoPanel) {
+        infoToggle.addEventListener('click', () => {
+            const isOpen = infoPanel.hidden === false;
+            infoPanel.hidden = isOpen;
+            infoToggle.setAttribute('aria-expanded', String(!isOpen));
         });
     }
 
