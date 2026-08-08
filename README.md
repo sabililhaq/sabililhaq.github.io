@@ -1,5 +1,6 @@
 # TODO: remove this section if merging to master
 - add info about how many keys being remapped upon node removal/addition
+- story: background, from conventional (modulo based), hashing intro, why virtual nodes
 
 # Astro Starter Kit: Blog
 
