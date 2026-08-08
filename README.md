@@ -8,6 +8,7 @@ Real-time communication: WebSocket.
 Message expiration: messages disappear after X minutes, with X fetched from backend configuration.
 In-memory / ephemeral: no need for permanent message history.
 Backend: separate WebSocket service at ws.sabililhaq.com; this is an implementation detail and isn't exposed to normal users.
+Swearing filter: The backend automatically filters configured swear/banned words before broadcasting messages. Filtering is implemented using the Aho–Corasick string-matching algorithm for efficient multi-pattern matching.
 Info dropdown: an ⓘ button explaining:
 For fun only — this is a small personal project, not intended for important/private communication.
 Temporary chat — messages disappear after X minutes. The displayed value should come from the backend configuration rather than being hardcoded in the frontend.
@@ -30,6 +31,7 @@ In-memory / ephemeral: no need for permanent message history.
 Backend: separate WebSocket service at ws.sabililhaq.com; this is an implementation detail and isn't exposed to normal users.
 Info dropdown: an ⓘ button explaining:
 For fun only — this is a small personal project, not intended for important/private communication.
+Swearing filter — messages are automatically checked for configured swear words before being delivered.
 Temporary chat — messages disappear after X minutes. The displayed value should come from the backend configuration rather than being hardcoded in the frontend.
 Built with WebSockets — the chat is a small demonstration of real-time WebSocket communication.
 For developers — open your browser's Developer Tools → Network → WS to inspect the WebSocket connection and see messages being sent and received in real time.
