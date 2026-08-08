@@ -1,0 +1,137 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Projects | ${SITE_TITLE}`}
+      description={`Selected projects by ${SITE_SHORT_NAME}.`}
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <article class="prose">
+        <h3>Projects</h3>
+        <p class="intro">
+          A selection of projects I've worked on across software engineering, data, and machine learning.
+        </p>
+
+        <div class="projects">
+          {
+            PROJECTS.map((project) => (
+              <div class="project">
+                <div class="project-header">
+                  <h3>{project.title}</h3>
+                  <div class="project-links">
+                    {project.liveDemo && (
+                      <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
+                        Live Demo ↗
+                      </a>
+                    )}
+                    {project.sourceCode && (
+                      <a href={project.sourceCode} target="_blank" rel="noopener noreferrer">
+                        Source ↗
+                      </a>
+                    )}
+                  </div>
+                </div>
+                {project.overview.map((para) => (
+                  <p set:html={para} />
+                ))}
+                <p class="tech-stack">{project.techStack}</p>
+              </div>
+            ))
+          }
+        </div>
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .prose h1 {
+    margin-bottom: 1rem;
+  }
+
+  .intro {
+    margin: 0 0 1.5rem;
+    color: rgb(var(--gray));
+    font-size: 1rem;
+  }
+
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .project {
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid rgb(var(--gray-light));
+  }
+
+  .project:last-child {
+    border-bottom: none;
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+
+  .project h3 {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .project-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .project-links a {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .project-links a:hover {
+    text-decoration: underline;
+  }
+
+  .project p {
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    color: rgb(var(--gray-dark));
+  }
+
+  .tech-stack {
+    font-size: 0.8rem !important;
+    color: rgb(var(--gray)) !important;
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .project-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .project-links {
+      gap: 0.5rem;
+    }
+  }
+</style>
