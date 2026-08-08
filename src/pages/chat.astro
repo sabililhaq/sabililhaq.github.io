@@ -1,0 +1,40 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ChatWidget from '../components/chat/ChatWidget.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+    <BaseHead title={`Chat | ${SITE_TITLE}`} description="Simple, anonymous, temporary chat over WebSocket" />
+    <style>
+        .chat-page {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 0.75rem;
+        }
+        .chat-page h1 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            line-height: 1.15;
+        }
+        .chat-page .subtitle {
+            color: #4b5563;
+            margin-bottom: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <Header />
+    <main class="chat-page">
+        <h1>Chat</h1>
+        <p class="subtitle">Anonymous, temporary, single-room chat. Messages disappear after a short while.</p>
+        <ChatWidget />
+    </main>
+    <Footer />
+</body>
+</html>
