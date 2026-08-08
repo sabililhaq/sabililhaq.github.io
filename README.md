@@ -1,3 +1,45 @@
+# TODO: remove this section if merging to master
+Update /c URL: sabililhaq.com/chat
+Purpose: Simple, anonymous, temporary chat for personal/peer use.
+No accounts / login
+Random nickname: adjective + animal, e.g. sleepy-panda, blue-frog, curious-otter
+Single shared chat: no rooms or room URLs.
+Real-time communication: WebSocket.
+Message expiration: messages disappear after X minutes, with X fetched from backend configuration.
+In-memory / ephemeral: no need for permanent message history.
+Backend: separate WebSocket service at ws.sabililhaq.com; this is an implementation detail and isn't exposed to normal users.
+Info dropdown: an ⓘ button explaining:
+For fun only — this is a small personal project, not intended for important/private communication.
+Temporary chat — messages disappear after X minutes. The displayed value should come from the backend configuration rather than being hardcoded in the frontend.
+Built with WebSockets — the chat is a small demonstration of real-time WebSocket communication.
+For developers — open your browser's Developer Tools → Network → WS to inspect the WebSocket connection and see messages being sent and received in real time.
+
+I'd word the developer section particularly simply:
+
+Curious how it works? Open your browser's Network inspector, filter for WS, and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
+
+That gives the project a nice dual purpose: useful enough to actually chat, but also explicitly a small WebSocket demonstration.chat spec
+Public URL: sabililhaq.com/chat
+Purpose: Simple, anonymous, temporary chat for personal/peer use.
+No accounts / login
+Random nickname: adjective + animal, e.g. sleepy-panda, blue-frog, curious-otter
+Single shared chat: no rooms or room URLs.
+Real-time communication: WebSocket.
+Message expiration: messages disappear after X minutes, with X fetched from backend configuration.
+In-memory / ephemeral: no need for permanent message history.
+Backend: separate WebSocket service at ws.sabililhaq.com; this is an implementation detail and isn't exposed to normal users.
+Info dropdown: an ⓘ button explaining:
+For fun only — this is a small personal project, not intended for important/private communication.
+Temporary chat — messages disappear after X minutes. The displayed value should come from the backend configuration rather than being hardcoded in the frontend.
+Built with WebSockets — the chat is a small demonstration of real-time WebSocket communication.
+For developers — open your browser's Developer Tools → Network → WS to inspect the WebSocket connection and see messages being sent and received in real time.
+
+I'd word the developer section particularly simply:
+
+Curious how it works? Open your browser's Network inspector, filter for WS, and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
+
+That gives the project a nice dual purpose: useful enough to actually chat, but also explicitly a small WebSocket demonstration.
+
 # Astro Starter Kit: Blog
 
 ```sh
