@@ -4,33 +4,40 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
-const labs = [
+const allLabs = [
   {
+    flag: 'FEATURE_LAB_FILES',
     label: 'Files',
     url: 'https://files.sabililhaq.com',
     description: 'My public read only file system',
   },
   {
+    flag: 'FEATURE_LAB_EXCALIDRAW',
     label: 'Excalidraw',
     url: 'https://draw.sabililhaq.com', // TODO configurable
     description: 'Whiteboard playground',
   },
   {
+    flag: 'FEATURE_LAB_URL_SHORTENER',
     label: 'URL Shortener',
     url: 'https://go.sabililhaq.com',
     description: 'Personal URL shortener',
   },
   {
+    flag: 'FEATURE_LAB_QR',
     label: 'QR Code Generator',
     url: '/qr',
     description: 'Generate QR codes instantly from URL',
   },
   {
+    flag: 'FEATURE_LAB_CONSISTENT_HASHING',
     label: 'Consistent Hashing',
     url: '/labs/consistent-hashing',
     description: 'Interactive hash ring — watch keys rebalance as nodes come and go',
   },
 ];
+
+const labs = allLabs.filter((lab) => import.meta.env[lab.flag] !== 'false');
 ---
 
 <!doctype html>
