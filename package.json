@@ -7,16 +7,23 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:chat": "npx tsx watch sabililhaq-chat/src/server.ts",
+    "dev:all": "npm run dev:chat & npm run dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6",
+    "obscenity": "^0.4.6",
     "qr-code-styling": "^1.9.2",
     "sharp": "^0.35.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }
