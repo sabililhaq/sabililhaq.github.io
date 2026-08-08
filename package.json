@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "dev:chat": "npx tsx watch sabililhaq-chat/src/server.ts",
+    "dev:chat": "npm --prefix sabililhaq-chat run dev",
     "dev:all": "npm run dev:chat & npm run dev",
     "build": "astro build",
     "preview": "astro preview",
