@@ -1,0 +1,40 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ConsistentHashing from '../../components/labs/consistent-hashing/ConsistentHashing.astro';
+import { SITE_TITLE } from '../../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Consistent Hashing | ${SITE_TITLE}`}
+      description="Interactive consistent hashing ring simulator — add/remove nodes and watch keys rebalance."
+    />
+    <style is:global>
+      main.lab-page {
+        max-width: 960px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 3rem;
+        box-sizing: border-box;
+      }
+
+      @media (max-width: 560px) {
+        main.lab-page {
+          padding: 1.25rem 1rem 2.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="lab-page">
+      <ConsistentHashing />
+    </main>
+    <Footer />
+  </body>
+</html>
+

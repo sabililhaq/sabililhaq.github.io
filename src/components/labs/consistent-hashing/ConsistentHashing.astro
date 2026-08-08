@@ -1,0 +1,40 @@
+---
+import HashRing from './HashRing.astro';
+---
+
+<section class="ch-lab">
+  <div class="intro">
+    <h1>Consistent Hashing</h1>
+    <p class="subtitle">
+      Interactive ring simulator. Add or remove nodes and watch how keys move with minimal redistribution.
+    </p>
+  </div>
+
+  <HashRing />
+</section>
+
+<style>
+  .ch-lab {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .intro {
+    margin-bottom: 1.5rem;
+  }
+
+  .intro h1 {
+    font-size: clamp(1.5rem, 4vw, 1.875rem);
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.55;
+    max-width: 42rem;
+  }
+</style>

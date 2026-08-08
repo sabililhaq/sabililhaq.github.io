@@ -1,3 +1,6 @@
+# TODO: remove this section if merging to master
+- add info about how many keys being remapped upon node removal/addition
+
 # Astro Starter Kit: Blog
 
 ```sh

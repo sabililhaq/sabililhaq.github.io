@@ -1,0 +1,732 @@
+---
+// Client-side consistent hashing ring simulator
+---
+
+<div class="hash-ring" id="hash-ring">
+  <!-- Controls -->
+  <div class="controls">
+    <div class="control-group">
+      <div class="field">
+        <label for="node-input">Node name</label>
+        <input id="node-input" type="text" placeholder="node-a" autocomplete="off" />
+      </div>
+      <button type="button" id="add-node" class="btn primary">Add Node</button>
+    </div>
+
+    <div class="control-group">
+      <div class="field">
+        <label for="key-input">Key</label>
+        <input id="key-input" type="text" placeholder="user:42" autocomplete="off" />
+      </div>
+      <button type="button" id="add-key" class="btn success">Add Key</button>
+    </div>
+
+    <div class="control-group actions">
+      <button type="button" id="add-random" class="btn muted">+10 Random Keys</button>
+      <button type="button" id="clear-keys" class="btn ghost">Clear Keys</button>
+    </div>
+  </div>
+
+  <p class="hint">
+    Click a node on the ring (or “remove”) to drop it — keys reassign with minimal movement.
+  </p>
+
+  <!-- Ring + Stats -->
+  <div class="layout">
+    <div class="ring-wrap">
+      <svg id="ring-svg" viewBox="0 0 420 420" role="img" aria-label="Consistent hashing ring"></svg>
+    </div>
+
+    <div class="stats">
+      <section>
+        <h3>Nodes (<span id="node-count">0</span>)</h3>
+        <ul id="node-list" class="stat-list"></ul>
+      </section>
+
+      <section>
+        <h3>Load Distribution</h3>
+        <ul id="load-list" class="stat-list"></ul>
+      </section>
+
+      <section>
+        <h3>Keys (<span id="key-count">0</span>)</h3>
+        <div id="key-list" class="key-list"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hash-ring {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  /* —— Controls —— */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-end;
+  }
+
+  .control-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .control-group.actions {
+    /* Align with input+button row height */
+    padding-bottom: 0;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+    flex: 1 1 8rem;
+  }
+
+  .field label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgb(var(--gray));
+    line-height: 1.2;
+  }
+
+  .field input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 12rem;
+    box-sizing: border-box;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    height: 2.4rem;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: #333;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.4rem;
+    padding: 0 0.95rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .btn.primary {
+    background: #111;
+    color: white;
+  }
+
+  .btn.success {
+    background: #0f766e;
+    color: white;
+  }
+
+  .btn.muted {
+    background: #444;
+    color: white;
+  }
+
+  .btn.ghost {
+    background: rgb(var(--gray-light));
+    color: rgb(var(--gray-dark));
+  }
+
+  .btn:hover {
+    opacity: 0.88;
+  }
+
+  .btn.danger {
+    background: transparent;
+    color: #b91c1c;
+    height: auto;
+    padding: 0;
+    font-size: 0.8rem;
+    text-decoration: underline;
+  }
+
+  .btn.danger:hover {
+    opacity: 1;
+    color: #7f1d1d;
+  }
+
+  .hint {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgb(var(--gray));
+    line-height: 1.45;
+  }
+
+  /* —— Main layout —— */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    width: 100%;
+  }
+
+  @media (min-width: 860px) {
+    .layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 2rem;
+      align-items: stretch;
+    }
+  }
+
+  .ring-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 420px;
+    margin-inline: auto;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    background: #f7f7f7;
+    border-radius: 12px;
+  }
+
+  @media (min-width: 860px) {
+    .ring-wrap {
+      margin-inline: 0;
+      max-width: none;
+      height: 100%;
+      max-height: 480px;
+    }
+  }
+
+  #ring-svg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    display: block;
+    user-select: none;
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    min-width: 0;
+  }
+
+  .stats section {
+    min-width: 0;
+  }
+
+  .stats h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.55rem;
+    line-height: 1.3;
+  }
+
+  .stat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-size: 0.9rem;
+  }
+
+  .stat-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgb(var(--gray-light));
+    min-width: 0;
+  }
+
+  .stat-list li:last-child {
+    border-bottom: none;
+  }
+
+  .stat-list li.load-item {
+    display: block;
+  }
+
+  .stat-list .node-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .stat-list .node-label .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stat-list .meta {
+    color: rgb(var(--gray));
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .stat-list .empty,
+  .key-list .empty {
+    color: rgb(var(--gray));
+    font-size: 0.9rem;
+    padding: 0.25rem 0;
+    border: none;
+  }
+
+  .node-swatch {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  /* Load rows: label | bar | count */
+  .load-row {
+    display: grid;
+    grid-template-columns: minmax(4rem, 5.5rem) 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .load-row .label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .load-row .label span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .load-track {
+    height: 6px;
+    background: rgb(var(--gray-light));
+    border-radius: 999px;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .load-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .key-list {
+    max-height: 12rem;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .key-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgb(var(--gray-light));
+    min-width: 0;
+  }
+
+  .key-row:last-child {
+    border-bottom: none;
+  }
+
+  .key-row .id {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .key-row .owner {
+    color: rgb(var(--gray));
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* —— Mobile —— */
+  @media (max-width: 560px) {
+    .controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .control-group {
+      width: 100%;
+    }
+
+    .control-group:not(.actions) {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 0.5rem;
+    }
+
+    .control-group.actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .control-group.actions .btn {
+      width: 100%;
+    }
+
+    .field {
+      flex: 1 1 auto;
+    }
+
+    .field input {
+      max-width: none;
+      width: 100%;
+    }
+
+    .load-row {
+      grid-template-columns: minmax(3.5rem, 4.5rem) 1fr auto;
+      gap: 0.45rem;
+    }
+
+    .ring-wrap {
+      max-width: 100%;
+    }
+  }
+</style>
+
+<script>
+  import { HashRing } from '../../../lib/consistent-hashing/ring';
+
+  const NODE_COLORS = [
+    '#2563eb',
+    '#db2777',
+    '#059669',
+    '#d97706',
+    '#7c3aed',
+    '#0891b2',
+    '#e11d48',
+    '#4f46e5',
+  ];
+
+  const ring = new HashRing();
+
+  // Stable per-node colors (assignment order), so add/remove never recolors others
+  const nodeColors = new Map<string, string>();
+  let nextColorIndex = 0;
+
+  function colorFor(id: string): string {
+    if (!id) return '#94a3b8';
+    let color = nodeColors.get(id);
+    if (!color) {
+      color = NODE_COLORS[nextColorIndex % NODE_COLORS.length];
+      nodeColors.set(id, color);
+      nextColorIndex += 1;
+    }
+    return color;
+  }
+
+  const svg = document.getElementById('ring-svg') as SVGSVGElement;
+  const nodeInput = document.getElementById('node-input') as HTMLInputElement;
+  const keyInput = document.getElementById('key-input') as HTMLInputElement;
+  const nodeList = document.getElementById('node-list') as HTMLUListElement;
+  const loadList = document.getElementById('load-list') as HTMLUListElement;
+  const keyList = document.getElementById('key-list') as HTMLDivElement;
+  const nodeCount = document.getElementById('node-count') as HTMLSpanElement;
+  const keyCount = document.getElementById('key-count') as HTMLSpanElement;
+
+  const SIZE = 420;
+  const CENTER = SIZE / 2;
+  const RADIUS = 160;
+
+  function polar(angle: number, r = RADIUS) {
+    const rad = ((angle - 90) * Math.PI) / 180;
+    return {
+      x: CENTER + r * Math.cos(rad),
+      y: CENTER + r * Math.sin(rad),
+    };
+  }
+
+  function svgEl<K extends keyof SVGElementTagNameMap>(
+    name: K,
+    attrs: Record<string, string | number> = {},
+  ) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', name);
+    for (const [k, v] of Object.entries(attrs)) {
+      el.setAttribute(k, String(v));
+    }
+    return el;
+  }
+
+  function renderRing() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    svg.appendChild(
+      svgEl('circle', {
+        cx: CENTER,
+        cy: CENTER,
+        r: RADIUS,
+        fill: 'none',
+        stroke: '#d4d4d8',
+        'stroke-width': 2,
+      }),
+    );
+
+    for (const key of ring.keys) {
+      const pos = polar(key.hash, RADIUS - 28);
+      const dot = svgEl('circle', {
+        cx: pos.x,
+        cy: pos.y,
+        r: 4.5,
+        fill: colorFor(key.owner) || '#10b981',
+        opacity: 0.85,
+      });
+      const title = svgEl('title');
+      title.textContent = `${key.id} → ${key.owner || 'unassigned'}`;
+      dot.appendChild(title);
+      svg.appendChild(dot);
+    }
+
+    for (const node of ring.nodes) {
+      const pos = polar(node.hash);
+      const g = svgEl('g');
+      g.style.cursor = 'pointer';
+      g.addEventListener('click', () => {
+        ring.removeNode(node.id);
+        render();
+      });
+
+      const circle = svgEl('circle', {
+        cx: pos.x,
+        cy: pos.y,
+        r: 11,
+        fill: colorFor(node.id),
+        stroke: '#fff',
+        'stroke-width': 2,
+      });
+      const title = svgEl('title');
+      title.textContent = `${node.id} @ ${node.hash}° (click to remove)`;
+      circle.appendChild(title);
+
+      const label = svgEl('text', {
+        x: pos.x,
+        y: pos.y - 18,
+        'text-anchor': 'middle',
+        'font-size': 11,
+        'font-family': 'inherit',
+        fill: '#111',
+      });
+      label.textContent = node.id;
+
+      g.appendChild(circle);
+      g.appendChild(label);
+      svg.appendChild(g);
+    }
+
+    const center = svgEl('text', {
+      x: CENTER,
+      y: CENTER + 4,
+      'text-anchor': 'middle',
+      'font-size': 12,
+      fill: '#71717a',
+      'font-family': 'inherit',
+    });
+    center.textContent = ring.nodes.length === 0 ? 'add a node' : 'hash ring';
+    svg.appendChild(center);
+  }
+
+  function renderStats() {
+    const nodes = ring.nodes;
+    const keys = ring.keys;
+    const load = ring.getLoad();
+    const totalKeys = keys.length || 1;
+
+    nodeCount.textContent = String(nodes.length);
+    keyCount.textContent = String(keys.length);
+
+    // Nodes
+    nodeList.replaceChildren();
+    if (nodes.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = 'No nodes yet. Add one to start.';
+      nodeList.appendChild(li);
+    } else {
+      for (const n of nodes) {
+        const li = document.createElement('li');
+
+        const left = document.createElement('span');
+        left.className = 'node-label';
+
+        const swatch = document.createElement('span');
+        swatch.className = 'node-swatch';
+        swatch.style.background = colorFor(n.id);
+
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = n.id;
+
+        const meta = document.createElement('span');
+        meta.className = 'meta';
+        meta.textContent = `(${n.hash}°)`;
+
+        left.append(swatch, name, meta);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn danger';
+        btn.textContent = 'remove';
+        btn.addEventListener('click', () => {
+          ring.removeNode(n.id);
+          render();
+        });
+
+        li.append(left, btn);
+        nodeList.appendChild(li);
+      }
+    }
+
+    // Load
+    loadList.replaceChildren();
+    const loadEntries = Object.entries(load);
+    if (loadEntries.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = '—';
+      loadList.appendChild(li);
+    } else {
+      for (const [id, count] of loadEntries) {
+        const li = document.createElement('li');
+        li.className = 'load-item';
+
+        const row = document.createElement('div');
+        row.className = 'load-row';
+
+        const label = document.createElement('div');
+        label.className = 'label';
+        const swatch = document.createElement('span');
+        swatch.className = 'node-swatch';
+        swatch.style.background = colorFor(id);
+        const name = document.createElement('span');
+        name.textContent = id;
+        label.append(swatch, name);
+
+        const track = document.createElement('div');
+        track.className = 'load-track';
+        const fill = document.createElement('div');
+        fill.className = 'load-fill';
+        fill.style.width = `${(count / totalKeys) * 100}%`;
+        fill.style.background = colorFor(id);
+        track.appendChild(fill);
+
+        const right = document.createElement('span');
+        right.className = 'meta';
+        right.textContent = `${count} key${count !== 1 ? 's' : ''}`;
+
+        row.append(label, track, right);
+        li.appendChild(row);
+        loadList.appendChild(li);
+      }
+    }
+
+    // Keys
+    keyList.replaceChildren();
+    if (keys.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No keys yet.';
+      keyList.appendChild(empty);
+    } else {
+      for (const k of keys) {
+        const row = document.createElement('div');
+        row.className = 'key-row';
+
+        const idEl = document.createElement('span');
+        idEl.className = 'id';
+        idEl.textContent = k.id;
+
+        const ownerEl = document.createElement('span');
+        ownerEl.className = 'owner';
+        ownerEl.textContent = `→ ${k.owner || '—'}`;
+
+        row.append(idEl, ownerEl);
+        keyList.appendChild(row);
+      }
+    }
+  }
+
+  function render() {
+    renderRing();
+    renderStats();
+  }
+
+  function addNode() {
+    const id = nodeInput.value.trim() || `node-${Math.random().toString(36).slice(2, 6)}`;
+    ring.addNode(id);
+    nodeInput.value = '';
+    render();
+  }
+
+  function addKey() {
+    const id = keyInput.value.trim() || `key-${Math.random().toString(36).slice(2, 7)}`;
+    ring.addKey(id);
+    keyInput.value = '';
+    render();
+  }
+
+  document.getElementById('add-node')?.addEventListener('click', addNode);
+  document.getElementById('add-key')?.addEventListener('click', addKey);
+  document.getElementById('add-random')?.addEventListener('click', () => {
+    ring.addRandomKeys(10);
+    render();
+  });
+  document.getElementById('clear-keys')?.addEventListener('click', () => {
+    ring.clearKeys();
+    render();
+  });
+
+  nodeInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addNode();
+  });
+  keyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addKey();
+  });
+
+  render();
+</script>
