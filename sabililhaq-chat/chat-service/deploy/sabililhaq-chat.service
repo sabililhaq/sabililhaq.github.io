@@ -1,0 +1,22 @@
+[Unit]
+Description=Sabililhaq anonymous chat WS service
+After=network.target
+
+[Service]
+Type=simple
+User=chatapp
+WorkingDirectory=/opt/sabililhaq-chat
+ExecStart=/usr/bin/node dist/server.js
+Environment=PORT=8080
+Restart=on-failure
+RestartSec=2
+
+# Light sandboxing since this is a small hobby-VPS service with no
+# filesystem writes and no need for elevated privileges.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
