@@ -1,15 +1,17 @@
 import {
   DataSet,
   RegExpMatcher,
-  englishDataset,
-  englishRecommendedTransformers,
+  indonesianDataset,
+  indonesianRecommendedTransformers,
   pattern,
 } from "obscenity";
 // import bannedWords from "../../../sabililhaq-chat/chat-service/src/dict.json" with { type: "json" };
 
 const bannedWords = ["sabililhaq"];
 
-const dataset = new DataSet<{ originalWord: string }>().addAll(englishDataset);
+const dataset = new DataSet<{ originalWord: string }>().addAll(
+  indonesianDataset,
+);
 
 for (const word of bannedWords as string[]) {
   dataset.addPhrase((phrase) =>
@@ -19,7 +21,7 @@ for (const word of bannedWords as string[]) {
 
 const matcher = new RegExpMatcher({
   ...dataset.build(),
-  ...englishRecommendedTransformers,
+  ...indonesianRecommendedTransformers,
 });
 
 function applySimpleAsteriskMask(text: string): string {
