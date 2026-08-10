@@ -11,7 +11,8 @@
     "dev:all": "npm run dev:chat & npm run dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
@@ -21,5 +22,8 @@
     "obscenity": "github:sabililhaq/obscenity#dist-id-profanity-v1",
     "qr-code-styling": "^1.9.2",
     "sharp": "^0.35.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }
