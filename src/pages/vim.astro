@@ -1,0 +1,32 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Vim Dojo | ${SITE_TITLE}`}
+      description="A lightweight Vim practice playground."
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div data-vim-dojo-host></div>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<script>
+  import { mountVimDojo } from 'vim-dojo';
+
+  const host = document.querySelector('[data-vim-dojo-host]');
+  if (host instanceof HTMLElement) {
+    mountVimDojo(host, { basePath: '/vim' });
+  }
+</script>

@@ -30,6 +30,19 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
+    id: "vim-dojo",
+    title: "Vim Dojo",
+    overview: [
+      "A browser playground for VIM practice. It is not a beginner tutorial, you should already know the basics.",
+      "The challenge set is open source. Anyone can add a case.",
+    ],
+    techStack: "TypeScript · CodeMirror · Vim",
+    image: "/images/sabililhaq2.jpg",
+    imageAlt: "Vim Dojo",
+    liveDemo: "https://sabililhaq.com/vim",
+    sourceCode: "https://github.com/sabililhaq/vim-dojo",
+  },
+  {
     id: "obscenity-id",
     title: "Obscenity Bahasa Indonesia",
     overview: [
