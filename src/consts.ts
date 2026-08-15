@@ -33,7 +33,7 @@ export const PROJECTS: Project[] = [
     id: "vim-dojo",
     title: "Vim Dojo",
     overview: [
-      "A browser playground for practicing Vim on ordinary editing tasks. It is not a beginner tutorial — you should already know the basics.",
+      "A browser playground for VIM practice. It is not a beginner tutorial, you should already know the basics.",
       "The challenge set is open source. Anyone can add a case.",
     ],
     techStack: "TypeScript · CodeMirror · Vim",
