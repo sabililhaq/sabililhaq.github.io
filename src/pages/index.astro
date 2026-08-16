@@ -4,7 +4,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+import { LABS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -19,7 +19,6 @@ const posts = (await getCollection('blog'))
 	<body>
 		<Header />
 		<main>
-			<!-- Intro -->
 			<section class="intro">
 				<h1>Hi, I'm <span class="name">{SITE_SHORT_NAME}</span></h1>
 				<p>
@@ -27,7 +26,7 @@ const posts = (await getCollection('blog'))
 					I enjoy building products and being part of the full engineering process.
 					<br><br>
 					I treat this site as my personal playground and showcase.
-					Check <a href="/labs">labs</a> for random stuff i deployed, 
+					Check <a href="/labs">labs</a> for random stuff i deployed,
 					or look around my <a href="/projects">projects</a> and <a href="/blog">blogs</a>.
 				</p>
 				<p class="intro-links">
@@ -35,7 +34,24 @@ const posts = (await getCollection('blog'))
 				</p>
 			</section>
 
-			<!-- Recent posts -->
+			<section class="labs">
+				<h2>Labs</h2>
+				<p class="lab-names">
+					{LABS.map((lab, index) => (
+						<>
+							{index > 0 && <span class="dot"> · </span>}
+							<a
+								href={lab.url}
+								target={lab.url.startsWith('http') ? '_blank' : undefined}
+								rel={lab.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+							>
+								{lab.label}
+							</a>
+						</>
+					))}
+				</p>
+			</section>
+
 			{posts.length > 0 && (
 				<section class="recent-posts">
 					<h2>Recent posts</h2>
@@ -60,9 +76,8 @@ const posts = (await getCollection('blog'))
 		max-width: 680px;
 	}
 
-	/* Intro */
 	.intro {
-		margin-bottom: 3rem;
+		margin-bottom: 2.5rem;
 		padding-top: 2rem;
 	}
 
@@ -93,24 +108,50 @@ const posts = (await getCollection('blog'))
 		text-decoration: underline;
 	}
 
-	/* Recent posts */
+	.labs,
+	.recent-posts {
+		margin-bottom: 2.25rem;
+	}
+
+	.labs h2,
 	.recent-posts h2 {
 		font-size: 1rem;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
 		color: rgb(var(--gray));
-		margin-bottom: 1rem;
+		margin-bottom: 0.75rem;
 		border-bottom: none;
+	}
+
+	.lab-names a,
+	.recent-posts li a {
+		color: rgb(var(--black));
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.lab-names a:hover,
+	.recent-posts li a:hover {
+		text-decoration: underline;
+		color: var(--accent);
+	}
+
+	.lab-names {
+		margin: 0;
+		font-size: 0.95rem;
+		line-height: 1.7;
+	}
+
+	.dot {
+		color: rgb(var(--gray-light));
+		font-weight: 400;
 	}
 
 	.recent-posts ul {
 		list-style: none;
 		margin: 0 0 1rem;
 		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0;
 	}
 
 	.recent-posts li {
@@ -123,14 +164,16 @@ const posts = (await getCollection('blog'))
 		font-size: 0.95rem;
 	}
 
-	.recent-posts li a {
-		color: rgb(var(--black));
+	.all-posts {
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
 		text-decoration: none;
+		font-weight: 400;
 	}
 
-	.recent-posts li a:hover {
-		text-decoration: underline;
+	.all-posts:hover {
 		color: var(--accent);
+		text-decoration: underline;
 	}
 
 	.post-date {
@@ -138,17 +181,6 @@ const posts = (await getCollection('blog'))
 		font-size: 0.8rem;
 		white-space: nowrap;
 		flex-shrink: 0;
-	}
-
-	.all-posts {
-		font-size: 0.9rem;
-		color: rgb(var(--gray));
-		text-decoration: none;
-	}
-
-	.all-posts:hover {
-		color: var(--accent);
-		text-decoration: underline;
 	}
 
 	@media (max-width: 640px) {

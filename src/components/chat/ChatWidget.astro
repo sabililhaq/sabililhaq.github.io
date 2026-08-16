@@ -43,10 +43,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
-		border: 1px solid #e2e8f0;
+		border: 1px solid rgb(var(--gray-light));
 		border-radius: 0.75rem;
 		padding: 1rem;
-		background: #fff;
+		background: rgb(var(--bg));
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05);
 	}
 	.chat-topbar {
@@ -55,12 +55,12 @@
 		justify-content: space-between;
 		gap: 1rem;
 		padding-bottom: 0.75rem;
-		border-bottom: 1px solid #f1f5f9;
+		border-bottom: 1px solid rgb(var(--gray-light));
 	}
 	.nickname {
 		font-weight: 600;
 		font-size: 0.95rem;
-		color: #1e293b;
+		color: rgb(var(--black));
 		line-height: 1.4;
 		display: flex;
 		align-items: center;
@@ -75,23 +75,23 @@
 	}
 	#info-toggle {
 		appearance: none;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
+		background: rgb(var(--surface));
+		border: 1px solid rgb(var(--gray-light));
 		border-radius: 0.5rem;
 		width: 2rem;
 		height: 2rem;
 		display: grid;
 		place-items: center;
-		color: #64748b;
+		color: rgb(var(--gray));
 		cursor: pointer;
 		transition: all 0.2s ease;
 		font-size: 0.95rem;
 		flex-shrink: 0;
 	}
 	#info-toggle:hover {
-		background: #f1f5f9;
-		border-color: #cbd5e1;
-		color: #475569;
+		background: rgb(var(--gray-light));
+		border-color: rgb(var(--gray));
+		color: rgb(var(--gray-dark));
 	}
 	#info-toggle:focus-visible {
 		outline: 2px solid #8b5cf6;
@@ -100,12 +100,12 @@
 	.info-panel {
 		position: relative;
 		z-index: 1;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
+		background: rgb(var(--surface));
+		border: 1px solid rgb(var(--gray-light));
 		border-radius: 0.5rem;
 		padding: 1rem;
 		font-size: 0.9rem;
-		color: #475569;
+		color: rgb(var(--gray-dark));
 		line-height: 1.6;
 	}
 	.info-panel ul {
@@ -116,10 +116,10 @@
 		gap: 0.625rem;
 	}
 	.info-panel li {
-		color: #475569;
+		color: rgb(var(--gray-dark));
 	}
 	.info-panel strong {
-		color: #1e293b;
+		color: rgb(var(--black));
 		font-weight: 600;
 	}
 	.messages {
@@ -153,23 +153,23 @@
 		gap: 0.625rem;
 		padding: 0.75rem 0.875rem;
 		border-radius: 0.5rem;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
+		background: rgb(var(--surface));
+		border: 1px solid rgb(var(--gray-light));
 		font-size: 0.9rem;
 		align-items: center;
 		transition: background 0.15s ease;
 	}
 	.messages li:hover {
-		background: #f1f5f9;
+		background: rgb(var(--gray-light));
 	}
 	.messages .who {
 		font-weight: 600;
-		color: #1e293b;
+		color: rgb(var(--black));
 		white-space: nowrap;
 		font-size: 0.875rem;
 	}
 	.messages .text {
-		color: #334155;
+		color: rgb(var(--gray-dark));
 		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -181,16 +181,16 @@
 		grid-template-columns: 1fr auto;
 		gap: 0.625rem;
 		padding-top: 0.75rem;
-		border-top: 1px solid #f1f5f9;
+		border-top: 1px solid rgb(var(--gray-light));
 	}
 	.composer input {
 		flex: 1;
 		padding: 0.75rem 1rem;
-		border: 1px solid #e2e8f0;
+		border: 1px solid rgb(var(--gray-light));
 		border-radius: 0.5rem;
 		font-size: 0.95rem;
-		color: #1e293b;
-		background: #fff;
+		color: rgb(var(--black));
+		background: rgb(var(--bg));
 		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 	.composer input::placeholder {
@@ -205,8 +205,8 @@
 		padding: 0.75rem 1.25rem;
 		border: none;
 		border-radius: 0.5rem;
-		background: #111827;
-		color: #fff;
+		background: rgb(var(--black));
+		color: rgb(var(--bg));
 		font-weight: 600;
 		font-size: 0.95rem;
 		cursor: pointer;
@@ -214,7 +214,7 @@
 		white-space: nowrap;
 	}
 	.composer button:hover:not(:disabled):not(.sending) {
-		background: #1f2937;
+		background: rgb(var(--gray-dark));
 		transform: translateY(-1px);
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { LABS } from '../src/consts';
 
 const vimPagePath = fileURLToPath(new URL('../src/pages/vim.astro', import.meta.url));
 const labsPagePath = fileURLToPath(new URL('../src/pages/labs.astro', import.meta.url));
@@ -19,10 +20,12 @@ describe('Vim Dojo site integration', () => {
 
   it('links Vim Dojo from the labs page as an internal lab', () => {
     const source = readFileSync(labsPagePath, 'utf-8');
-    const entry = source.match(/label:\s*'Vim Dojo',\s*url:\s*'\/vim',\s*description:\s*"([^"]*)"/);
+    const lab = LABS.find((entry) => entry.label === 'Vim Dojo');
 
-    expect(entry).not.toBeNull();
-    expect(entry![1]).toContain('Practice Vim');
+    expect(lab).toBeDefined();
+    expect(lab!.url).toBe('/vim');
+    expect(lab!.description).toContain('Practice Vim');
+    expect(source).toContain('LABS');
   });
 
   it('imports vim-dojo as an external package', () => {

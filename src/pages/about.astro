@@ -10,7 +10,7 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 	<head>
 		<BaseHead
 			title={`About | ${SITE_TITLE}`}
-			description={`About ${SITE_SHORT_NAME} — software engineering, data, and machine learning.`}
+			description={`About ${SITE_SHORT_NAME} — backend, distributed systems, and a personal workshop.`}
 		/>
 	</head>
 	<body>
@@ -21,52 +21,37 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 				<h3>About Me</h3>
 				<p>
 					Hi! I'm <strong>Muhammad Furqony Sabililhaq</strong> — usually just{' '}
-					<strong>{SITE_SHORT_NAME}</strong>. I'm a computer science graduate with a deep interest in
-					Software Engineering and Data fields. I'm passionate about coding, enjoy competitive
-					programming, and occasionally write about tech.
+					<strong>{SITE_SHORT_NAME}</strong>. I work on backend and distributed systems at{' '}
+					<strong>Samsung R&amp;D Institute Indonesia</strong>. I like building products and staying
+					close to the full engineering process — from the messy first version to something people
+					actually use.
 				</p>
 
 				<p>
-					My focus areas include <strong>Backend Engineering</strong>,{' '}
-					<strong>Data Analysis</strong>, and <strong>Machine Learning</strong> (Deep Learning with
-					emphasis on Computer Vision and NLP). I've worked on software development and data science
-					projects in academic and industry settings.
+					This site is the workshop. <a href="/labs">Labs</a> are things I run on my own domain.{' '}
+					<a href="/projects">Projects</a> are the ones that escaped.
 				</p>
 
 				<p>
-					During my third year of college, I joined{' '}
+					I studied computer science at Universitas Brawijaya. In my third year I joined{' '}
 					<a href="https://grow.google/intl/id_id/bangkit/" target="_blank" rel="noopener noreferrer">
 						Google Bangkit Academy
 					</a>{' '}
-					as a Machine Learning Engineer trainee — an intensive program run with the Indonesian Ministry
-					of Education and Culture, Google, GoTo, and Traveloka. I later interned at{' '}
-					<strong>Traveloka</strong> on a{' '}
+					as an ML trainee — with the Indonesian Ministry of Education, Google, GoTo, and Traveloka —
+					and interned on{' '}
 					<a
 						href="https://github.com/capstone-bangkit-c22-ky01"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						company-based capstone project
-					</a>{' '}
-					(TravelokaOCR) as a Machine Learning Engineer.
+						TravelokaOCR
+					</a>
+					, a KTP-scanning capstone hosted by Traveloka. I still enjoy competitive programming.
 				</p>
 
 				<p>
-					I'm enthusiastic about technology, especially artificial intelligence and human space
-					exploration. I'm also an active member of{' '}
-					<a
-						href="https://www.linkedin.com/company/bccfilkomub/"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						BCC (Basic Computing Community)
-					</a>.
-				</p>
-
-				<h2>Projects</h2>
-				<p>
-					See my work in software development and data science on the{' '}
-					<a href="/projects">Projects</a> page.
+					I care about backend systems, and about tools that only make sense from here — Indonesian
+					language, local products, WhatsApp-shaped software.
 				</p>
 
 				<h2>Skills</h2>
@@ -75,26 +60,16 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 						SKILLS.map((group) => (
 							<div class="skill-group">
 								<h3>{group.label}</h3>
-								<ul class="skill-list">
-									{group.items.map((skill) => (
-										<li>
-											<img src={skill.icon} alt="" width="24" height="24" />
-											<span>{skill.name}</span>
-										</li>
-									))}
-								</ul>
+								<p class="skill-list">{group.items.join(' · ')}</p>
 							</div>
 						))
 					}
 				</div>
 
-				<h2>Find me online</h2>
+				<h2>Find me</h2>
 				<ul>
 					<li><a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
 					<li><a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
-					<li><a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a></li>
-					<li><a href={SOCIALS.leetcode} target="_blank" rel="noopener noreferrer">LeetCode</a></li>
-					<li><a href={SOCIALS.hackerrank} target="_blank" rel="noopener noreferrer">HackerRank</a></li>
 					<li><a href={SOCIALS.email}>Email</a></li>
 				</ul>
 			</article>
@@ -115,11 +90,10 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 		border-bottom: 1px solid rgb(var(--gray-light));
 	}
 
-	/* Skills */
 	.skills {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
+		gap: 1rem;
 	}
 
 	.skill-group h3 {
@@ -128,31 +102,13 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: rgb(var(--gray));
-		margin-bottom: 0.6rem;
+		margin-bottom: 0.35rem;
 	}
 
 	.skill-list {
-		list-style: none;
 		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1rem;
-	}
-
-	.skill-list li {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
-		font-size: 0.9rem;
+		font-size: 0.95rem;
 		color: rgb(var(--gray-dark));
-	}
-
-	.skill-list img {
-		border-radius: 0;
-		width: 20px;
-		height: 20px;
-		object-fit: contain;
 	}
 
 	.avatar {

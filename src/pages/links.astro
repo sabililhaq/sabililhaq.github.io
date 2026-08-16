@@ -4,13 +4,19 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { EMAIL, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../consts';
 
-const links = [
+const siteLinks = [
+	{ label: 'About', url: '/about', description: 'Who I am' },
+	{ label: 'Projects', url: '/projects', description: 'Things that escaped the workshop' },
+	{ label: 'Labs', url: '/labs', description: 'Things I run for myself' },
+];
+
+const elsewhere = [
 	{ label: 'GitHub', url: SOCIALS.github, description: 'Open source projects and code' },
 	{ label: 'LinkedIn', url: SOCIALS.linkedin, description: 'Professional profile' },
-	{ label: 'Medium', url: SOCIALS.medium, description: 'Writings' },
+	{ label: 'Email', url: SOCIALS.email, description: EMAIL },
 	{ label: 'LeetCode', url: SOCIALS.leetcode, description: 'Programming' },
 	{ label: 'HackerRank', url: SOCIALS.hackerrank, description: 'Programming' },
-	{ label: 'Email', url: SOCIALS.email, description: EMAIL },
+	{ label: 'Medium', url: SOCIALS.medium, description: 'Older writing' },
 ];
 ---
 
@@ -27,11 +33,30 @@ const links = [
 		<main>
 			<article class="prose">
 				<h3>Links</h3>
+				<p class="intro">On this site, and around the web.</p>
+
+				<h2>This site</h2>
 				<ul class="link-list">
 					{
-						links.map((link) => (
+						siteLinks.map((link) => (
 							<li>
-								<a href={link.url} target={link.url.startsWith('mailto') ? undefined : '_blank'} rel={link.url.startsWith('mailto') ? undefined : 'noopener noreferrer'}>
+								<a href={link.url}>{link.label}</a>
+								{link.description && <span class="desc"> — {link.description}</span>}
+							</li>
+						))
+					}
+				</ul>
+
+				<h2>Elsewhere</h2>
+				<ul class="link-list">
+					{
+						elsewhere.map((link) => (
+							<li>
+								<a
+									href={link.url}
+									target={link.url.startsWith('mailto') ? undefined : '_blank'}
+									rel={link.url.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+								>
 									{link.label}
 								</a>
 								{link.description && <span class="desc"> — {link.description}</span>}
@@ -48,6 +73,22 @@ const links = [
 <style>
 	.prose h1 {
 		margin-bottom: 1.5rem;
+	}
+	.intro {
+		margin: 0 0 1.5rem;
+		color: rgb(var(--gray));
+		font-size: 1rem;
+	}
+	.prose h2 {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--gray));
+		padding-bottom: 0.4rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
 	}
 	.link-list {
 		list-style: none;

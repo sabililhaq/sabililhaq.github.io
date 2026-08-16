@@ -2,7 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
@@ -19,36 +19,46 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
       <article class="prose">
         <h3>Projects</h3>
         <p class="intro">
-          A selection of projects I've worked on across software engineering, data, and machine learning.
+          Things that escaped the workshop — a tool I use, one product with users, and earlier work.
         </p>
 
-        <div class="projects">
-          {
-            PROJECTS.map((project) => (
-              <div class="project">
-                <div class="project-header">
-                  <h3>{project.title}</h3>
-                  <div class="project-links">
-                    {project.liveDemo && (
-                      <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
-                        Live Demo ↗
-                      </a>
-                    )}
-                    {project.sourceCode && (
-                      <a href={project.sourceCode} target="_blank" rel="noopener noreferrer">
-                        Source ↗
-                      </a>
-                    )}
-                  </div>
+        {
+          PROJECT_GROUPS.map((group) => {
+            const items = PROJECTS.filter((project) => project.group === group.id);
+            if (items.length === 0) return null;
+
+            return (
+              <section class="group">
+                <h2>{group.label}</h2>
+                <div class="projects">
+                  {items.map((project) => (
+                    <div class="project" id={project.id}>
+                      <div class="project-header">
+                        <h3>{project.title}</h3>
+                        <div class="project-links">
+                          {project.liveDemo && (
+                            <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
+                              Live Demo ↗
+                            </a>
+                          )}
+                          {project.sourceCode && (
+                            <a href={project.sourceCode} target="_blank" rel="noopener noreferrer">
+                              Source ↗
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      {project.overview.map((para) => (
+                        <p set:html={para} />
+                      ))}
+                      <p class="tech-stack">{project.techStack}</p>
+                    </div>
+                  ))}
                 </div>
-                {project.overview.map((para) => (
-                  <p set:html={para} />
-                ))}
-                <p class="tech-stack">{project.techStack}</p>
-              </div>
-            ))
-          }
-        </div>
+              </section>
+            );
+          })
+        }
       </article>
     </main>
     <Footer />
@@ -66,6 +76,21 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
     font-size: 1rem;
   }
 
+  .group {
+    margin-bottom: 2.25rem;
+  }
+
+  .group h2 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgb(var(--gray));
+    margin: 0 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgb(var(--gray-light));
+  }
+
   .projects {
     display: flex;
     flex-direction: column;
@@ -79,6 +104,7 @@ import { PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
   .project:last-child {
     border-bottom: none;
+    padding-bottom: 0;
   }
 
   .project-header {

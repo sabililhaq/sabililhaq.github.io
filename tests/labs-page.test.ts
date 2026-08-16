@@ -1,23 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { LABS } from '../src/consts';
 
 const labsPagePath = fileURLToPath(new URL('../src/pages/labs.astro', import.meta.url));
 const source = readFileSync(labsPagePath, 'utf-8');
 
-describe('src/pages/labs.astro', () => {
+describe('labs', () => {
   it('adds a Chat entry pointing at the new /chat route', () => {
-    const chatEntryMatch = source.match(
-      /label:\s*'Chat',\s*url:\s*'\/chat',\s*description:\s*'([^']*)'/,
-    );
+    const chat = LABS.find((lab) => lab.label === 'Chat');
 
-    expect(chatEntryMatch).not.toBeNull();
-    expect(chatEntryMatch![1]).toMatch(/chat/i);
+    expect(chat).toBeDefined();
+    expect(chat!.url).toBe('/chat');
+    expect(chat!.description).toMatch(/chat/i);
   });
 
   it('lists the Chat entry before the pre-existing Files entry', () => {
-    const chatIndex = source.indexOf("label: 'Chat'");
-    const filesIndex = source.indexOf("label: 'Files'");
+    const chatIndex = LABS.findIndex((lab) => lab.label === 'Chat');
+    const filesIndex = LABS.findIndex((lab) => lab.label === 'Files');
 
     expect(chatIndex).toBeGreaterThan(-1);
     expect(filesIndex).toBeGreaterThan(-1);
@@ -25,13 +25,21 @@ describe('src/pages/labs.astro', () => {
   });
 
   it('does not remove any of the pre-existing lab entries', () => {
+    const labels = LABS.map((lab) => lab.label);
     for (const label of ['Files', 'Excalidraw', 'URL Shortener', 'QR Code Generator']) {
-      expect(source).toContain(`label: '${label}'`);
+      expect(labels).toContain(label);
     }
   });
 
   it('uses a relative, non-external URL for the chat entry so it is not opened in a new tab', () => {
-    // The template only sets target="_blank" for URLs starting with "http".
-    expect(source).toContain("url: '/chat'");
+    const chat = LABS.find((lab) => lab.label === 'Chat');
+    expect(chat!.url.startsWith('http')).toBe(false);
+    expect(source).toContain("lab.url.startsWith('http')");
+  });
+
+  it('renders labs from the shared catalog', () => {
+    expect(source).toContain('LABS');
+    expect(source).toContain('lab.label');
+    expect(source).toContain('lab.url');
   });
 });

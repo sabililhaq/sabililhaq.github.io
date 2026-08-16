@@ -70,23 +70,25 @@
   .field input[type="number"],
   .field select {
     padding: 0.65rem 0.75rem;
-    border: 1px solid #ccc;
+    border: 1px solid rgb(var(--gray-light));
     border-radius: 8px;
     font-size: 1rem;
     font-family: inherit;
+    background: rgb(var(--bg));
+    color: rgb(var(--gray-dark));
   }
 
   .field textarea:focus,
   .field input:focus,
   .field select:focus {
     outline: none;
-    border-color: #333;
+    border-color: rgb(var(--black));
   }
 
   .field input[type="color"] {
     height: 42px;
     padding: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid rgb(var(--gray-light));
     border-radius: 8px;
     cursor: pointer;
   }
@@ -107,7 +109,7 @@
     display: flex;
     justify-content: center;
     padding: 1.5rem;
-    background: #f7f7f7;
+    background: rgb(var(--surface));
     border-radius: 12px;
   }
 
@@ -125,8 +127,8 @@
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
-    background: #111;
-    color: white;
+    background: rgb(var(--black));
+    color: rgb(var(--bg));
   }
 
   .actions button:hover {
@@ -134,7 +136,7 @@
   }
 
   .actions button.secondary {
-    background: #444;
+    background: rgb(var(--gray-dark));
   }
 </style>
 
