@@ -46,6 +46,11 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
                               Source ↗
                             </a>
                           )}
+                          {project.roadmap && (
+                            <a href={project.roadmap}>
+                              Roadmap
+                            </a>
+                          )}
                         </div>
                       </div>
                       {project.overview.map((para) => (

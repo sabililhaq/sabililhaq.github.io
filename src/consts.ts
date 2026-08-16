@@ -17,6 +17,29 @@ export const SOCIALS = {
   leetcode: "https://leetcode.com/sabililhaq/",
 } as const;
 
+export type MediumPost = {
+  title: string;
+  description: string;
+  url: string;
+  pubDate: Date;
+};
+
+export const MEDIUM_POSTS: MediumPost[] = [
+  {
+    title: "Bahasa Indonesia: Fundamental Machine Learning: Kunci Era Baru Teknologi",
+    description:
+      "Artikel ini memberikan pengetahuan/konsep dasar dan fundamental machine learning secara sederhana, tidak membahas sisi teknikal.",
+    url: "https://medium.com/data-folks-indonesia/machine-learning-kunci-era-baru-teknologi-2a780254f6c1",
+    pubDate: new Date(2022, 4, 25),
+  },
+  {
+    title: "Drone as our future courier",
+    description: "Technological disruption for conventional courier.",
+    url: "https://sabililhaq.medium.com/drone-as-our-future-courier-bcc9290a1945",
+    pubDate: new Date(2020, 10, 11),
+  },
+];
+
 export type ProjectGroup = "now" | "shipped" | "earlier";
 
 export type Project = {
@@ -27,6 +50,7 @@ export type Project = {
   group: ProjectGroup;
   liveDemo?: string;
   sourceCode?: string;
+  roadmap?: string;
 };
 
 export const PROJECTS: Project[] = [
@@ -41,6 +65,7 @@ export const PROJECTS: Project[] = [
     group: "now",
     liveDemo: "https://sabililhaq.com/vim",
     sourceCode: "https://github.com/sabililhaq/vim-dojo",
+    roadmap: "/vim/roadmap",
   },
   {
     id: "doktergpt",
@@ -105,6 +130,58 @@ export const PROJECT_GROUPS: { id: ProjectGroup; label: string }[] = [
   { id: "now", label: "Now" },
   { id: "shipped", label: "Shipped" },
   { id: "earlier", label: "Earlier" },
+];
+
+export type RoadmapStatus = "next" | "later";
+
+export type RoadmapItem = {
+  id: string;
+  title: string;
+  status: RoadmapStatus;
+  summary: string;
+};
+
+export const ROADMAP_GROUPS: { id: RoadmapStatus; label: string }[] = [
+  { id: "next", label: "Next" },
+  { id: "later", label: "Later" },
+];
+
+export const VIM_DOJO_ROADMAP: RoadmapItem[] = [
+  {
+    id: "category-play",
+    title: "Play by category",
+    status: "next",
+    summary:
+      "Stay inside one category. ?category=motion loads only that set. Next and Reset stay in the filter.",
+  },
+  {
+    id: "random",
+    title: "Randomized practice",
+    status: "next",
+    summary:
+      "Shuffle remaining unsolved cases, optionally inside a category. For review, not first-time play.",
+  },
+  {
+    id: "daily",
+    title: "Daily kata",
+    status: "next",
+    summary:
+      "One deterministic case per UTC day, same for everyone. No streak counter. Stored locally as today's date.",
+  },
+  {
+    id: "interactive-hints",
+    title: "Interactive hints",
+    status: "next",
+    summary:
+      "Teach in the buffer: highlight the span that must change, then ghost the next intended key. Text hints stay as layer one.",
+  },
+  {
+    id: "more-categories",
+    title: "Search, counts, macros, replace",
+    status: "later",
+    summary:
+      "New category files after the learning modes exist. Same hand-written case format as today.",
+  },
 ];
 
 export type Lab = {
