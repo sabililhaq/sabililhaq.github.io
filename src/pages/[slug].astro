@@ -1,0 +1,35 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+	const reserved = new Set([
+		'about',
+		'blog',
+		'chat',
+		'labs',
+		'links',
+		'projects',
+		'qr',
+		'vim',
+	]);
+	const posts = await getCollection('blog');
+	return posts.map((post) => {
+		if (reserved.has(post.id)) {
+			throw new Error(`Blog slug "${post.id}" conflicts with an existing page`);
+		}
+		return {
+			params: { slug: post.id },
+			props: post,
+		};
+	});
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+	<Content />
+</BlogPost>

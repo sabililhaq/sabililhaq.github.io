@@ -8,7 +8,7 @@ import { LABS, MEDIUM_POSTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } fro
 
 const localPosts = (await getCollection('blog')).map((post) => ({
 	title: post.data.title,
-	url: `/blog/${post.id}/`,
+	url: `/${post.id}/`,
 	pubDate: post.data.pubDate,
 }));
 

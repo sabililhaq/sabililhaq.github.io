@@ -26,6 +26,13 @@ describe('blog writings', () => {
 		expect(post).toContain('/images/blog/tag-aggressively-notes.png');
 	});
 
+	it('links local posts at the site root instead of /blog', () => {
+		expect(blogSource).toContain('`/${post.id}/`');
+		expect(blogSource).not.toContain('`/blog/${post.id}/`');
+		expect(homeSource).toContain('`/${post.id}/`');
+		expect(homeSource).not.toContain('`/blog/${post.id}/`');
+	});
+
 	it('points every Medium entry at a real Medium URL', () => {
 		for (const post of MEDIUM_POSTS) {
 			expect(post.url.startsWith('https://')).toBe(true);
