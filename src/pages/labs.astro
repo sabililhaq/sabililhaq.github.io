@@ -2,40 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_SHORT_NAME, SITE_TITLE } from '../consts';
-
-const labs = [
-  {
-    label: 'Chat',
-    url: '/chat',
-    description: 'Anonymous, temporary chat',
-  },
-  {
-    label: 'Vim Dojo',
-    url: '/vim',
-    description: "Practice Vim. Don't learn Vim.",
-  },
-  {
-    label: 'Files',
-    url: 'https://files.sabililhaq.com',
-    description: 'My public read only file system',
-  },
-  {
-    label: 'Excalidraw',
-    url: 'https://draw.sabililhaq.com', // TODO configurable
-    description: 'Whiteboard playground',
-  },
-  {
-    label: 'URL Shortener',
-    url: 'https://go.sabililhaq.com',
-    description: 'Personal URL shortener',
-  },
-  {
-    label: 'QR Code Generator',
-    url: '/qr',
-    description: 'Generate QR codes instantly from URL',
-  },
-];
+import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
@@ -51,20 +18,23 @@ const labs = [
     <main>
       <article class="prose">
         <h3>Labs</h3>
-        <p class="intro">Personal playgrounds.</p>
+        <p class="intro">Things I run for myself. Some I actually use.</p>
         <ul class="link-list">
           {
-            labs.map((lab) => (
+            LABS.map((lab) => (
               <li>
-                <a
-                  href={lab.url}
-                  target={lab.url.startsWith('http') ? '_blank' : undefined}
-                  rel={lab.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                >
-                  {lab.label}
-                </a>
+                <div class="lab-row">
+                  <a
+                    href={lab.url}
+                    target={lab.url.startsWith('http') ? '_blank' : undefined}
+                    rel={lab.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  >
+                    {lab.label}
+                  </a>
+                  {lab.note && <span class="note">{lab.note}</span>}
+                </div>
                 {lab.description && (
-                  <span class="desc"> — {lab.description}</span>
+                  <span class="desc">{lab.description}</span>
                 )}
               </li>
             ))
@@ -101,6 +71,12 @@ const labs = [
   .link-list li:last-child {
     border-bottom: none;
   }
+  .lab-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
   .link-list a {
     font-weight: 600;
     color: rgb(var(--black));
@@ -110,8 +86,15 @@ const labs = [
     text-decoration: underline;
     color: var(--accent);
   }
+  .note {
+    color: rgb(var(--gray));
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
   .desc {
+    display: block;
     color: rgb(var(--gray));
     font-size: 0.9rem;
+    margin-top: 0.2rem;
   }
 </style>
