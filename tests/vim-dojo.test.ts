@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { LABS, PROJECTS } from '../src/consts';
+import { LABS, PROJECTS, ROADMAP_GROUPS, VIM_DOJO_ROADMAP } from '../src/consts';
 
 const vimPagePath = fileURLToPath(new URL('../src/pages/vim.astro', import.meta.url));
+const roadmapPagePath = fileURLToPath(new URL('../src/pages/vim/roadmap.astro', import.meta.url));
+const projectsPagePath = fileURLToPath(new URL('../src/pages/projects.astro', import.meta.url));
 const labsPagePath = fileURLToPath(new URL('../src/pages/labs.astro', import.meta.url));
 const pkgPath = fileURLToPath(new URL('../package.json', import.meta.url));
 const dojoRoot = fileURLToPath(new URL('../node_modules/vim-dojo/', import.meta.url));
@@ -22,6 +24,40 @@ describe('Vim Dojo site integration', () => {
     expect(source).toContain('mountVimDojo');
     expect(source).toMatch(/title=\{`Vim Dojo \| \$\{SITE_TITLE\}`\}/);
     expect(source).toContain("basePath: '/vim'");
+    expect(source).toContain('href="/vim/roadmap"');
+    expect(source.indexOf('data-vim-dojo-host')).toBeLessThan(source.indexOf('class="dojo-nav"'));
+    expect(source).toContain('order: -1');
+  });
+
+  it('publishes a learning roadmap for category, random, daily, and interactive hints', () => {
+    const project = PROJECTS.find((entry) => entry.id === 'vim-dojo');
+    const page = readFileSync(roadmapPagePath, 'utf-8');
+    const projectsPage = readFileSync(projectsPagePath, 'utf-8');
+    const ids = VIM_DOJO_ROADMAP.map((item) => item.id);
+
+    expect(project?.roadmap).toBe('/vim/roadmap');
+    expect(projectsPage).toContain('project.roadmap');
+    expect(page).toContain('VIM_DOJO_ROADMAP');
+    expect(page).toMatch(/learning tool/i);
+    expect(ids).toEqual(expect.arrayContaining([
+      'category-play',
+      'random',
+      'daily',
+      'interactive-hints',
+    ]));
+    expect(ids).not.toContain('learning');
+    expect(ids).not.toContain('categorized');
+    expect(ids).not.toContain('hints');
+    expect(ROADMAP_GROUPS.some((group) => group.label === 'Shipped')).toBe(false);
+
+    const random = VIM_DOJO_ROADMAP.find((item) => item.id === 'random');
+    const daily = VIM_DOJO_ROADMAP.find((item) => item.id === 'daily');
+    const interactive = VIM_DOJO_ROADMAP.find((item) => item.id === 'interactive-hints');
+
+    expect(random?.status).toBe('next');
+    expect(daily?.status).toBe('next');
+    expect(interactive?.status).toBe('next');
+    expect(interactive?.summary).toMatch(/ghost/i);
   });
 
   it('links Vim Dojo from the labs page as an internal lab', () => {

@@ -17,10 +17,52 @@ import { SITE_TITLE } from '../consts';
     <Header />
     <main>
       <div data-vim-dojo-host></div>
+      <p class="dojo-nav">
+        <a href="/vim/roadmap">Roadmap</a>
+        <span aria-hidden="true">·</span>
+        <span>category · random · daily · interactive hints</span>
+      </p>
     </main>
     <Footer />
   </body>
 </html>
+
+<style>
+  main {
+    padding-top: 1rem;
+  }
+
+  :global([data-vim-dojo-host] .challenge-shell) {
+    order: -1;
+  }
+
+  :global([data-vim-dojo-host] .intro) {
+    border-bottom: none;
+    padding-bottom: 0;
+    border-top: 1px solid rgb(var(--gray-light));
+    padding-top: 1.4rem;
+  }
+
+  .dojo-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.45rem;
+    margin: 1.25rem 0 0;
+    color: rgb(var(--gray));
+    font-size: 0.85rem;
+  }
+
+  .dojo-nav a {
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .dojo-nav a:hover {
+    text-decoration: underline;
+  }
+</style>
 
 <script>
   import { mountVimDojo } from 'vim-dojo';
