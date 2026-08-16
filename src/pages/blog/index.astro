@@ -1,145 +1,188 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { MEDIUM_POSTS, SITE_SHORT_NAME, SITE_TITLE, SOCIALS } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const localPosts = (await getCollection('blog'))
+	.map((post) => ({
+		title: post.data.title,
+		description: post.data.description,
+		url: `/blog/${post.id}/`,
+		pubDate: post.data.pubDate,
+	}))
+	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+
+const mediumPosts = [...MEDIUM_POSTS].sort(
+	(a, b) => b.pubDate.valueOf() - a.pubDate.valueOf(),
 );
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 100%;
-				max-width: 960px;
-				box-sizing: border-box;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			.empty {
-				text-align: center;
-				padding: 2rem 0;
-			}
-			.empty h1 {
-				margin-bottom: 0.75rem;
-			}
-			@media (max-width: 720px) {
-				main {
-					padding: 1em;
-				}
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-
-			@media (max-width: 480px) {
-				ul {
-					gap: 0.25rem;
-				}
-				ul li:first-child .title {
-					font-size: 1.25rem;
-				}
-				ul li h4 {
-					font-size: 0.95rem;
-				}
-			}
-		</style>
+		<BaseHead
+			title={`Blog | ${SITE_TITLE}`}
+			description={`Writing by ${SITE_SHORT_NAME}.`}
+		/>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<section>
+			<article class="prose">
+				<h3>Blog</h3>
+
 				{
-					posts.length === 0 ? (
-						<div class="empty">
-							<h3>Blog</h3>
-							<p>Nothing published here yet.</p>
-						</div>
-					) : (
-						<ul>
-							{posts.map((post) => (
-								<li>
-									<a href={`/blog/${post.id}/`}>
-										{post.data.heroImage && (
-											<Image width={720} height={360} src={post.data.heroImage} alt="" />
-										)}
-										<h4 class="title">{post.data.title}</h4>
-										<p class="date">
-											<FormattedDate date={post.data.pubDate} />
-										</p>
-									</a>
-								</li>
-							))}
-						</ul>
+					localPosts.length > 0 && (
+						<section class="group">
+							<h2>Here</h2>
+							<ul class="post-list">
+								{localPosts.map((post) => (
+									<li>
+										<div class="post-row">
+											<a href={post.url}>{post.title}</a>
+											<span class="date">
+												<FormattedDate date={post.pubDate} />
+											</span>
+										</div>
+										{post.description && <span class="desc">{post.description}</span>}
+									</li>
+								))}
+							</ul>
+						</section>
 					)
 				}
-			</section>
+
+				<section class="group">
+					<h2>On Medium</h2>
+					<ul class="post-list">
+						{
+							mediumPosts.map((post) => (
+								<li>
+									<div class="post-row">
+										<a href={post.url} target="_blank" rel="noopener noreferrer">
+											{post.title}
+										</a>
+										<span class="date">
+											<FormattedDate date={post.pubDate} />
+										</span>
+									</div>
+									{post.description && <span class="desc">{post.description}</span>}
+								</li>
+							))
+						}
+					</ul>
+					<p class="more">
+						<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">
+							More on Medium →
+						</a>
+					</p>
+				</section>
+			</article>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	main {
+		font-size: 16px;
+	}
+
+	.prose h3 {
+		font-size: 1.35rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.group {
+		margin-bottom: 2.25rem;
+	}
+
+	.group h2 {
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--gray));
+		margin: 0 0 1rem;
+		padding-bottom: 0.4rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	.post-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+
+	.post-list li {
+		font-size: 0.95rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		padding-bottom: 0.85rem;
+	}
+
+	.post-list li:last-child {
+		border-bottom: none;
+	}
+
+	.post-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.post-list a {
+		font-weight: 600;
+		color: rgb(var(--black));
+		text-decoration: none;
+	}
+
+	.post-list a:hover {
+		text-decoration: underline;
+		color: var(--accent);
+	}
+
+	.date {
+		color: rgb(var(--gray));
+		font-size: 0.8rem;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.desc {
+		display: block;
+		color: rgb(var(--gray));
+		font-size: 0.9rem;
+		margin-top: 0.2rem;
+	}
+
+	.more {
+		margin: 1rem 0 0;
+	}
+
+	.more a {
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		text-decoration: none;
+		font-weight: 400;
+	}
+
+	.more a:hover {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
+	@media (max-width: 640px) {
+		.post-row {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+	}
+</style>

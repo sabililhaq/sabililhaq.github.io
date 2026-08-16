@@ -17,6 +17,29 @@ export const SOCIALS = {
   leetcode: "https://leetcode.com/sabililhaq/",
 } as const;
 
+export type MediumPost = {
+  title: string;
+  description: string;
+  url: string;
+  pubDate: Date;
+};
+
+export const MEDIUM_POSTS: MediumPost[] = [
+  {
+    title: "Bahasa Indonesia: Fundamental Machine Learning: Kunci Era Baru Teknologi",
+    description:
+      "Artikel ini memberikan pengetahuan/konsep dasar dan fundamental machine learning secara sederhana, tidak membahas sisi teknikal.",
+    url: "https://medium.com/data-folks-indonesia/machine-learning-kunci-era-baru-teknologi-2a780254f6c1",
+    pubDate: new Date(2022, 4, 25),
+  },
+  {
+    title: "Drone as our future courier",
+    description: "Technological disruption for conventional courier.",
+    url: "https://sabililhaq.medium.com/drone-as-our-future-courier-bcc9290a1945",
+    pubDate: new Date(2020, 10, 11),
+  },
+];
+
 export type ProjectGroup = "now" | "shipped" | "earlier";
 
 export type Project = {

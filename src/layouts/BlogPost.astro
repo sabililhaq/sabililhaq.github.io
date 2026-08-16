@@ -16,45 +16,49 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: 100%;
-				max-width: 100%;
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
-			.hero-image {
-				width: 100%;
-				box-sizing: border-box;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				font-size: 16px;
 			}
 			.prose {
 				width: 100%;
 				max-width: 720px;
 				margin: auto;
-				padding: 1em;
 				color: rgb(var(--gray-dark));
 				box-sizing: border-box;
 			}
-			.title {
+			.prose :global(p) {
 				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+				font-size: 1em;
+			}
+			.hero-image {
+				margin-bottom: 1.5rem;
+			}
+			.hero-image img {
+				display: block;
+				width: 100%;
+				border-radius: 12px;
+			}
+			.title {
+				margin-bottom: 1.5rem;
 			}
 			.title h1 {
-				margin: 0 0 0.5em 0;
+				margin: 0 0 0.4rem;
+				font-size: 1.4rem;
 			}
 			.date {
-				margin-bottom: 0.5em;
+				margin-bottom: 0.35rem;
 				color: rgb(var(--gray));
+				font-size: 0.85rem;
 			}
 			.last-updated-on {
 				font-style: italic;
+			}
+			.prose :global(figure) {
+				margin: 0 0 1.5em;
+			}
+			.prose :global(figcaption) {
+				margin-top: 0.5rem;
+				color: rgb(var(--gray));
+				font-size: 0.8rem;
 			}
 		</style>
 	</head>
@@ -79,7 +83,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 							}
 						</div>
 						<h1>{title}</h1>
-						<hr />
 					</div>
 					<slot />
 				</div>
