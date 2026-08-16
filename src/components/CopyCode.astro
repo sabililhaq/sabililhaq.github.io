@@ -1,0 +1,129 @@
+<script>
+	const COPY_ICON =
+		'<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+	const CHECK_ICON =
+		'<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>';
+
+	async function copyText(text: string): Promise<boolean> {
+		if (navigator.clipboard?.writeText) {
+			try {
+				await navigator.clipboard.writeText(text);
+				return true;
+			} catch {
+				// fall through to the execCommand path
+			}
+		}
+
+		const textarea = document.createElement('textarea');
+		textarea.value = text;
+		textarea.setAttribute('readonly', '');
+		textarea.style.position = 'fixed';
+		textarea.style.left = '-9999px';
+		document.body.appendChild(textarea);
+		textarea.select();
+		const ok = document.execCommand('copy');
+		textarea.remove();
+		return ok;
+	}
+
+	function enhance(pre: HTMLPreElement) {
+		if (pre.parentElement?.classList.contains('code-block')) return;
+
+		const wrapper = document.createElement('div');
+		wrapper.className = 'code-block';
+		pre.replaceWith(wrapper);
+		wrapper.append(pre);
+
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'copy-code';
+		button.setAttribute('aria-label', 'Copy code');
+		button.innerHTML = COPY_ICON;
+
+		let reset: number | undefined;
+		button.addEventListener('click', async () => {
+			const text = pre.textContent ?? '';
+			if (!(await copyText(text))) return;
+
+			button.classList.add('copied');
+			button.setAttribute('aria-label', 'Copied');
+			button.innerHTML = CHECK_ICON;
+			window.clearTimeout(reset);
+			reset = window.setTimeout(() => {
+				button.classList.remove('copied');
+				button.setAttribute('aria-label', 'Copy code');
+				button.innerHTML = COPY_ICON;
+			}, 1600);
+		});
+
+		wrapper.append(button);
+	}
+
+	const root = document.querySelector('article .prose') ?? document;
+	for (const pre of root.querySelectorAll('pre')) {
+		enhance(pre);
+	}
+</script>
+
+<style is:global>
+	.code-block {
+		position: relative;
+		margin: 0 0 1em;
+	}
+
+	.code-block pre {
+		margin: 0;
+		padding-right: 3rem;
+	}
+
+	.copy-code {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		z-index: 1;
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		padding: 0;
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		border-radius: 6px;
+		background: rgba(15, 18, 25, 0.55);
+		color: rgba(255, 255, 255, 0.78);
+		cursor: pointer;
+		opacity: 0;
+		transition:
+			opacity 0.15s ease,
+			background 0.15s ease,
+			color 0.15s ease;
+	}
+
+	.code-block:hover .copy-code,
+	.code-block:focus-within .copy-code,
+	.copy-code:focus-visible {
+		opacity: 1;
+	}
+
+	.copy-code:hover,
+	.copy-code:focus-visible {
+		background: rgba(15, 18, 25, 0.8);
+		color: #fff;
+	}
+
+	.copy-code.copied {
+		color: #86efac;
+		border-color: rgba(134, 239, 172, 0.35);
+	}
+
+	@media (hover: none) {
+		.copy-code {
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.copy-code {
+			transition: none;
+		}
+	}
+</style>

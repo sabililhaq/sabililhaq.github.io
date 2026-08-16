@@ -26,6 +26,16 @@ describe('blog writings', () => {
 		expect(post).toContain('/images/blog/tag-aggressively-notes.png');
 	});
 
+	it('hosts Sortable git status as a local post', () => {
+		const postPath = fileURLToPath(
+			new URL('../src/content/blog/sortable-git-status.md', import.meta.url),
+		);
+		const post = readFileSync(postPath, 'utf-8');
+		expect(post).toContain('title: "Sortable git status"');
+		expect(post).toContain('gls ()');
+		expect(post).toContain('/images/blog/sortable-git-status.png');
+	});
+
 	it('links local posts at the site root instead of /blog', () => {
 		expect(blogSource).toContain('`/${post.id}/`');
 		expect(blogSource).not.toContain('`/blog/${post.id}/`');
