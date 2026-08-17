@@ -8,7 +8,7 @@ When running an AI agent, I often get into this situation:
 
 Agent changes a lot of files, then I need to nitpick all their changes (`git add`).
 
-At the same time, I got a lot of irrelevant changes that I forgot to stash, or any old files I won't bother in this particular session.
+At the same time, I got a lot of irrelevant changes that I forgot to stash, or any old files I won't care in a particular session.
 
 This command saves me:
 
