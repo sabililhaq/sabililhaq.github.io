@@ -103,13 +103,13 @@ describe('Vim Dojo learning (pinned package)', () => {
     expect(challengeSource).toContain("category: 'operator'");
     expect(challengeSource).toContain("category: 'text-object'");
     expect(challengeSource).toContain("category: 'visual'");
-    expect(challengeSource.match(/intendedMove:/g)?.length).toBeGreaterThanOrEqual(20);
-    expect(challengeSource.match(/hints:/g)?.length).toBeGreaterThanOrEqual(20);
-    expect(challengeSource.match(/concepts:/g)?.length).toBeGreaterThanOrEqual(20);
+    expect(challengeSource.match(/intendedMove:/g)?.length).toBeGreaterThanOrEqual(26);
+    expect(challengeSource.match(/hints:/g)?.length).toBeGreaterThanOrEqual(26);
+    expect(challengeSource.match(/concepts:/g)?.length).toBeGreaterThanOrEqual(26);
   });
 
   it('covers core keys a learner should practice', () => {
-    for (const move of ['0cw', '$a', 'fecw', 'wcw', 'bcw', 'ct-', 'dd', 'cw', 'dw', 'dW', 'x', 'D', 'ci"', 'ci(', 'ciw', 'ci{', 'daw', 'vec', 'Vd', 'vi"c']) {
+    for (const move of ['0cw', '$a', 'fecw', 'wcw', 'bcw', 'ct-', 'Ftcw', 'ea', 'dd', 'cw', 'dw', 'dW', 'x', 'D', 'C', 'dt"', 'ci"', 'ci(', 'ciw', 'ci{', 'daw', 'ca"', 'vec', 'Vd', 'vi"c', 'viwc']) {
       expect(challengeSource).toContain(`intendedMove: '${move}'`);
     }
   });
