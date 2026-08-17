@@ -121,6 +121,8 @@ const mediumPosts = [...MEDIUM_POSTS].sort(
 	}
 
 	.post-list li {
+		position: relative;
+		isolation: isolate;
 		font-size: 0.95rem;
 		border-bottom: 1px solid rgb(var(--gray-light));
 		padding-bottom: 0.85rem;
@@ -128,6 +130,21 @@ const mediumPosts = [...MEDIUM_POSTS].sort(
 
 	.post-list li:last-child {
 		border-bottom: none;
+	}
+
+	.post-list li::before {
+		content: "";
+		position: absolute;
+		z-index: -1;
+		inset: 0 0 0.85rem;
+		background-color: rgb(var(--row-hover));
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.15s ease;
+	}
+
+	.post-list li:hover::before {
+		opacity: 1;
 	}
 
 	.post-row {
@@ -141,6 +158,12 @@ const mediumPosts = [...MEDIUM_POSTS].sort(
 		font-weight: 600;
 		color: rgb(var(--black));
 		text-decoration: none;
+	}
+
+	.post-list a::after {
+		content: "";
+		position: absolute;
+		inset: 0;
 	}
 
 	.post-list a:hover {

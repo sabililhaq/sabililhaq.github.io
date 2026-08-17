@@ -167,6 +167,8 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 	}
 
 	.recent-posts li {
+		position: relative;
+		isolation: isolate;
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
@@ -174,6 +176,27 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		padding: 0.6rem 0;
 		border-bottom: 1px solid rgb(var(--gray-light));
 		font-size: 0.95rem;
+	}
+
+	.recent-posts li::before {
+		content: "";
+		position: absolute;
+		z-index: -1;
+		inset: 0.6rem 0;
+		background-color: rgb(var(--row-hover));
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.15s ease;
+	}
+
+	.recent-posts li:hover::before {
+		opacity: 1;
+	}
+
+	.recent-posts li a::after {
+		content: "";
+		position: absolute;
+		inset: 0;
 	}
 
 	.all-posts {
