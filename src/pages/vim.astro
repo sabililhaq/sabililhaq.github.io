@@ -43,6 +43,11 @@ import { SITE_TITLE } from '../consts';
     padding-top: 1.4rem;
   }
 
+  /* Package focus ring is clipped by .editor-wrap { overflow: hidden }. */
+  :global([data-vim-dojo-host] .vim-dojo .editor-wrap .cm-editor.cm-focused) {
+    outline: none;
+  }
+
   .dojo-nav {
     display: flex;
     flex-wrap: wrap;

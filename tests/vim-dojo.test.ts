@@ -27,6 +27,8 @@ describe('Vim Dojo site integration', () => {
     expect(source).toContain('href="/vim/roadmap"');
     expect(source.indexOf('data-vim-dojo-host')).toBeLessThan(source.indexOf('class="dojo-nav"'));
     expect(source).toContain('order: -1');
+    expect(source).toContain('.editor-wrap .cm-editor.cm-focused');
+    expect(source).toContain('outline: none');
   });
 
   it('publishes a learning roadmap for category, random, daily, and interactive hints', () => {
