@@ -6,7 +6,7 @@ pubDate: 2026-08-16
 
 When running an AI agent, I often get into this situation:
 
-Agent changes a lot of files, then I need to nitpick all their changes (`git add`).
+Agent changes a lot of files, then I need to nitpick all <a href="#fn-1" id="fnref-1">their changes</a> (`git add`).
 
 At the same time, I got a lot of irrelevant changes that I forgot to stash, or any old files I won't care in a particular session.
 
@@ -48,3 +48,11 @@ Example usage:
 	<img src="/images/blog/sortable-git-status.png" alt="Left: git status. Right: gls, with files sorted by last changed time." />
 	<figcaption>Left: git status. Right: gls. I can see irrelevant files to be added (in this case, .codegraph/.gitignore).</figcaption>
 </figure>
+
+<hr />
+
+<ol class="footnotes">
+<li id="fn-1">
+I could ask the agent to add their changes, but they often make annoying mistakes, they add everything, stash stuff they shouldn't, or stage half the wrong files. <a href="#fnref-1" class="footnote-backref" aria-label="Back to reference">↩</a>
+</li>
+</ol>
