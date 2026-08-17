@@ -34,7 +34,6 @@ const elsewhere = [
 		<main>
 			<article class="prose">
 				<h3>Links</h3>
-				<p class="intro">On this site, and around the web.</p>
 
 				<h2>This site</h2>
 				<ul class="link-list">
@@ -72,13 +71,11 @@ const elsewhere = [
 </html>
 
 <style>
-	.prose h1 {
-		margin-bottom: 1.5rem;
+	.prose h3 {
+		margin-bottom: 1.25rem;
 	}
-	.intro {
-		margin: 0 0 1.5rem;
-		color: rgb(var(--gray));
-		font-size: 1rem;
+	.prose h3 + h2 {
+		margin-top: 0;
 	}
 	.prose h2 {
 		margin-top: 2rem;

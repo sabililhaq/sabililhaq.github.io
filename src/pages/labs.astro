@@ -18,7 +18,6 @@ import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
     <main>
       <article class="prose">
         <h3>Labs</h3>
-        <p class="intro">Things I run for myself. Some I actually use.</p>
         <ul class="link-list">
           {
             LABS.map((lab) => (
@@ -47,13 +46,8 @@ import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 </html>
 
 <style>
-  .prose h1 {
-    margin-bottom: 0.5rem;
-  }
-  .intro {
-    margin: 0 0 1.5rem;
-    color: rgb(var(--gray));
-    font-size: 1rem;
+  .prose h3 {
+    margin-bottom: 1.25rem;
   }
   .link-list {
     list-style: none;

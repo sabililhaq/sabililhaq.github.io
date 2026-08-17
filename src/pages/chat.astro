@@ -19,15 +19,9 @@ import { SITE_TITLE } from '../consts';
         .chat-page h1 {
             font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.25rem;
             line-height: 1.2;
             color: rgb(var(--black));
-        }
-        .chat-page .subtitle {
-            color: rgb(var(--gray));
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            line-height: 1.6;
         }
     </style>
 </head>
@@ -35,7 +29,6 @@ import { SITE_TITLE } from '../consts';
     <Header />
     <main class="chat-page">
         <h1>Chat</h1>
-        <p class="subtitle">Anonymous, temporary, single-room chat. Messages disappear after a short while.</p>
         <ChatWidget />
     </main>
     <Footer />

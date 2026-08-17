@@ -21,7 +21,7 @@ import { SITE_TITLE } from '../consts';
         font-weight: 700;
         margin-bottom: 0.5rem;
       }
-      .qr-page .subtitle {
+      .qr-page .note {
         color: rgb(var(--gray));
         margin-bottom: 2rem;
       }
@@ -31,7 +31,7 @@ import { SITE_TITLE } from '../consts';
     <Header />
     <main class="qr-page">
       <h1>QR Code Generator</h1>
-      <p class="subtitle">Generate QR codes instantly. No data is sent to any server.</p>
+      <p class="note">No data is sent to any server.</p>
       
       <QRGenerator client:load />
     </main>
