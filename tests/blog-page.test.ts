@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { MEDIUM_POSTS, SOCIALS } from '../src/consts';
 
@@ -66,5 +66,34 @@ describe('blog writings', () => {
 
 	it('keeps the Medium profile URL', () => {
 		expect(SOCIALS.medium).toBe('https://sabililhaq.medium.com/');
+	});
+
+	it('shows only the latest post on the home page', () => {
+		expect(homeSource).toContain('.slice(0, 1)');
+	});
+
+	it('reserves existing page slugs so local posts stay at the root', () => {
+		const slugPagePath = fileURLToPath(new URL('../src/pages/[slug].astro', import.meta.url));
+		const slugSource = readFileSync(slugPagePath, 'utf-8');
+		const reserved = [
+			'about',
+			'blog',
+			'chat',
+			'labs',
+			'links',
+			'projects',
+			'qr',
+			'vim',
+		];
+		const localIds = readdirSync(fileURLToPath(new URL('../src/content/blog/', import.meta.url)))
+			.filter((name) => name.endsWith('.md') || name.endsWith('.mdx'))
+			.map((name) => name.replace(/\.mdx?$/, ''));
+
+		for (const slug of reserved) {
+			expect(slugSource).toContain(`'${slug}'`);
+		}
+		expect(slugSource).toContain('conflicts with an existing page');
+		expect(localIds.length).toBeGreaterThan(0);
+		expect(localIds.some((id) => reserved.includes(id))).toBe(false);
 	});
 });
