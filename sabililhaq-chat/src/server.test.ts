@@ -1,11 +1,10 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import type WebSocket from 'ws';
 import { CONFIG } from './config.js';
 import {
   waitForServerReady,
   connectClient,
   expectConnectionRejected,
-  collectMessages,
   waitFor,
 } from './wsTestHelpers.js';
 
@@ -20,6 +19,29 @@ function track(ws: WebSocket): WebSocket {
   return ws;
 }
 
+async function closeTrackedClients(): Promise<void> {
+  const closing = openClients.splice(0, openClients.length);
+  await Promise.all(
+    closing.map(
+      (ws) =>
+        new Promise<void>((resolve) => {
+          if (ws.readyState === ws.CLOSED) {
+            resolve();
+            return;
+          }
+          ws.once('close', () => resolve());
+          try {
+            ws.terminate();
+          } catch {
+            resolve();
+          }
+        }),
+    ),
+  );
+  // Let the server finish its close handlers (presence broadcast, map delete).
+  await new Promise((resolve) => setTimeout(resolve, 50));
+}
+
 describe('chat server (integration)', () => {
   beforeAll(async () => {
     process.env.PORT = String(TEST_PORT);
@@ -30,14 +52,12 @@ describe('chat server (integration)', () => {
     await waitForServerReady(`${HTTP_URL}/config`);
   }, 15000);
 
-  afterAll(() => {
-    for (const ws of openClients) {
-      try {
-        ws.terminate();
-      } catch {
-        // ignore
-      }
-    }
+  afterEach(async () => {
+    await closeTrackedClients();
+  });
+
+  afterAll(async () => {
+    await closeTrackedClients();
   });
 
   it('GET /config returns the public configuration as JSON', async () => {
@@ -66,30 +86,80 @@ describe('chat server (integration)', () => {
     await expectConnectionRejected(WS_URL);
   });
 
-  it('accepts the WebSocket upgrade for an allowed Origin and sends welcome + backlog', async () => {
-    const ws = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(ws) as any[];
+  it('accepts the WebSocket upgrade for an allowed Origin and sends welcome + backlog + presence', async () => {
+    const { ws, messages } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(ws);
+    const frames = messages as any[];
 
-    await waitFor(() => messages.length >= 2);
+    await waitFor(() => frames.some((m) => m.type === 'presence'));
 
-    expect(messages[0]).toMatchObject({ type: 'welcome' });
-    expect(messages[0].nickname).toMatch(/^[a-z]+-[a-z]+$/);
-    expect(messages[0].config).toEqual({
+    expect(frames[0]).toMatchObject({ type: 'welcome' });
+    expect(frames[0].nickname).toMatch(/^[a-z]+-[a-z]+$/);
+    expect(frames[0].config).toEqual({
       expirationSeconds: CONFIG.expirationSeconds,
       maxMessageLength: CONFIG.maxMessageLength,
     });
 
-    expect(messages[1]).toMatchObject({ type: 'backlog' });
-    expect(Array.isArray(messages[1].messages)).toBe(true);
+    expect(frames[1]).toMatchObject({ type: 'backlog' });
+    expect(Array.isArray(frames[1].messages)).toBe(true);
+
+    expect(frames.find((m) => m.type === 'presence')).toEqual({
+      type: 'presence',
+      count: 1,
+    });
+  }, 10000);
+
+  it('broadcasts presence with the live client count on connect and disconnect', async () => {
+    const { ws: a, messages: aMsgsRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    const aMsgs = aMsgsRaw as any[];
+    track(a);
+
+    await waitFor(() => aMsgs.some((m) => m.type === 'presence' && m.count === 1));
+    expect(aMsgs.find((m) => m.type === 'presence')).toEqual({
+      type: 'presence',
+      count: 1,
+    });
+
+    aMsgs.length = 0;
+
+    const { ws: b, messages: bMsgsRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    const bMsgs = bMsgsRaw as any[];
+    track(b);
+
+    await waitFor(
+      () =>
+        aMsgs.some((m) => m.type === 'presence' && m.count === 2) &&
+        bMsgs.some((m) => m.type === 'presence' && m.count === 2),
+    );
+
+    expect(aMsgs.filter((m) => m.type === 'presence').at(-1)).toEqual({
+      type: 'presence',
+      count: 2,
+    });
+    expect(bMsgs.find((m) => m.type === 'presence')).toEqual({
+      type: 'presence',
+      count: 2,
+    });
+
+    aMsgs.length = 0;
+    b.close();
+
+    await waitFor(() => aMsgs.some((m) => m.type === 'presence' && m.count === 1));
+    expect(aMsgs.filter((m) => m.type === 'presence').at(-1)).toEqual({
+      type: 'presence',
+      count: 1,
+    });
   }, 10000);
 
   it('broadcasts a chat message to every connected client, including the sender', async () => {
-    const a = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const b = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const aMsgs = collectMessages(a) as any[];
-    const bMsgs = collectMessages(b) as any[];
+    const { ws: a, messages: aMsgsRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    const { ws: b, messages: bMsgsRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(a);
+    track(b);
+    const aMsgs = aMsgsRaw as any[];
+    const bMsgs = bMsgsRaw as any[];
 
-    await waitFor(() => aMsgs.length >= 2 && bMsgs.length >= 2);
+    await waitFor(() => aMsgs.some((m) => m.type === 'welcome') && bMsgs.some((m) => m.type === 'welcome'));
     aMsgs.length = 0;
     bMsgs.length = 0;
 
@@ -110,9 +180,10 @@ describe('chat server (integration)', () => {
   }, 10000);
 
   it('rejects messages longer than maxMessageLength with an error', async () => {
-    const ws = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(ws) as any[];
-    await waitFor(() => messages.length >= 2);
+    const { ws, messages: messagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(ws);
+    const messages = messagesRaw as any[];
+    await waitFor(() => messages.some((m) => m.type === 'welcome'));
     messages.length = 0;
 
     ws.send(JSON.stringify({ text: 'a'.repeat(CONFIG.maxMessageLength + 1) }));
@@ -122,9 +193,10 @@ describe('chat server (integration)', () => {
   }, 10000);
 
   it('accepts messages exactly at maxMessageLength', async () => {
-    const ws = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(ws) as any[];
-    await waitFor(() => messages.length >= 2);
+    const { ws, messages: messagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(ws);
+    const messages = messagesRaw as any[];
+    await waitFor(() => messages.some((m) => m.type === 'welcome'));
     messages.length = 0;
 
     const text = 'a'.repeat(CONFIG.maxMessageLength);
@@ -136,9 +208,10 @@ describe('chat server (integration)', () => {
   }, 10000);
 
   it('responds with invalid_payload for malformed JSON', async () => {
-    const ws = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(ws) as any[];
-    await waitFor(() => messages.length >= 2);
+    const { ws, messages: messagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(ws);
+    const messages = messagesRaw as any[];
+    await waitFor(() => messages.some((m) => m.type === 'welcome'));
     messages.length = 0;
 
     ws.send('this is not valid json {{{');
@@ -148,9 +221,10 @@ describe('chat server (integration)', () => {
   }, 10000);
 
   it('silently ignores blank/whitespace-only messages without erroring or broadcasting', async () => {
-    const ws = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(ws) as any[];
-    await waitFor(() => messages.length >= 2);
+    const { ws, messages: messagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(ws);
+    const messages = messagesRaw as any[];
+    await waitFor(() => messages.some((m) => m.type === 'welcome'));
     messages.length = 0;
 
     ws.send(JSON.stringify({ text: '   ' }));
@@ -164,9 +238,10 @@ describe('chat server (integration)', () => {
   }, 10000);
 
   it('rate limits a client that sends more messages than the token bucket burst allows', async () => {
-    const ws = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(ws) as any[];
-    await waitFor(() => messages.length >= 2);
+    const { ws, messages: messagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(ws);
+    const messages = messagesRaw as any[];
+    await waitFor(() => messages.some((m) => m.type === 'welcome'));
     messages.length = 0;
 
     const attempts = CONFIG.rateLimit.burst + 1;

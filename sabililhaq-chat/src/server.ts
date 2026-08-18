@@ -72,6 +72,11 @@ function broadcast(payload: unknown): void {
   }
 }
 
+/** Online count for the single room. No nicknames — keep presence anonymous. */
+function broadcastPresence(): void {
+  broadcast({ type: "presence", count: clients.size });
+}
+
 wss.on("connection", (ws) => {
   const nickname = generateNickname();
   clients.set(ws, { nickname, bucket: new TokenBucket() });
@@ -79,6 +84,8 @@ wss.on("connection", (ws) => {
   // Welcome frame: tell the client who they are + replay recent history.
   send(ws, { type: "welcome", nickname, config: toPublicConfig() });
   send(ws, { type: "backlog", messages: getLiveMessages() });
+  // After this client is in the map so count includes them (and everyone else).
+  broadcastPresence();
 
   ws.on("message", (raw: RawData) => {
     const meta = clients.get(ws);
@@ -120,6 +127,7 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     clients.delete(ws);
+    broadcastPresence();
   });
 });
 
