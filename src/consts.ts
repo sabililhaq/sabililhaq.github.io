@@ -152,7 +152,7 @@ export const VIM_DOJO_ROADMAP: RoadmapItem[] = [
     title: "Play by category",
     status: "next",
     summary:
-      "Stay inside one category. ?category=motion loads only that set. Next and Reset stay in the filter.",
+      "Stay inside one category. ?category=motion loads only that set. Next and Previous stay in the filter.",
   },
   {
     id: "random",
@@ -177,10 +177,10 @@ export const VIM_DOJO_ROADMAP: RoadmapItem[] = [
   },
   {
     id: "more-categories",
-    title: "Search, counts, macros, replace",
+    title: "Counts and macros",
     status: "later",
     summary:
-      "New category files after the learning modes exist. Same hand-written case format as today.",
+      "New category files after the learning modes exist. Search and replace already have their own files.",
   },
 ];
 
