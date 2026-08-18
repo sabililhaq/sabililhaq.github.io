@@ -19,13 +19,29 @@ export async function waitForServerReady(url: string, timeoutMs = 5000): Promise
   }
 }
 
-export function connectClient(wsUrl: string, origin?: string): Promise<WebSocket> {
+export type ConnectedClient = {
+  ws: WebSocket;
+  /** Frames received since the socket was created (listener attached before open). */
+  messages: unknown[];
+};
+
+/**
+ * Open a WebSocket and collect frames from the start of the connection.
+ * Attaching the message listener before `open` avoids missing the server's
+ * initial welcome/backlog/presence frames, which are sent in the same tick.
+ */
+export function connectClient(wsUrl: string, origin?: string): Promise<ConnectedClient> {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(wsUrl, origin ? { origin } : undefined);
+    const messages: unknown[] = [];
+
+    ws.on('message', (data) => {
+      messages.push(JSON.parse(data.toString()));
+    });
 
     const onOpen = () => {
       cleanup();
-      resolve(ws);
+      resolve({ ws, messages });
     };
     const onError = (err: Error) => {
       cleanup();

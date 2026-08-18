@@ -15,6 +15,7 @@ describe('src/components/chat/ChatWidget.astro', () => {
   it('exposes the DOM hooks the inline script depends on', () => {
     for (const id of [
       'nickname',
+      'presence',
       'info-toggle',
       'info-panel',
       'expiration-seconds',
@@ -25,6 +26,12 @@ describe('src/components/chat/ChatWidget.astro', () => {
     ]) {
       expect(source).toContain(`id="${id}"`);
     }
+  });
+
+  it('handles presence frames from the WebSocket server', () => {
+    expect(source).toMatch(/case\s+['"]presence['"]/);
+    expect(source).toMatch(/setPresence\(/);
+    expect(source).toMatch(/1 online/);
   });
 
   it('imports the shared profanity filter from filter.ts', () => {

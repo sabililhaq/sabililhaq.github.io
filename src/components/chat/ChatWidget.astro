@@ -6,7 +6,10 @@
 <div class="chat-widget">
 	<div class="chat-topbar">
 		<span class="nickname" id="nickname">connecting…</span>
-		<button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel">ⓘ</button>
+		<div class="topbar-right">
+			<span class="presence" id="presence" aria-live="polite" hidden></span>
+			<button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel">ⓘ</button>
+		</div>
 	</div>
 
 	<div id="info-panel" class="info-panel" hidden>
@@ -65,6 +68,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		min-width: 0;
 	}
 	.nickname::before {
 		content: '';
@@ -72,6 +76,23 @@
 		height: 0.625rem;
 		border-radius: 50%;
 		background: #10b981;
+		flex-shrink: 0;
+	}
+	.chat-widget.inactive .nickname::before,
+	.chat-widget.offline .nickname::before {
+		background: #94a3b8;
+	}
+	.topbar-right {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		flex-shrink: 0;
+	}
+	.presence {
+		font-size: 0.8rem;
+		color: rgb(var(--gray));
+		white-space: nowrap;
+		line-height: 1.4;
 	}
 	#info-toggle {
 		appearance: none;
@@ -332,6 +353,7 @@
 	})();
 
 	const nicknameEl = document.getElementById('nickname');
+	const presenceEl = document.getElementById('presence');
 	const infoToggle = document.getElementById('info-toggle');
 	const infoPanel = document.getElementById('info-panel');
 	const expirationEl = document.getElementById('expiration-seconds');
@@ -351,6 +373,22 @@
 	let reconnectAttempts = 0;
 	const maxReconnectAttempts = 8;
 	let permanentlyDisabled = false;
+
+	function setPresence(count) {
+		if (!presenceEl) return;
+		if (typeof count !== 'number' || !Number.isFinite(count) || count < 1) {
+			presenceEl.hidden = true;
+			presenceEl.textContent = '';
+			return;
+		}
+		const n = Math.floor(count);
+		presenceEl.textContent = n === 1 ? '1 online' : `${n} online`;
+		presenceEl.hidden = false;
+	}
+
+	function clearPresence() {
+		setPresence(0);
+	}
 
 	// Wire info-panel toggle behavior: keep `aria-expanded` and `hidden` in sync.
 	if (infoToggle && infoPanel) {
@@ -419,6 +457,7 @@
 		// Prevent creating multiple sockets simultaneously.
 		if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
 		setStatus('Connecting…');
+		clearPresence();
 		isConnected = false;
 		widgetEl?.classList.add('inactive');
 		if (connectTimer) clearTimeout(connectTimer);
@@ -473,6 +512,10 @@
 					}
 					break;
 
+				case 'presence':
+					setPresence(data.count);
+					break;
+
 				case 'ping':
 					ws.send(JSON.stringify({ type: 'pong' }));
 					break;
@@ -496,6 +539,7 @@
 			console.warn('[chat] closed:', event);
 			ws = null;
 			isConnected = false;
+			clearPresence();
 			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
 			widgetEl?.classList.add('inactive');
 
@@ -520,6 +564,7 @@
 			if (socketHandled) return; socketHandled = true;
 			console.error('[chat] error:', error);
 			isConnected = false;
+			clearPresence();
 			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
 			widgetEl?.classList.add('inactive');
 

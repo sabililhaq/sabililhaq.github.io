@@ -4,7 +4,6 @@ import {
   waitForServerReady,
   connectClient,
   expectConnectionRejected,
-  collectMessages,
   waitFor,
 } from './wsTestHelpers.js';
 
@@ -50,9 +49,10 @@ describe('chat server maxConnections enforcement', () => {
   });
 
   it('accepts a connection while under the limit, then rejects the next one', async () => {
-    const first = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const firstMessages = collectMessages(first) as any[];
-    await waitFor(() => firstMessages.length >= 2);
+    const { ws: first, messages: firstMessagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(first);
+    const firstMessages = firstMessagesRaw as any[];
+    await waitFor(() => firstMessages.some((m) => m.type === 'welcome'));
 
     await expectConnectionRejected(WS_URL, ALLOWED_ORIGIN);
   }, 10000);
@@ -68,9 +68,10 @@ describe('chat server maxConnections enforcement', () => {
     // Give the server's `close` handler a moment to remove the client.
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    const second = track(await connectClient(WS_URL, ALLOWED_ORIGIN));
-    const messages = collectMessages(second) as any[];
-    await waitFor(() => messages.length >= 2);
+    const { ws: second, messages: messagesRaw } = await connectClient(WS_URL, ALLOWED_ORIGIN);
+    track(second);
+    const messages = messagesRaw as any[];
+    await waitFor(() => messages.some((m) => m.type === 'welcome'));
 
     expect(messages[0]).toMatchObject({ type: 'welcome' });
   }, 10000);
