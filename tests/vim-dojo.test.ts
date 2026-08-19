@@ -107,13 +107,13 @@ describe('Vim Dojo learning (pinned package)', () => {
     expect(challengeSource).toContain("category: 'visual'");
     expect(challengeSource).toContain("category: 'search'");
     expect(challengeSource).toContain("category: 'replace'");
-    expect(challengeSource.match(/intendedMove:/g)?.length).toBeGreaterThanOrEqual(41);
-    expect(challengeSource.match(/hints:/g)?.length).toBeGreaterThanOrEqual(41);
-    expect(challengeSource.match(/concepts:/g)?.length).toBeGreaterThanOrEqual(41);
+    expect(challengeSource.match(/intendedMove:/g)?.length).toBeGreaterThanOrEqual(47);
+    expect(challengeSource.match(/hints:/g)?.length).toBeGreaterThanOrEqual(47);
+    expect(challengeSource.match(/concepts:/g)?.length).toBeGreaterThanOrEqual(47);
   });
 
   it('covers core keys a learner should practice', () => {
-    for (const move of ['0cw', '$a', 'fecw', 'wcw', 'bcw', 'ct-', 'Ftcw', 'ea', 'dT"', '%a', 'Gcw', 'dd', 'cw', 'dw', 'dW', 'x', 'D', 'C', 'dt"', 'r', 'cc', 'Gdd', 'ci"', 'ci(', 'ciw', 'ci{', 'daw', 'ca"', "ci'", 'Gci"', 'vec', 'Vd', 'vi"c', 'viwc', 'vi(c', 'GVkkd', '/legacycw', '/betanci"', '*cw', ':s/colour/color', ':%s/colour/color/g']) {
+    for (const move of ['0cw', '$a', 'fecw', 'wcw', 'bcw', 'ct-', 'Ftcw', 'ea', 'dT"', '%a', 'Gcw', '^cw', 'dd', 'cw', 'dw', 'dW', 'x', 'D', 'C', 'dt"', 'r', 'cc', 'Gdd', 'xp', 'ci"', 'ci(', 'ciw', 'ci{', 'daw', 'ca"', "ci'", 'Gci"', 'ci[', 'vec', 'Vd', 'vi"c', 'viwc', 'vi(c', 'GVkkd', 'vi{c', '/legacycw', '/betanci"', '*cw', '#cw', ':s/colour/color', ':%s/colour/color/g', ':s/colour/color/g']) {
       expect(
         challengeSource.includes(`intendedMove: '${move}'`)
           || challengeSource.includes(`intendedMove: "${move}"`),
