@@ -31,12 +31,19 @@ describe('censorMessage', () => {
     expect(result.censored).toBe('********** is loud');
   });
 
-  it('censors a known default-dataset profanity term', () => {
-    const result = censorMessage('what the shit is going on');
+  it('censors a known Indonesian-dataset profanity term', () => {
+    const result = censorMessage('dasar anjing lu');
 
     expect(result.hadMatch).toBe(true);
-    expect(result.censored).not.toContain('shit');
+    expect(result.censored).not.toContain('anjing');
     expect(result.censored).toContain('*');
+  });
+
+  it('does not apply the English dataset', () => {
+    const result = censorMessage('what the shit is going on');
+
+    expect(result.hadMatch).toBe(false);
+    expect(result.censored).toBe('what the shit is going on');
   });
 
   it('preserves the overall string length when masking matches', () => {

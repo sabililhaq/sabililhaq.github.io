@@ -159,19 +159,32 @@
     }
   });
 
-  const input = document.getElementById("qr-input");
-  const sizeInput = document.getElementById("qr-size");
-  const ecSelect = document.getElementById("qr-ec");
-  const colorInput = document.getElementById("qr-color");
-  const container = document.getElementById("qr-code");
+  function requireEl<T extends HTMLElement>(
+    id: string,
+    ctor: { new (): T } | (new (...args: never[]) => T),
+  ): T {
+    const el = document.getElementById(id);
+    if (!(el instanceof ctor)) {
+      throw new Error(`QR generator markup is missing #${id}`);
+    }
+    return el;
+  }
+
+  const input = requireEl("qr-input", HTMLTextAreaElement);
+  const sizeInput = requireEl("qr-size", HTMLInputElement);
+  const ecSelect = requireEl("qr-ec", HTMLSelectElement);
+  const colorInput = requireEl("qr-color", HTMLInputElement);
+  const container = requireEl("qr-code", HTMLElement);
+  const downloadPng = requireEl("download-png", HTMLButtonElement);
+  const downloadSvg = requireEl("download-svg", HTMLButtonElement);
 
   qrCode.append(container);
 
   function updateQR() {
     const data = input.value.trim() || "https://sabililhaq.com";
-    const size = parseInt(sizeInput.value) || 300;
+    const size = parseInt(sizeInput.value, 10) || 300;
     const color = colorInput.value;
-    const ec = ecSelect.value;
+    const ec = ecSelect.value as "L" | "M" | "Q" | "H";
 
     qrCode.update({
       width: size,
@@ -187,11 +200,11 @@
   ecSelect.addEventListener("change", updateQR);
   colorInput.addEventListener("input", updateQR);
 
-  document.getElementById("download-png").addEventListener("click", () => {
+  downloadPng.addEventListener("click", () => {
     qrCode.download({ name: "qr-code", extension: "png" });
   });
 
-  document.getElementById("download-svg").addEventListener("click", () => {
+  downloadSvg.addEventListener("click", () => {
     qrCode.download({ name: "qr-code", extension: "svg" });
   });
 </script>

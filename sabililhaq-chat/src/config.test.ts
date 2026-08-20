@@ -46,15 +46,18 @@ describe('config', () => {
       expect(CONFIG.allowedOrigins).not.toContain('http://localhost:4321');
     });
 
-    it('re-includes localhost origins in production when ALLOW_LOCALHOST=1', async () => {
+    it('never includes localhost origins in production, even when ALLOW_LOCALHOST=1', async () => {
       process.env.NODE_ENV = 'production';
       process.env.ALLOW_LOCALHOST = '1';
 
       const { CONFIG } = await loadConfig();
 
-      expect(CONFIG.allowedOrigins).toEqual(
-        expect.arrayContaining(['http://localhost:4321', 'http://127.0.0.1:4321']),
-      );
+      expect(CONFIG.allowedOrigins).toEqual([
+        'https://sabililhaq.com',
+        'https://www.sabililhaq.com',
+      ]);
+      expect(CONFIG.allowedOrigins).not.toContain('http://localhost:4321');
+      expect(CONFIG.allowedOrigins).not.toContain('http://127.0.0.1:4321');
     });
 
     it('does not re-include localhost origins in production for other ALLOW_LOCALHOST values', async () => {
