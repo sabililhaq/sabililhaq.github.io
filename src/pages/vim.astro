@@ -19,8 +19,6 @@ import { SITE_TITLE } from '../consts';
       <div data-vim-dojo-host></div>
       <p class="dojo-nav">
         <a href="/vim/roadmap">Roadmap</a>
-        <span aria-hidden="true">·</span>
-        <span>category · random · daily · interactive hints</span>
       </p>
     </main>
     <Footer />
@@ -30,22 +28,6 @@ import { SITE_TITLE } from '../consts';
 <style>
   main {
     padding-top: 1rem;
-  }
-
-  :global([data-vim-dojo-host] .challenge-shell) {
-    order: -1;
-  }
-
-  :global([data-vim-dojo-host] .intro) {
-    border-bottom: none;
-    padding-bottom: 0;
-    border-top: 1px solid rgb(var(--gray-light));
-    padding-top: 1.4rem;
-  }
-
-  /* Package focus ring is clipped by .editor-wrap { overflow: hidden }. */
-  :global([data-vim-dojo-host] .vim-dojo .editor-wrap .cm-editor.cm-focused) {
-    outline: none;
   }
 
   .dojo-nav {

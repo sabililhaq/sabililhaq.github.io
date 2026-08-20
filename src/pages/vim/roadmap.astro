@@ -2,7 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { ROADMAP_GROUPS, SITE_TITLE, VIM_DOJO_ROADMAP } from '../../consts';
+import { SITE_TITLE } from '../../consts';
 ---
 
 <!doctype html>
@@ -29,28 +29,11 @@ import { ROADMAP_GROUPS, SITE_TITLE, VIM_DOJO_ROADMAP } from '../../consts';
         <p class="intro">
           No accounts. No leaderboards. No skill trees.
         </p>
-
-        {
-          ROADMAP_GROUPS.map((group) => {
-            const items = VIM_DOJO_ROADMAP.filter((item) => item.status === group.id);
-            if (items.length === 0) return null;
-
-            return (
-              <section class="group">
-                <h2>{group.label}</h2>
-                <ul class="items">
-                  {items.map((item) => (
-                    <li>
-                      <h4>{item.title}</h4>
-                      <p>{item.summary}</p>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })
-        }
-
+        <p class="intro">
+          Category play, random review, and a daily kata are in the dojo.
+          Interactive hints are next: teach in the buffer, starting with a
+          target highlight and then ghosting the next intended key.
+        </p>
         <p class="source">
           The long form lives in the{' '}
           <a href="https://github.com/sabililhaq/vim-dojo/blob/main/ROADMAP.md" target="_blank" rel="noopener noreferrer">vim-dojo repo</a>.
@@ -80,41 +63,6 @@ import { ROADMAP_GROUPS, SITE_TITLE, VIM_DOJO_ROADMAP } from '../../consts';
     margin: 0 0 1rem;
     color: rgb(var(--gray));
     font-size: 1rem;
-  }
-
-  .group {
-    margin: 1.75rem 0 0;
-  }
-
-  .group h2 {
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgb(var(--gray));
-    margin: 0 0 1rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid rgb(var(--gray-light));
-  }
-
-  .items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.15rem;
-  }
-
-  .items h4 {
-    font-size: 1rem;
-    margin: 0 0 0.25rem;
-  }
-
-  .items p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: rgb(var(--gray-dark));
   }
 
   .source {

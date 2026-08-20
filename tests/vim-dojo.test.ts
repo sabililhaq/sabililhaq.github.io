@@ -1,18 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { LABS, PROJECTS, ROADMAP_GROUPS, VIM_DOJO_ROADMAP } from '../src/consts';
+import { LABS, PROJECTS } from '../src/consts';
 
 const vimPagePath = fileURLToPath(new URL('../src/pages/vim.astro', import.meta.url));
 const roadmapPagePath = fileURLToPath(new URL('../src/pages/vim/roadmap.astro', import.meta.url));
 const projectsPagePath = fileURLToPath(new URL('../src/pages/projects.astro', import.meta.url));
 const labsPagePath = fileURLToPath(new URL('../src/pages/labs.astro', import.meta.url));
 const pkgPath = fileURLToPath(new URL('../package.json', import.meta.url));
-const dojoRoot = fileURLToPath(new URL('../node_modules/vim-dojo/', import.meta.url));
-
-function readDojo(relativePath: string): string {
-  return readFileSync(new URL(relativePath, `file://${dojoRoot}`), 'utf-8');
-}
 
 describe('Vim Dojo site integration', () => {
   it('adds a /vim page using the shared layout pieces', () => {
@@ -26,40 +21,26 @@ describe('Vim Dojo site integration', () => {
     expect(source).toContain("basePath: '/vim'");
     expect(source).toContain('href="/vim/roadmap"');
     expect(source.indexOf('data-vim-dojo-host')).toBeLessThan(source.indexOf('class="dojo-nav"'));
-    expect(source).toContain('order: -1');
-    expect(source).toContain('.editor-wrap .cm-editor.cm-focused');
-    expect(source).toContain('outline: none');
+    expect(source).not.toContain('order: -1');
+    expect(source).not.toContain('category · random · daily · interactive hints');
   });
 
-  it('publishes a learning roadmap for category, random, daily, and interactive hints', () => {
+  it('points the learning roadmap at the vim-dojo repo instead of copying it', () => {
     const project = PROJECTS.find((entry) => entry.id === 'vim-dojo');
     const page = readFileSync(roadmapPagePath, 'utf-8');
     const projectsPage = readFileSync(projectsPagePath, 'utf-8');
-    const ids = VIM_DOJO_ROADMAP.map((item) => item.id);
 
     expect(project?.roadmap).toBe('/vim/roadmap');
     expect(projectsPage).toContain('project.roadmap');
-    expect(page).toContain('VIM_DOJO_ROADMAP');
     expect(page).toMatch(/learning tool/i);
-    expect(ids).toEqual(expect.arrayContaining([
-      'category-play',
-      'random',
-      'daily',
-      'interactive-hints',
-    ]));
-    expect(ids).not.toContain('learning');
-    expect(ids).not.toContain('categorized');
-    expect(ids).not.toContain('hints');
-    expect(ROADMAP_GROUPS.some((group) => group.label === 'Shipped')).toBe(false);
-
-    const random = VIM_DOJO_ROADMAP.find((item) => item.id === 'random');
-    const daily = VIM_DOJO_ROADMAP.find((item) => item.id === 'daily');
-    const interactive = VIM_DOJO_ROADMAP.find((item) => item.id === 'interactive-hints');
-
-    expect(random?.status).toBe('next');
-    expect(daily?.status).toBe('next');
-    expect(interactive?.status).toBe('next');
-    expect(interactive?.summary).toMatch(/ghost/i);
+    expect(page).toContain('https://github.com/sabililhaq/vim-dojo/blob/main/ROADMAP.md');
+    expect(page).toMatch(/category play/i);
+    expect(page).toMatch(/random review/i);
+    expect(page).toMatch(/daily kata/i);
+    expect(page).toMatch(/interactive hints/i);
+    expect(page).toMatch(/ghost/i);
+    expect(page).not.toContain('VIM_DOJO_ROADMAP');
+    expect(page).not.toContain('ROADMAP_GROUPS');
   });
 
   it('links Vim Dojo from the labs page as an internal lab', () => {
@@ -89,46 +70,5 @@ describe('Vim Dojo site integration', () => {
 
     expect(pkg.dependencies['vim-dojo']).toMatch(/^(file:|github:)/);
     expect(pkg.dependencies['@replit/codemirror-vim']).toBeUndefined();
-  });
-});
-
-describe('Vim Dojo learning (pinned package)', () => {
-  const challengeFiles = readdirSync(new URL('src/challenges/', `file://${dojoRoot}`))
-    .filter((name) => name.endsWith('.ts') && name !== 'index.ts' && name !== 'types.ts')
-    .map((name) => readDojo(`src/challenges/${name}`));
-  const challengeSource = challengeFiles.join('\n');
-  const template = readDojo('src/template.ts');
-  const mount = readDojo('src/mount.ts');
-
-  it('ships a hinted curriculum across motion, operator, text-object, and visual', () => {
-    expect(challengeSource).toContain("category: 'motion'");
-    expect(challengeSource).toContain("category: 'operator'");
-    expect(challengeSource).toContain("category: 'text-object'");
-    expect(challengeSource).toContain("category: 'visual'");
-    expect(challengeSource).toContain("category: 'search'");
-    expect(challengeSource).toContain("category: 'replace'");
-    expect(challengeSource.match(/intendedMove:/g)?.length).toBeGreaterThanOrEqual(47);
-    expect(challengeSource.match(/hints:/g)?.length).toBeGreaterThanOrEqual(47);
-    expect(challengeSource.match(/concepts:/g)?.length).toBeGreaterThanOrEqual(47);
-  });
-
-  it('covers core keys a learner should practice', () => {
-    for (const move of ['0cw', '$a', 'fecw', 'wcw', 'bcw', 'ct-', 'Ftcw', 'ea', 'dT"', '%a', 'Gcw', '^cw', 'dd', 'cw', 'dw', 'dW', 'x', 'D', 'C', 'dt"', 'r', 'cc', 'Gdd', 'xp', 'ci"', 'ci(', 'ciw', 'ci{', 'daw', 'ca"', "ci'", 'Gci"', 'ci[', 'vec', 'Vd', 'vi"c', 'viwc', 'vi(c', 'GVkkd', 'vi{c', '/legacycw', '/betanci"', '*cw', '#cw', ':s/colour/color', ':%s/colour/color/g', ':s/colour/color/g']) {
-      expect(
-        challengeSource.includes(`intendedMove: '${move}'`)
-          || challengeSource.includes(`intendedMove: "${move}"`),
-        move,
-      ).toBe(true);
-    }
-  });
-
-  it('points beginners to VimHero and teaches the intended move after a solve', () => {
-    expect(template).toContain('Practice Vim. Don\'t learn Vim.');
-    expect(template).toContain('https://www.vim-hero.com/lessons/basic-movement');
-    expect(template).toContain('data-hint-button');
-    expect(mount).toContain('function renderHint');
-    expect(mount).toContain('was the intended move.');
-    expect(mount).toContain('You pasted the solution.');
-    expect(mount).toContain('missed some Vim practice');
   });
 });
