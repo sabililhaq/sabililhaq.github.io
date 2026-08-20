@@ -31,6 +31,15 @@ describe('labs', () => {
     }
   });
 
+  it('adds a Terbilang entry pointing at the new /terbilang route', () => {
+    const terbilang = LABS.find((lab) => lab.label === 'Terbilang');
+
+    expect(terbilang).toBeDefined();
+    expect(terbilang!.url).toBe('/terbilang');
+    expect(terbilang!.description).toMatch(/indonesian/i);
+    expect(terbilang!.url.startsWith('http')).toBe(false);
+  });
+
   it('uses a relative, non-external URL for the chat entry so it is not opened in a new tab', () => {
     const chat = LABS.find((lab) => lab.label === 'Chat');
     expect(chat!.url.startsWith('http')).toBe(false);

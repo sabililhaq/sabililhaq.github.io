@@ -228,6 +228,12 @@ export const LABS: Lab[] = [
     description: "Generate QR codes instantly from URL",
     note: "runs in the browser",
   },
+  {
+    label: "Terbilang",
+    url: "/terbilang",
+    description: "Turn numbers into Indonesian words",
+    note: "runs in the browser",
+  },
 ];
 
 export type SkillGroup = {

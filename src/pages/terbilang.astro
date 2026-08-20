@@ -1,0 +1,42 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Terbilang from '../components/terbilang/Terbilang.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Terbilang | ${SITE_TITLE}`}
+			description="Turn numbers into Indonesian words. Nothing is sent anywhere."
+		/>
+		<style>
+			.tb-page {
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 2.5rem 1.25rem;
+			}
+			.tb-page h1 {
+				font-size: 1.875rem;
+				font-weight: 700;
+				margin-bottom: 0.5rem;
+			}
+			.tb-page .note {
+				color: rgb(var(--gray));
+				margin-bottom: 2rem;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="tb-page">
+			<h1>Terbilang</h1>
+			<p class="note">Numbers to Indonesian words. Nothing is sent anywhere.</p>
+			<Terbilang />
+		</main>
+		<Footer />
+	</body>
+</html>

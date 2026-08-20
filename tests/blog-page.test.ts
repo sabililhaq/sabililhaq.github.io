@@ -83,6 +83,7 @@ describe('blog writings', () => {
 			'links',
 			'projects',
 			'qr',
+			'terbilang',
 			'vim',
 		];
 		const localIds = readdirSync(fileURLToPath(new URL('../src/content/blog/', import.meta.url)))
