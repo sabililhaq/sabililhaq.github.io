@@ -26,11 +26,12 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		<Header />
 		<main>
 			<section class="intro">
-				<h1>Hi, I'm <span class="name">{SITE_SHORT_NAME}</span></h1>
+				<h1>Hi, I'm {SITE_SHORT_NAME}</h1>
 				<p>
 					I'm a Software Engineer, currently doing backend and distributed systems stuff @ Samsung Indonesia.
 					I enjoy building products and being part of the full engineering process.
-					<br><br>
+				</p>
+				<p>
 					I treat this site as my personal playground and showcase.
 					Check <a href="/labs">labs</a> for random stuff i deployed,
 					or look around my <a href="/projects">projects</a> and <a href="/blog">blogs</a>.
@@ -61,7 +62,7 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 			{posts.length > 0 && (
 				<section class="recent-posts">
 					<h2>Recent posts</h2>
-					<ul>
+					<ul class="hover-list">
 						{posts.map((post) => (
 							<li>
 								<a
@@ -71,7 +72,7 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 								>
 									{post.title}
 								</a>
-								<span class="post-date"><FormattedDate date={post.pubDate} /></span>
+								<div class="post-date"><FormattedDate date={post.pubDate} /></div>
 							</li>
 						))}
 					</ul>
@@ -84,153 +85,94 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 </html>
 
 <style>
-	main {
-		max-width: 680px;
-	}
-
 	.intro {
-		margin-bottom: 2.5rem;
-		padding-top: 2rem;
+		margin-bottom: 2.75rem;
+		padding-top: 1.25rem;
 	}
 
 	.intro h1 {
 		font-size: 1.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.name {
-		color: var(--accent);
+		margin-bottom: 0.85rem;
+		letter-spacing: -0.02em;
 	}
 
 	.intro p {
-		margin-bottom: 0.75rem;
-		font-size: 0.95rem;
+		margin-bottom: 1rem;
 		color: rgb(var(--gray-dark));
-		line-height: 1.65;
+	}
+
+	.intro-links {
+		margin-top: 0.35rem;
 	}
 
 	.intro-links a {
-		font-size: 0.9rem;
+		font-size: 0.95rem;
 		color: rgb(var(--gray));
 		text-decoration: none;
+		box-shadow: none;
 	}
 
 	.intro-links a:hover {
 		color: var(--accent);
 		text-decoration: underline;
+		text-underline-offset: 0.18em;
 	}
 
 	.labs,
 	.recent-posts {
-		margin-bottom: 2.25rem;
+		margin-bottom: 2.5rem;
 	}
 
 	.labs h2,
 	.recent-posts h2 {
-		font-size: 1rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: rgb(var(--gray));
-		margin-bottom: 0.75rem;
-		border-bottom: none;
+		font-size: 1.05rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		margin: 0 0 0.85rem;
 	}
 
 	.lab-names a,
 	.recent-posts li a {
-		color: rgb(var(--black));
+		color: var(--accent);
 		text-decoration: none;
-		font-weight: 600;
+		box-shadow: 0 1px 0 0 currentColor;
+		font-weight: 700;
 	}
 
 	.lab-names a:hover,
 	.recent-posts li a:hover {
-		text-decoration: underline;
-		color: var(--accent);
+		box-shadow: none;
 	}
 
 	.lab-names {
 		margin: 0;
-		font-size: 0.95rem;
-		line-height: 1.7;
+		line-height: 1.8;
 	}
 
 	.dot {
-		color: rgb(var(--gray-light));
+		color: rgb(var(--gray));
 		font-weight: 400;
 	}
 
 	.recent-posts ul {
-		list-style: none;
 		margin: 0 0 1rem;
-		padding: 0;
-	}
-
-	.recent-posts li {
-		position: relative;
-		isolation: isolate;
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-		gap: 1rem;
-		padding: 0.6rem 0;
-		border-bottom: 1px solid rgb(var(--gray-light));
-		font-size: 0.95rem;
-	}
-
-	.recent-posts li::before {
-		content: "";
-		position: absolute;
-		z-index: -1;
-		inset: 0.6rem 0;
-		background-color: rgb(var(--row-hover));
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.15s ease;
-	}
-
-	.recent-posts li:hover::before {
-		opacity: 1;
-	}
-
-	.recent-posts li a::after {
-		content: "";
-		position: absolute;
-		inset: 0;
 	}
 
 	.all-posts {
-		font-size: 0.9rem;
+		font-size: 0.95rem;
 		color: rgb(var(--gray));
 		text-decoration: none;
-		font-weight: 400;
 	}
 
 	.all-posts:hover {
 		color: var(--accent);
 		text-decoration: underline;
+		text-underline-offset: 0.18em;
 	}
 
 	.post-date {
 		color: rgb(var(--gray));
-		font-size: 0.8rem;
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
-	@media (max-width: 640px) {
-		.intro h1 {
-			font-size: 1.25rem;
-		}
-
-		.recent-posts li {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.25rem;
-		}
-
-		.post-date {
-			font-size: 0.75rem;
-		}
+		font-size: 0.9rem;
+		margin-top: 0.2rem;
 	}
 </style>

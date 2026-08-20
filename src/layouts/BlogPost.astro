@@ -12,84 +12,156 @@ type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
+<!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				font-size: 16px;
+				padding-top: 1.75rem;
 			}
-			.prose {
+			.post {
 				width: 100%;
-				max-width: 720px;
-				margin: auto;
 				color: rgb(var(--gray-dark));
-				box-sizing: border-box;
+				font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Times New Roman', serif;
+				font-size: 1.0625rem;
+				line-height: 1.75;
 			}
-			.prose :global(p) {
-				margin-bottom: 1em;
-				font-size: 1em;
+			.back {
+				margin: 0 0 1.25rem;
+				font-family: var(--font-atkinson);
+				font-size: 0.9rem;
+			}
+			.back a {
+				color: rgb(var(--gray));
+				text-decoration: none;
+			}
+			.back a:hover {
+				color: var(--accent);
+				text-decoration: underline;
+				text-underline-offset: 0.18em;
 			}
 			.hero-image {
-				margin-bottom: 1.5rem;
+				margin: 0 0 1.75rem;
 			}
 			.hero-image img {
 				display: block;
 				width: 100%;
-				border-radius: 12px;
+				border-radius: 0;
 			}
 			.title {
-				margin-bottom: 1.5rem;
+				margin-bottom: 1.75rem;
 			}
 			.title h1 {
-				margin: 0 0 0.4rem;
-				font-size: 1.4rem;
+				margin: 0 0 0.55rem;
+				font-family: var(--font-atkinson);
+				font-size: 2.1rem;
+				font-weight: 700;
+				letter-spacing: -0.03em;
+				line-height: 1.2;
+				color: rgb(var(--black));
 			}
 			.date {
-				margin-bottom: 0.35rem;
 				color: rgb(var(--gray));
-				font-size: 0.85rem;
+				font-family: var(--font-atkinson);
+				font-size: 0.9rem;
+				line-height: 1.4;
 			}
 			.last-updated-on {
 				font-style: italic;
 			}
-			.prose :global(figure) {
-				margin: 0 0 1.5em;
+			.post :global(p) {
+				margin: 0 0 1.75rem;
 			}
-			.prose :global(figcaption) {
-				margin-top: 0.5rem;
-				color: rgb(var(--gray));
-				font-size: 0.8rem;
+			.post :global(p:last-child) {
+				margin-bottom: 0;
 			}
-			/* Sean-style footnote links: underline the word, jump to notes, jump back */
-			.prose :global(a) {
+			.post :global(a) {
 				color: var(--accent);
+				text-decoration: none;
+				box-shadow: 0 1px 0 0 currentColor;
+			}
+			.post :global(a:hover),
+			.post :global(a:active) {
+				box-shadow: none;
+			}
+			.post :global(h2),
+			.post :global(h3) {
+				font-family: var(--font-atkinson);
+				margin: 2.4rem 0 0.9rem;
+				line-height: 1.25;
+			}
+			.post :global(ul),
+			.post :global(ol) {
+				margin: 0 0 1.75rem;
+				padding-left: 1.4rem;
+			}
+			.post :global(li) {
+				margin-bottom: 0.55rem;
+			}
+			.post :global(li > p) {
+				margin-bottom: 0.55rem;
+			}
+			.post :global(strong) {
+				color: rgb(var(--black));
+			}
+			.post :global(figure) {
+				margin: 0 0 1.75rem;
+			}
+			.post :global(figcaption) {
+				margin-top: 0.55rem;
+				color: rgb(var(--gray));
+				font-family: var(--font-atkinson);
+				font-size: 0.85rem;
+				line-height: 1.45;
+			}
+			.post :global(img) {
+				border-radius: 0;
+			}
+			.post :global(blockquote) {
+				border-left: 4px solid rgb(var(--gray-light));
+				margin: 0 0 1.75rem;
+				padding: 0 0 0 1rem;
+				color: rgb(var(--gray));
+				font-size: 1rem;
+				font-style: normal;
+			}
+			.post :global(hr) {
+				border: none;
+				border-top: 1px solid rgb(var(--gray-light));
+				margin: 2.4rem 0 1.5rem;
+			}
+			.post :global(pre) {
+				margin: 0 0 1.75rem;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			}
+			.post :global(p code),
+			.post :global(li code) {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.86em;
+			}
+			.post :global(ol.footnotes) {
+				margin: 0;
+				padding-left: 1.4rem;
+				color: rgb(var(--gray));
+				font-size: 0.92em;
+				font-family: var(--font-atkinson);
+			}
+			.post :global(ol.footnotes li) {
+				margin-bottom: 0.75em;
+			}
+			.post :global(a.footnote-backref) {
+				box-shadow: none;
+				margin-left: 0.15em;
+			}
+			.post :global(a.footnote-backref:hover) {
 				text-decoration: underline;
 				text-underline-offset: 0.15em;
 			}
-			.prose :global(a:hover) {
-				text-decoration-thickness: 2px;
-			}
-			.prose :global(hr) {
-				border: none;
-				border-top: 1px solid rgb(var(--gray-light));
-				margin: 2em 0 1.25em;
-			}
-			.prose :global(ol.footnotes) {
-				margin: 0 0 1.5em;
-				padding-left: 1.4em;
-				color: rgb(var(--gray-dark));
-				font-size: 0.92em;
-			}
-			.prose :global(ol.footnotes li) {
-				margin-bottom: 0.75em;
-			}
-			.prose :global(a.footnote-backref) {
-				text-decoration: none;
-				margin-left: 0.15em;
-			}
-			.prose :global(a.footnote-backref:hover) {
-				text-decoration: underline;
+			@media (max-width: 480px) {
+				.title h1 {
+					font-size: 1.7rem;
+				}
 			}
 		</style>
 	</head>
@@ -97,26 +169,31 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
+			<article class="post">
+				<p class="back">
+					<a href="/blog">← Blog</a>
+				</p>
+				{
+					heroImage && (
+						<div class="hero-image">
+							<Image width={1020} height={510} src={heroImage} alt="" />
 						</div>
-						<h1>{title}</h1>
+					)
+				}
+				<div class="title">
+					<h1>{title}</h1>
+					<div class="date">
+						<FormattedDate date={pubDate} />
+						{
+							updatedDate && (
+								<div class="last-updated-on">
+									Last updated on <FormattedDate date={updatedDate} />
+								</div>
+							)
+						}
 					</div>
-					<slot />
 				</div>
+				<slot />
 			</article>
 		</main>
 		<Footer />

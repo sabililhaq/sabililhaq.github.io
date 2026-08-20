@@ -32,11 +32,11 @@ const elsewhere = [
 	<body>
 		<Header />
 		<main>
-			<article class="prose">
-				<h3>Links</h3>
+			<article>
+				<h1 class="page-title">Links</h1>
 
 				<h2>This site</h2>
-				<ul class="link-list">
+				<ul class="link-list hover-list">
 					{
 						siteLinks.map((link) => (
 							<li>
@@ -48,7 +48,7 @@ const elsewhere = [
 				</ul>
 
 				<h2>Elsewhere</h2>
-				<ul class="link-list">
+				<ul class="link-list hover-list">
 					{
 						elsewhere.map((link) => (
 							<li>
@@ -71,70 +71,38 @@ const elsewhere = [
 </html>
 
 <style>
-	.prose h3 {
-		margin-bottom: 1.25rem;
-	}
-	.prose h3 + h2 {
-		margin-top: 0;
-	}
-	.prose h2 {
+	h2 {
 		margin-top: 2rem;
 		margin-bottom: 1rem;
-		font-size: 0.85rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: rgb(var(--gray));
-		padding-bottom: 0.4rem;
-		border-bottom: 1px solid rgb(var(--gray-light));
+		font-size: 1.05rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		padding-top: 0.25rem;
+		border-top: 1px solid rgb(var(--gray-light));
+	}
+	h1 + h2 {
+		margin-top: 0;
+		border-top: none;
+		padding-top: 0;
 	}
 	.link-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.85rem;
+		margin-bottom: 0.5rem;
 	}
 	.link-list li {
-		position: relative;
-		isolation: isolate;
-		font-size: 1rem;
-		border-bottom: 1px solid rgb(var(--gray-light));
-		padding-bottom: 0.85rem;
-	}
-	.link-list li:last-child {
-		border-bottom: none;
-	}
-	.link-list li::before {
-		content: "";
-		position: absolute;
-		z-index: -1;
-		inset: 0 0 0.85rem;
-		background-color: rgb(var(--row-hover));
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.15s ease;
-	}
-	.link-list li:hover::before {
-		opacity: 1;
+		line-height: 1.5;
 	}
 	.link-list a {
-		font-weight: 600;
-		color: rgb(var(--black));
-		text-decoration: none;
-	}
-	.link-list a::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-	}
-	.link-list a:hover {
-		text-decoration: underline;
+		font-weight: 700;
 		color: var(--accent);
+		text-decoration: none;
+		box-shadow: 0 1px 0 0 currentColor;
+	}
+	.link-list a:hover,
+	.link-list a:active {
+		box-shadow: none;
 	}
 	.desc {
 		color: rgb(var(--gray));
-		font-size: 0.9rem;
+		font-size: 0.95rem;
 	}
 </style>

@@ -18,7 +18,7 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 		<main>
 			<article class="prose">
 				<img class="avatar" src="/images/sabililhaq2.jpg" alt={SITE_TITLE} />
-				<h3>About Me</h3>
+				<h1 class="page-title">About</h1>
 				<p>
 					Hi! I'm <strong>Muhammad Furqony Sabililhaq</strong> — usually just{' '}
 					<strong>{SITE_SHORT_NAME}</strong>. I work on backend and distributed systems at{' '}
@@ -80,15 +80,10 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 </html>
 
 <style>
-	.prose h1 {
-		margin-bottom: 1rem;
-	}
 	.prose h2 {
-		margin-top: 2.5rem;
-		margin-bottom: 1rem;
-		font-size: 1.35rem;
-		padding-bottom: 0.4rem;
-		border-bottom: 1px solid rgb(var(--gray-light));
+		margin-top: 2.4rem;
+		margin-bottom: 0.9rem;
+		font-size: 1.15rem;
 	}
 
 	.skills {
@@ -99,24 +94,21 @@ import { SITE_SHORT_NAME, SITE_TITLE, SKILLS, SOCIALS } from '../consts';
 
 	.skill-group h3 {
 		font-size: 0.85rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		font-weight: 700;
 		color: rgb(var(--gray));
-		margin-bottom: 0.35rem;
+		margin-bottom: 0.25rem;
 	}
 
 	.skill-list {
 		margin: 0;
-		font-size: 0.95rem;
 		color: rgb(var(--gray-dark));
 	}
 
 	.avatar {
-		width: 120px;
-		height: 120px;
+		width: 112px;
+		height: 112px;
 		object-fit: cover;
-		border-radius: 0.75rem;
+		border-radius: 4px;
 		margin-bottom: 1.5rem;
 		display: block;
 	}

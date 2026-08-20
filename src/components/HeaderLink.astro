@@ -5,8 +5,24 @@ type Props = HTMLAttributes<'a'>;
 
 const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-const subpath = pathname.match(/[^\\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const first = pathname.split('/').filter(Boolean)[0] || '';
+const reserved = new Set([
+	'about',
+	'blog',
+	'chat',
+	'labs',
+	'links',
+	'projects',
+	'qr',
+	'vim',
+]);
+const hrefPath = typeof href === 'string' ? href.replace(/\/$/, '') : '';
+const current = pathname.replace(/\/$/, '');
+const isBlogPost = first !== '' && !reserved.has(first);
+const isActive =
+	hrefPath === current ||
+	hrefPath === '/' + first ||
+	(hrefPath === '/blog' && isBlogPost);
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>
@@ -16,17 +32,17 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 	a {
 		display: inline-block;
 		text-decoration: none;
-		color: rgb(var(--gray-dark));
+		color: rgb(var(--gray));
 		font-size: 0.95rem;
 		font-weight: 400;
-		transition: color 0.15s;
 	}
 	a:hover {
 		text-decoration: underline;
+		text-underline-offset: 0.18em;
 		color: rgb(var(--black));
 	}
 	a.active {
-		font-weight: 600;
+		font-weight: 700;
 		color: rgb(var(--black));
 	}
 </style>

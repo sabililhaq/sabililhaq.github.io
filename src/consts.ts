@@ -63,7 +63,7 @@ export const PROJECTS: Project[] = [
     ],
     techStack: "TypeScript · CodeMirror · Vim",
     group: "now",
-    liveDemo: "https://sabililhaq.com/vim",
+    liveDemo: "/vim",
     sourceCode: "https://github.com/sabililhaq/vim-dojo",
     roadmap: "/vim/roadmap",
   },
@@ -88,7 +88,7 @@ export const PROJECTS: Project[] = [
     ],
     techStack: "TypeScript · Obscenity · Node.js",
     group: "shipped",
-    liveDemo: "https://sabililhaq.com/chat",
+    liveDemo: "/chat",
     sourceCode: "https://github.com/sabililhaq/obscenity/tree/indonesian",
   },
   {

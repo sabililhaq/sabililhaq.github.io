@@ -8,9 +8,9 @@ const today = new Date();
 	<div class="footer-inner">
 		<span>&copy; {today.getFullYear()} <a href="/">{SITE_TITLE}</a></span>
 		<div class="footer-links">
-			<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a> 
-			<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a> 
-			<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a> 
+			<a href={SOCIALS.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+			<a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+			<a href={SOCIALS.medium} target="_blank" rel="noopener noreferrer">Medium</a>
 			<a href={SOCIALS.email}>Email</a>
 		</div>
 	</div>
@@ -18,17 +18,17 @@ const today = new Date();
 
 <style>
 	footer {
-		padding: 3em 1em 4em;
+		padding: 1.5rem 1.3rem 3.5rem;
 		color: rgb(var(--gray));
 		font-size: 0.9rem;
-		border-top: 1px solid rgb(var(--gray-light));
-		margin-top: 4rem;
 		box-sizing: border-box;
 	}
 	.footer-inner {
 		width: 100%;
-		max-width: 720px;
+		max-width: var(--content-width);
 		margin: 0 auto;
+		padding-top: 1.25rem;
+		border-top: 1px solid rgb(var(--gray-light));
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -43,10 +43,10 @@ const today = new Date();
 	footer a:hover {
 		color: rgb(var(--black));
 		text-decoration: underline;
+		text-underline-offset: 0.18em;
 	}
 	.footer-links {
 		display: flex;
-		gap: 1.25rem;
+		gap: 1.15rem;
 	}
 </style>
-

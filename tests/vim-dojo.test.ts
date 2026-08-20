@@ -60,7 +60,7 @@ describe('Vim Dojo site integration', () => {
     expect(project).toBeDefined();
     expect(project!.overview.join(' ')).toMatch(/not a beginner tutorial/i);
     expect(project!.overview.join(' ')).toMatch(/already know the basics/i);
-    expect(project!.liveDemo).toBe('https://sabililhaq.com/vim');
+    expect(project!.liveDemo).toBe('/vim');
     expect(project!.sourceCode).toBe('https://github.com/sabililhaq/vim-dojo');
     expect(lab!.description).toBe("Practice Vim. Don't learn Vim.");
   });

@@ -11,29 +11,19 @@ import { SITE_TITLE } from '../consts';
   <head>
     <BaseHead title={`QR Code Generator | ${SITE_TITLE}`} description="Free online QR Code Generator" />
     <style>
-      .qr-page {
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 2.5rem 1.25rem;
-      }
-      .qr-page h1 {
-        font-size: 1.875rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-      }
-      .qr-page .note {
+      .note {
         color: rgb(var(--gray));
-        margin-bottom: 2rem;
+        margin: -0.75rem 0 1.75rem;
       }
     </style>
   </head>
   <body>
     <Header />
-    <main class="qr-page">
-      <h1>QR Code Generator</h1>
+    <main>
+      <h1 class="page-title">QR Code Generator</h1>
       <p class="note">No data is sent to any server.</p>
       
-      <QRGenerator client:load />
+      <QRGenerator />
     </main>
     <Footer />
   </body>

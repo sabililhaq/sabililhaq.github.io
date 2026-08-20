@@ -17,7 +17,7 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
     <Header />
     <main>
       <article class="prose">
-        <h3>Projects</h3>
+        <h1 class="page-title">Projects</h1>
 
         {
           PROJECT_GROUPS.map((group) => {
@@ -34,8 +34,12 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
                         <h3>{project.title}</h3>
                         <div class="project-links">
                           {project.liveDemo && (
-                            <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
-                              Live Demo ↗
+                            <a
+                              href={project.liveDemo}
+                              target={project.liveDemo.startsWith('http') ? '_blank' : undefined}
+                              rel={project.liveDemo.startsWith('http') ? 'noopener noreferrer' : undefined}
+                            >
+                              {project.liveDemo.startsWith('http') ? 'Live Demo ↗' : 'Open'}
                             </a>
                           )}
                           {project.sourceCode && (
@@ -68,23 +72,17 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
 </html>
 
 <style>
-  .prose h3 {
-    margin-bottom: 1.25rem;
-  }
-
   .group {
-    margin-bottom: 2.25rem;
+    margin-bottom: 2.5rem;
   }
 
   .group h2 {
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgb(var(--gray));
-    margin: 0 0 1rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid rgb(var(--gray-light));
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgb(var(--black));
+    margin: 0 0 1.15rem;
+    padding-top: 0.25rem;
+    border-top: 1px solid rgb(var(--gray-light));
   }
 
   .projects {
@@ -113,8 +111,9 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
   }
 
   .project h3 {
-    font-size: 0.85rem;
+    font-size: 1.15rem;
     margin: 0;
+    letter-spacing: -0.02em;
   }
 
   .project-links {
@@ -124,25 +123,25 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
   }
 
   .project-links a {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--accent);
     text-decoration: none;
   }
 
   .project-links a:hover {
     text-decoration: underline;
+    text-underline-offset: 0.18em;
   }
 
   .project p {
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
     color: rgb(var(--gray-dark));
   }
 
   .tech-stack {
-    font-size: 0.8rem !important;
+    font-size: 0.85rem !important;
     color: rgb(var(--gray)) !important;
-    font-style: italic;
   }
 
   @media (max-width: 640px) {
