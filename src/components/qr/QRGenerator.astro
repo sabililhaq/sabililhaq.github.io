@@ -39,11 +39,13 @@
   <!-- Preview -->
   <div class="preview">
     <div id="qr-code"></div>
+    <p id="qr-caption" class="caption"></p>
   </div>
 
   <!-- Actions -->
   <div class="actions">
     <button id="download-png">Download PNG</button>
+    <button id="copy-png" class="secondary">Copy PNG</button>
     <button id="download-svg" class="secondary">Download SVG</button>
   </div>
 </div>
@@ -106,10 +108,22 @@
 
   .preview {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
     padding: 1.5rem;
     background: rgb(var(--surface));
     border-radius: 12px;
+  }
+
+  .caption {
+    margin: 0;
+    max-width: 100%;
+    color: rgb(var(--gray));
+    font-size: 0.85rem;
+    line-height: 1.4;
+    word-break: break-word;
+    text-align: center;
   }
 
   .actions {
@@ -176,12 +190,18 @@
   const colorInput = requireEl("qr-color", HTMLInputElement);
   const container = requireEl("qr-code", HTMLElement);
   const downloadPng = requireEl("download-png", HTMLButtonElement);
+  const copyPng = requireEl("copy-png", HTMLButtonElement);
   const downloadSvg = requireEl("download-svg", HTMLButtonElement);
+  const caption = requireEl("qr-caption", HTMLParagraphElement);
 
   qrCode.append(container);
 
+  function encodedData() {
+    return input.value.trim() || "https://sabililhaq.com";
+  }
+
   function updateQR() {
-    const data = input.value.trim() || "https://sabililhaq.com";
+    const data = encodedData();
     const size = parseInt(sizeInput.value, 10) || 300;
     const color = colorInput.value;
     const ec = ecSelect.value as "L" | "M" | "Q" | "H";
@@ -193,6 +213,9 @@
       dotsOptions: { color },
       qrOptions: { errorCorrectionLevel: ec }
     });
+    caption.textContent = input.value.trim()
+      ? data
+      : `${data} (default)`;
   }
 
   input.addEventListener("input", updateQR);
@@ -204,7 +227,26 @@
     qrCode.download({ name: "qr-code", extension: "png" });
   });
 
+  copyPng.addEventListener("click", async () => {
+    const blob = await qrCode.getRawData("png");
+    if (!(blob instanceof Blob)) return;
+    const label = copyPng.textContent;
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob }),
+      ]);
+      copyPng.textContent = "Copied";
+    } catch {
+      copyPng.textContent = "Copy failed";
+    }
+    setTimeout(() => {
+      copyPng.textContent = label;
+    }, 1500);
+  });
+
   downloadSvg.addEventListener("click", () => {
     qrCode.download({ name: "qr-code", extension: "svg" });
   });
+
+  updateQR();
 </script>
