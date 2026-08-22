@@ -25,7 +25,10 @@
 		</ul>
 	</div>
 
-	<ul id="messages" class="messages" aria-live="polite"></ul>
+	<div class="messages-wrap">
+		<p id="messages-empty" class="messages-empty">No messages yet. They expire after a few seconds.</p>
+		<ul id="messages" class="messages" aria-live="polite"></ul>
+	</div>
 
 	<form id="composer" class="composer">
 		<input
@@ -143,6 +146,25 @@
 		color: rgb(var(--black));
 		font-weight: 600;
 	}
+	.messages-wrap {
+		position: relative;
+		min-height: 240px;
+		max-height: 380px;
+	}
+	.messages-empty {
+		margin: 0;
+		min-height: 240px;
+		display: grid;
+		place-items: center;
+		text-align: center;
+		color: rgb(var(--gray));
+		font-size: 0.9rem;
+		line-height: 1.5;
+		padding: 1rem;
+	}
+	.messages-empty[hidden] {
+		display: none;
+	}
 	.messages {
 		list-style: none;
 		margin: 0;
@@ -154,6 +176,9 @@
 		max-height: 380px;
 		overflow-y: auto;
 		scroll-behavior: smooth;
+	}
+	.messages[hidden] {
+		display: none;
 	}
 	.messages::-webkit-scrollbar {
 		width: 6px;
@@ -177,7 +202,7 @@
 		background: rgb(var(--surface));
 		border: 1px solid rgb(var(--gray-light));
 		font-size: 0.9rem;
-		align-items: center;
+		align-items: start;
 		transition: background 0.15s ease;
 	}
 	.messages li:hover {
@@ -192,9 +217,8 @@
 	.messages .text {
 		color: rgb(var(--gray-dark));
 		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		overflow-wrap: anywhere;
+		white-space: normal;
 		font-size: 0.9rem;
 	}
 	.composer {
@@ -306,9 +330,13 @@
 			padding: 0.7rem 1rem;
 			font-size: 0.9rem;
 		}
+		.messages-wrap,
+		.messages-empty,
 		.messages {
 			min-height: 200px;
 			max-height: 320px;
+		}
+		.messages {
 			gap: 0.5rem;
 		}
 		.messages li {
@@ -357,12 +385,12 @@
 	const infoPanel = document.getElementById('info-panel');
 	const expirationEl = document.getElementById('expiration-seconds');
 	const messagesEl = document.getElementById('messages');
+	const emptyEl = document.getElementById('messages-empty');
 	const composer = document.getElementById('composer');
 	const input = document.getElementById('message-input');
 	const sendButton = composer?.querySelector('button');
 	const statusEl = document.getElementById('status');
 
-	const MAX_MESSAGE_CHARS = 40;
 	let expirationSeconds = 30;
 	let ws = null;
 	let isConnected = false;
@@ -408,6 +436,12 @@
 		}
 	}
 
+	function syncEmptyState() {
+		const hasMessages = Boolean(messagesEl?.children.length);
+		if (emptyEl) emptyEl.hidden = hasMessages;
+		if (messagesEl) messagesEl.hidden = !hasMessages;
+	}
+
 	function renderMessage(msg) {
 		const li = document.createElement('li');
 		li.dataset.ts = String(msg.ts);
@@ -419,13 +453,11 @@
 
 		const text = document.createElement('span');
 		text.className = 'text';
-		const displayText = msg.text.length > MAX_MESSAGE_CHARS
-			? msg.text.slice(0, MAX_MESSAGE_CHARS) + '...'
-			: msg.text;
-		text.textContent = displayText;
+		text.textContent = msg.text;
 
 		li.append(who, text);
 		messagesEl.appendChild(li);
+		syncEmptyState();
 		messagesEl.scrollTop = messagesEl.scrollHeight;
 	}
 
@@ -437,7 +469,7 @@
 			const who = existing.querySelector('.who');
 			const text = existing.querySelector('.text');
 			if (who) who.textContent = msg.nickname + ': ';
-			if (text) text.textContent = msg.text.length > MAX_MESSAGE_CHARS ? msg.text.slice(0, MAX_MESSAGE_CHARS) + '...' : msg.text;
+			if (text) text.textContent = msg.text;
 			return;
 		}
 		renderMessage(msg);
@@ -448,6 +480,7 @@
 		for (const li of Array.from(messagesEl.children)) {
 			if (Number(li.dataset.ts) < cutoff) li.remove();
 		}
+		syncEmptyState();
 	}
 	setInterval(sweepExpired, 1000);
 
@@ -614,5 +647,6 @@
 		}
 	});
 
+	syncEmptyState();
 	connect();
 </script>
