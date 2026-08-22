@@ -14,9 +14,10 @@ const localPosts = (await getCollection('blog')).map((post) => ({
 
 const posts = [...localPosts, ...MEDIUM_POSTS]
 	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
-	.slice(0, 3);
+	.slice(0, 1);
 
 const featured = PROJECTS.find((project) => project.group === 'now');
+const featuredLab = LABS.find((lab) => lab.label === 'Vim Dojo');
 ---
 
 <!doctype html>
@@ -55,23 +56,20 @@ const featured = PROJECTS.find((project) => project.group === 'now');
 				</section>
 			)}
 
-			<section class="labs">
-				<h2>Labs</h2>
-				<ul class="hover-list lab-list">
-					{LABS.map((lab) => (
+			{featuredLab && (
+				<section class="labs">
+					<h2>Labs</h2>
+					<ul class="hover-list lab-list">
 						<li>
-							<a
-								href={lab.url}
-								target={lab.url.startsWith('http') ? '_blank' : undefined}
-								rel={lab.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-							>
-								{lab.label}
-							</a>
-							{lab.description && <span class="desc"> — {lab.description}</span>}
+							<a href={featuredLab.url}>{featuredLab.label}</a>
+							{featuredLab.description && (
+								<span class="desc"> — {featuredLab.description}</span>
+							)}
 						</li>
-					))}
-				</ul>
-			</section>
+					</ul>
+					<a class="all-posts" href="/labs">All labs →</a>
+				</section>
+			)}
 
 			{posts.length > 0 && (
 				<section class="recent-posts">
@@ -168,7 +166,7 @@ const featured = PROJECTS.find((project) => project.group === 'now');
 	}
 
 	.lab-list {
-		margin: 0;
+		margin: 0 0 1rem;
 	}
 
 	.desc {
