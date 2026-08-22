@@ -9,14 +9,29 @@ import { SITE_TITLE } from '../consts';
 <!doctype html>
 <html lang="en">
 <head>
-    <BaseHead title={`Chat | ${SITE_TITLE}`} description="Simple, anonymous, temporary chat over WebSocket" />
+    <BaseHead
+        title={`Chat | ${SITE_TITLE}`}
+        description="Anonymous, temporary chat. Messages are filtered in the browser and expire after a few seconds."
+    />
 </head>
 <body>
     <Header />
     <main>
         <h1 class="page-title">Chat</h1>
+        <p class="lede">
+            Anonymous, filtered in the browser, gone in 10 seconds. A live demo of
+            <a href="https://github.com/sabililhaq/obscenity/tree/indonesian#obscenity-bahasa-indonesia">Obscenity Bahasa Indonesia</a>.
+        </p>
         <ChatWidget />
     </main>
     <Footer />
 </body>
 </html>
+
+<style>
+    .lede {
+        color: rgb(var(--gray));
+        margin: -0.75rem 0 1.5rem;
+        line-height: 1.55;
+    }
+</style>
