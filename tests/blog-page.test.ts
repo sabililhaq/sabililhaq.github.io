@@ -68,8 +68,8 @@ describe('blog writings', () => {
 		expect(SOCIALS.medium).toBe('https://sabililhaq.medium.com/');
 	});
 
-	it('shows only the latest post on the home page', () => {
-		expect(homeSource).toContain('.slice(0, 1)');
+	it('shows a few recent posts on the home page', () => {
+		expect(homeSource).toContain('.slice(0, 3)');
 	});
 
 	it('reserves existing page slugs so local posts stay at the root', () => {
