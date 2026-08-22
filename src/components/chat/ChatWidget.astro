@@ -640,7 +640,7 @@
 				return;
 			}
 
-			setStatus('Error. Reconnecting…', 'error');
+			setStatus('Error. Reconnecting…');
 			if (retryTimer) { clearTimeout(retryTimer); }
 			retryTimer = setTimeout(connect, 5000);
 		});
