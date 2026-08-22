@@ -43,10 +43,9 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 
 			<section class="labs">
 				<h2>Labs</h2>
-				<p class="lab-names">
-					{LABS.map((lab, index) => (
-						<>
-							{index > 0 && <span class="dot"> · </span>}
+				<ul class="hover-list lab-list">
+					{LABS.map((lab) => (
+						<li>
 							<a
 								href={lab.url}
 								target={lab.url.startsWith('http') ? '_blank' : undefined}
@@ -54,9 +53,10 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 							>
 								{lab.label}
 							</a>
-						</>
+							{lab.description && <span class="desc"> — {lab.description}</span>}
+						</li>
 					))}
-				</p>
+				</ul>
 			</section>
 
 			{posts.length > 0 && (
@@ -131,7 +131,7 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		margin: 0 0 0.85rem;
 	}
 
-	.lab-names a,
+	.lab-list a,
 	.recent-posts li a {
 		color: var(--accent);
 		text-decoration: none;
@@ -139,19 +139,18 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		font-weight: 700;
 	}
 
-	.lab-names a:hover,
+	.lab-list a:hover,
 	.recent-posts li a:hover {
 		box-shadow: none;
 	}
 
-	.lab-names {
+	.lab-list {
 		margin: 0;
-		line-height: 1.8;
 	}
 
-	.dot {
+	.desc {
 		color: rgb(var(--gray));
-		font-weight: 400;
+		font-size: 0.95rem;
 	}
 
 	.recent-posts ul {
