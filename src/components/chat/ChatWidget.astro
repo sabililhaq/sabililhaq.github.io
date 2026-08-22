@@ -400,6 +400,7 @@
 
 	let expirationSeconds = 30;
 	let selfNickname = '';
+	let lastNickname = '';
 	let ws = null;
 	let isConnected = false;
 	const widgetEl = document.querySelector('.chat-widget');
@@ -548,6 +549,10 @@
 			switch (data.type) {
 				case 'welcome':
 					selfNickname = data.nickname;
+					if (lastNickname && data.nickname && lastNickname !== data.nickname) {
+						setStatus(`Rejoined as ${data.nickname}.`);
+					}
+					lastNickname = data.nickname;
 					if (nicknameEl) {
 						nicknameEl.textContent = data.nickname;
 					}
