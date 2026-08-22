@@ -53,7 +53,6 @@
 		border-radius: 0.75rem;
 		padding: 1rem;
 		background: rgb(var(--bg));
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05);
 	}
 	.chat-topbar {
 		display: flex;
@@ -78,12 +77,12 @@
 		width: 0.625rem;
 		height: 0.625rem;
 		border-radius: 50%;
-		background: #10b981;
+		background: rgb(var(--black));
 		flex-shrink: 0;
 	}
 	.chat-widget.inactive .nickname::before,
 	.chat-widget.offline .nickname::before {
-		background: #94a3b8;
+		background: rgb(var(--gray));
 	}
 	.topbar-right {
 		display: flex;
@@ -187,11 +186,11 @@
 		background: transparent;
 	}
 	.messages::-webkit-scrollbar-thumb {
-		background: #cbd5e1;
+		background: rgb(var(--gray-light));
 		border-radius: 3px;
 	}
 	.messages::-webkit-scrollbar-thumb:hover {
-		background: #94a3b8;
+		background: rgb(var(--gray));
 	}
 	.messages li {
 		display: grid;
@@ -246,7 +245,7 @@
 		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 	.composer input::placeholder {
-		color: #94a3b8;
+		color: rgb(var(--gray));
 	}
 	.composer input:focus {
 		border-color: var(--accent);
@@ -266,18 +265,16 @@
 	}
 	.composer button:hover:not(:disabled):not(.sending) {
 		background: rgb(var(--gray-dark));
-		transform: translateY(-1px);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 	.composer button:active:not(:disabled):not(.sending) {
 		transform: translateY(0);
 	}
 	.composer button:disabled {
-		background: #cbd5e1;
+		background: rgb(var(--gray-light));
 		cursor: not-allowed;
 	}
 	.composer button.sending {
-		background: #6366f1;
+		background: rgb(var(--gray-dark));
 		cursor: not-allowed;
 		opacity: 0.9;
 	}
@@ -303,7 +300,8 @@
 		color: rgb(var(--gray-dark));
 	}
 	.status[data-kind='error'] {
-		color: #a44;
+		color: rgb(var(--black));
+		font-weight: 600;
 	}
 	.chat-widget.inactive {
 		opacity: 0.6;
