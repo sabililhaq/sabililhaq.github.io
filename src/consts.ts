@@ -71,8 +71,9 @@ export const PROJECTS: Project[] = [
     id: "doktergpt",
     title: "DokterGPT",
     overview: [
-      "WhatsApp-based medical chatbot featuring a curated medical database, dose calculator, clinical guidelines, and an AI layer. Content and workflows verified by clinicians and doctors.",
-      'Actively used by 3,000+ users as of Q1 2026. Built in collaboration with <a href="https://sejawatidn.com/" target="_blank" rel="noopener noreferrer">Sejawat IDN</a> and <a href="https://hecolab.id/" target="_blank" rel="noopener noreferrer">HecoLab</a>, leading bimbel platforms for medical students in Indonesia.',
+      "WhatsApp-based medical chatbot. Actively used by 3,000+ users as of Q1 2026.",
+      "Curated medical database, dose calculator, clinical guidelines, and an AI layer. Content and workflows verified by clinicians and doctors.",
+      'Built in collaboration with <a href="https://sejawatidn.com/" target="_blank" rel="noopener noreferrer">Sejawat IDN</a> and <a href="https://hecolab.id/" target="_blank" rel="noopener noreferrer">HecoLab</a>, leading bimbel platforms for medical students in Indonesia.',
     ],
     techStack: "WhatsApp · AI/LLM · Medical Database",
     group: "shipped",
