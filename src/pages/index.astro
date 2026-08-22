@@ -4,7 +4,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { LABS, MEDIUM_POSTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+import { LABS, MEDIUM_POSTS, PROJECTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
 const localPosts = (await getCollection('blog')).map((post) => ({
 	title: post.data.title,
@@ -15,6 +15,8 @@ const localPosts = (await getCollection('blog')).map((post) => ({
 const posts = [...localPosts, ...MEDIUM_POSTS]
 	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
 	.slice(0, 3);
+
+const featured = PROJECTS.find((project) => project.group === 'now');
 ---
 
 <!doctype html>
@@ -40,6 +42,18 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 					<a href="/about">More about me →</a>
 				</p>
 			</section>
+
+			{featured && (
+				<section class="featured">
+					<h2>Now</h2>
+					<p>
+						<a href={featured.liveDemo ?? '/projects'}>{featured.title}</a>
+						{featured.overview[0] && (
+							<span class="desc"> — {featured.overview[0]}</span>
+						)}
+					</p>
+				</section>
+			)}
 
 			<section class="labs">
 				<h2>Labs</h2>
@@ -118,11 +132,13 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		text-underline-offset: 0.18em;
 	}
 
+	.featured,
 	.labs,
 	.recent-posts {
 		margin-bottom: 2.5rem;
 	}
 
+	.featured h2,
 	.labs h2,
 	.recent-posts h2 {
 		font-size: 1.05rem;
@@ -131,6 +147,7 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		margin: 0 0 0.85rem;
 	}
 
+	.featured a,
 	.lab-list a,
 	.recent-posts li a {
 		color: var(--accent);
@@ -139,9 +156,15 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 		font-weight: 700;
 	}
 
+	.featured a:hover,
 	.lab-list a:hover,
 	.recent-posts li a:hover {
 		box-shadow: none;
+	}
+
+	.featured p {
+		margin: 0;
+		line-height: 1.6;
 	}
 
 	.lab-list {
