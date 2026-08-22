@@ -208,6 +208,9 @@
 	.messages li:hover {
 		background: rgb(var(--gray-light));
 	}
+	.messages li.mine {
+		border-color: rgb(var(--gray));
+	}
 	.messages .who {
 		font-weight: 600;
 		color: rgb(var(--black));
@@ -396,6 +399,7 @@
 	const statusEl = document.getElementById('status');
 
 	let expirationSeconds = 30;
+	let selfNickname = '';
 	let ws = null;
 	let isConnected = false;
 	const widgetEl = document.querySelector('.chat-widget');
@@ -450,14 +454,23 @@
 		if (messagesEl) messagesEl.hidden = !hasMessages;
 	}
 
+	function isOwnMessage(msg) {
+		return Boolean(selfNickname && msg.nickname === selfNickname);
+	}
+
+	function whoLabel(msg) {
+		return isOwnMessage(msg) ? `${msg.nickname} (you): ` : `${msg.nickname}: `;
+	}
+
 	function renderMessage(msg) {
 		const li = document.createElement('li');
 		li.dataset.ts = String(msg.ts);
 		li.dataset.id = msg.id;
+		if (isOwnMessage(msg)) li.classList.add('mine');
 
 		const who = document.createElement('span');
 		who.className = 'who';
-		who.textContent = msg.nickname + ': ';
+		who.textContent = whoLabel(msg);
 
 		const text = document.createElement('span');
 		text.className = 'text';
@@ -474,9 +487,10 @@
 		const existing = messagesEl.querySelector(`li[data-id="${msg.id}"]`);
 		if (existing) {
 			existing.dataset.ts = String(msg.ts);
+			existing.classList.toggle('mine', isOwnMessage(msg));
 			const who = existing.querySelector('.who');
 			const text = existing.querySelector('.text');
-			if (who) who.textContent = msg.nickname + ': ';
+			if (who) who.textContent = whoLabel(msg);
 			if (text) text.textContent = msg.text;
 			return;
 		}
@@ -533,6 +547,7 @@
 
 			switch (data.type) {
 				case 'welcome':
+					selfNickname = data.nickname;
 					if (nicknameEl) {
 						nicknameEl.textContent = data.nickname;
 					}
