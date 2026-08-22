@@ -287,10 +287,16 @@
 	.status {
 		min-height: 1.3em;
 		font-size: 0.85rem;
-		color: #dc2626;
+		color: rgb(var(--gray));
 		margin: 0;
 		transition: color 0.3s ease;
 		line-height: 1.4;
+	}
+	.status[data-kind='offline'] {
+		color: rgb(var(--gray-dark));
+	}
+	.status[data-kind='error'] {
+		color: #a44;
 	}
 	.chat-widget.inactive {
 		opacity: 0.6;
@@ -301,9 +307,7 @@
 		border-color: rgb(var(--gray-light));
 		background: rgb(var(--surface));
 	}
-	.status.offline {
-		color: #d97706;
-	}
+
 	@media (max-width: 520px) {
 		.chat-widget {
 			padding: 0.875rem;
@@ -430,10 +434,14 @@
 		});
 	}
 
-	function setStatus(message) {
-		if (statusEl) {
-			statusEl.textContent = message;
+	function setStatus(message, kind = 'info') {
+		if (!statusEl) return;
+		statusEl.textContent = message;
+		if (!message) {
+			delete statusEl.dataset.kind;
+			return;
 		}
+		statusEl.dataset.kind = kind;
 	}
 
 	function syncEmptyState() {
@@ -497,10 +505,9 @@
 		widgetEl?.classList.remove('offline');
 		connectTimer = setTimeout(() => {
 			if (!isConnected) {
-				setStatus('Offline mode — you can still chat.');
+				setStatus('Offline mode — you can still chat.', 'offline');
 				widgetEl?.classList.remove('inactive');
 				widgetEl?.classList.add('offline');
-				statusEl?.classList.add('offline');
 			}
 		}, 5000);
 		ws = new WebSocket(WS_URL);
@@ -513,7 +520,6 @@
 			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
 			widgetEl?.classList.remove('inactive');
 			widgetEl?.classList.remove('offline');
-			statusEl?.classList.remove('offline');
 			setStatus('');
 			if (input) input.disabled = false;
 			if (sendButton) {
@@ -558,7 +564,7 @@
 
 				case 'error':
 					// Surface server-side rejection reason to users in the widget.
-					setStatus(String(data.reason ?? 'Server error'));
+					setStatus(String(data.reason ?? 'Server error'), 'error');
 					break;
 
 				default:
@@ -580,8 +586,7 @@
 				permanentlyDisabled = true;
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
-				statusEl?.classList.remove('offline');
-				setStatus('Chat unavailable — server appears disabled.');
+				setStatus('Chat unavailable — server appears disabled.', 'error');
 				if (input) input.disabled = true;
 				if (sendButton) sendButton.disabled = true;
 				return;
@@ -605,14 +610,13 @@
 				permanentlyDisabled = true;
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
-				statusEl?.classList.remove('offline');
-				setStatus('Chat unavailable — server appears disabled.');
+				setStatus('Chat unavailable — server appears disabled.', 'error');
 				if (input) input.disabled = true;
 				if (sendButton) sendButton.disabled = true;
 				return;
 			}
 
-			setStatus('Error. Reconnecting…');
+			setStatus('Error. Reconnecting…', 'error');
 			if (retryTimer) { clearTimeout(retryTimer); }
 			retryTimer = setTimeout(connect, 5000);
 		});
@@ -642,7 +646,7 @@
 				text: censored,
 			};
 			renderMessage(localMsg);
-			setStatus('Not connected — message shown locally.');
+			setStatus('Not connected — message shown locally.', 'offline');
 			input.value = '';
 		}
 	});
