@@ -20,6 +20,7 @@ describe('src/components/chat/ChatWidget.astro', () => {
       'info-panel',
       'expiration-seconds',
       'messages',
+      'messages-empty',
       'composer',
       'message-input',
       'status',
@@ -51,8 +52,10 @@ describe('src/components/chat/ChatWidget.astro', () => {
     expect(source).toMatch(/maxReconnectAttempts\s*=\s*8/);
   });
 
-  it('truncates long rendered messages for display', () => {
-    expect(source).toMatch(/MAX_MESSAGE_CHARS\s*=\s*40/);
+  it('renders full message text with wrapping instead of truncating', () => {
+    expect(source).not.toMatch(/MAX_MESSAGE_CHARS/);
+    expect(source).toContain('white-space: normal');
+    expect(source).toContain('id="messages-empty"');
   });
 
   it('mentions the info panel disclosures required by the spec', () => {

@@ -54,6 +54,13 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
                           )}
                         </div>
                       </div>
+                      {project.image && (
+                        <img
+                          class="project-still"
+                          src={project.image}
+                          alt={project.imageAlt ?? ''}
+                        />
+                      )}
                       {project.overview.map((para) => (
                         <p set:html={para} />
                       ))}
@@ -108,6 +115,14 @@ import { PROJECT_GROUPS, PROJECTS, SITE_SHORT_NAME, SITE_TITLE } from '../consts
     gap: 1rem;
     flex-wrap: wrap;
     margin-bottom: 0.5rem;
+  }
+
+  .project-still {
+    display: block;
+    width: 100%;
+    margin: 0.75rem 0 1rem;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 4px;
   }
 
   .project h3 {

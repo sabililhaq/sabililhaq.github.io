@@ -54,7 +54,7 @@ describe('blog writings', () => {
 
 	it('renders Medium writings on the blog page', () => {
 		expect(blogSource).toContain('MEDIUM_POSTS');
-		expect(blogSource).toContain('On Medium');
+		expect(blogSource).toContain('Earlier on Medium');
 		expect(blogSource).toContain('SOCIALS.medium');
 		expect(blogSource).toContain("target=\"_blank\"");
 	});
@@ -68,7 +68,7 @@ describe('blog writings', () => {
 		expect(SOCIALS.medium).toBe('https://sabililhaq.medium.com/');
 	});
 
-	it('shows only the latest post on the home page', () => {
+	it('highlights the latest post on the home page', () => {
 		expect(homeSource).toContain('.slice(0, 1)');
 	});
 

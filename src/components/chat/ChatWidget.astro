@@ -14,18 +14,21 @@
 
 	<div id="info-panel" class="info-panel" hidden>
 		<ul>
-			<li><strong>For fun only</strong> — this is a small personal project, not intended for important or private communication.</li>
-			<li><strong>Swearing filter</strong> — messages are filtered in the browser before they are sent.</li>
-			<li><strong>Temporary chat</strong> — messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
-			<li><strong>Built with WebSockets</strong> — this chat is a small demonstration of real-time WebSocket communication.</li>
+			<li><strong>For fun only</strong>, this is a small personal project, not intended for important or private communication.</li>
+			<li><strong>Swearing filter</strong>, messages are filtered in the browser before they are sent.</li>
+			<li><strong>Temporary chat</strong>, messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
+			<li><strong>Built with WebSockets</strong>, this chat is a small demonstration of real-time WebSocket communication.</li>
 			<li>
-				<strong>For developers</strong> — curious how it works? Open your browser's Network inspector, filter for WS,
+				<strong>For developers</strong>, curious how it works? Open your browser's Network inspector, filter for WS,
 				and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
 			</li>
 		</ul>
 	</div>
 
-	<ul id="messages" class="messages" aria-live="polite"></ul>
+	<div class="messages-wrap">
+		<p id="messages-empty" class="messages-empty">No messages yet. They expire after a few seconds.</p>
+		<ul id="messages" class="messages" aria-live="polite"></ul>
+	</div>
 
 	<form id="composer" class="composer">
 		<input
@@ -50,7 +53,6 @@
 		border-radius: 0.75rem;
 		padding: 1rem;
 		background: rgb(var(--bg));
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05);
 	}
 	.chat-topbar {
 		display: flex;
@@ -75,12 +77,12 @@
 		width: 0.625rem;
 		height: 0.625rem;
 		border-radius: 50%;
-		background: #10b981;
+		background: rgb(var(--black));
 		flex-shrink: 0;
 	}
 	.chat-widget.inactive .nickname::before,
 	.chat-widget.offline .nickname::before {
-		background: #94a3b8;
+		background: rgb(var(--gray));
 	}
 	.topbar-right {
 		display: flex;
@@ -143,6 +145,25 @@
 		color: rgb(var(--black));
 		font-weight: 600;
 	}
+	.messages-wrap {
+		position: relative;
+		min-height: 240px;
+		max-height: 380px;
+	}
+	.messages-empty {
+		margin: 0;
+		min-height: 240px;
+		display: grid;
+		place-items: center;
+		text-align: center;
+		color: rgb(var(--gray));
+		font-size: 0.9rem;
+		line-height: 1.5;
+		padding: 1rem;
+	}
+	.messages-empty[hidden] {
+		display: none;
+	}
 	.messages {
 		list-style: none;
 		margin: 0;
@@ -155,6 +176,9 @@
 		overflow-y: auto;
 		scroll-behavior: smooth;
 	}
+	.messages[hidden] {
+		display: none;
+	}
 	.messages::-webkit-scrollbar {
 		width: 6px;
 	}
@@ -162,11 +186,11 @@
 		background: transparent;
 	}
 	.messages::-webkit-scrollbar-thumb {
-		background: #cbd5e1;
+		background: rgb(var(--gray-light));
 		border-radius: 3px;
 	}
 	.messages::-webkit-scrollbar-thumb:hover {
-		background: #94a3b8;
+		background: rgb(var(--gray));
 	}
 	.messages li {
 		display: grid;
@@ -177,11 +201,18 @@
 		background: rgb(var(--surface));
 		border: 1px solid rgb(var(--gray-light));
 		font-size: 0.9rem;
-		align-items: center;
+		align-items: start;
 		transition: background 0.15s ease;
 	}
 	.messages li:hover {
 		background: rgb(var(--gray-light));
+	}
+	.messages li.mine {
+		border-color: rgb(var(--gray));
+	}
+	.messages li.local {
+		border-style: dashed;
+		opacity: 0.85;
 	}
 	.messages .who {
 		font-weight: 600;
@@ -192,9 +223,8 @@
 	.messages .text {
 		color: rgb(var(--gray-dark));
 		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		overflow-wrap: anywhere;
+		white-space: normal;
 		font-size: 0.9rem;
 	}
 	.composer {
@@ -215,7 +245,7 @@
 		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 	.composer input::placeholder {
-		color: #94a3b8;
+		color: rgb(var(--gray));
 	}
 	.composer input:focus {
 		border-color: var(--accent);
@@ -235,18 +265,16 @@
 	}
 	.composer button:hover:not(:disabled):not(.sending) {
 		background: rgb(var(--gray-dark));
-		transform: translateY(-1px);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 	.composer button:active:not(:disabled):not(.sending) {
 		transform: translateY(0);
 	}
 	.composer button:disabled {
-		background: #cbd5e1;
+		background: rgb(var(--gray-light));
 		cursor: not-allowed;
 	}
 	.composer button.sending {
-		background: #6366f1;
+		background: rgb(var(--gray-dark));
 		cursor: not-allowed;
 		opacity: 0.9;
 	}
@@ -263,10 +291,17 @@
 	.status {
 		min-height: 1.3em;
 		font-size: 0.85rem;
-		color: #dc2626;
+		color: rgb(var(--gray));
 		margin: 0;
 		transition: color 0.3s ease;
 		line-height: 1.4;
+	}
+	.status[data-kind='offline'] {
+		color: rgb(var(--gray-dark));
+	}
+	.status[data-kind='error'] {
+		color: rgb(var(--black));
+		font-weight: 600;
 	}
 	.chat-widget.inactive {
 		opacity: 0.6;
@@ -277,9 +312,7 @@
 		border-color: rgb(var(--gray-light));
 		background: rgb(var(--surface));
 	}
-	.status.offline {
-		color: #d97706;
-	}
+
 	@media (max-width: 520px) {
 		.chat-widget {
 			padding: 0.875rem;
@@ -306,9 +339,13 @@
 			padding: 0.7rem 1rem;
 			font-size: 0.9rem;
 		}
+		.messages-wrap,
+		.messages-empty,
 		.messages {
 			min-height: 200px;
 			max-height: 320px;
+		}
+		.messages {
 			gap: 0.5rem;
 		}
 		.messages li {
@@ -357,13 +394,15 @@
 	const infoPanel = document.getElementById('info-panel');
 	const expirationEl = document.getElementById('expiration-seconds');
 	const messagesEl = document.getElementById('messages');
+	const emptyEl = document.getElementById('messages-empty');
 	const composer = document.getElementById('composer');
 	const input = document.getElementById('message-input');
 	const sendButton = composer?.querySelector('button');
 	const statusEl = document.getElementById('status');
 
-	const MAX_MESSAGE_CHARS = 40;
 	let expirationSeconds = 30;
+	let selfNickname = '';
+	let lastNickname = '';
 	let ws = null;
 	let isConnected = false;
 	const widgetEl = document.querySelector('.chat-widget');
@@ -402,30 +441,49 @@
 		});
 	}
 
-	function setStatus(message) {
-		if (statusEl) {
-			statusEl.textContent = message;
+	function setStatus(message, kind = 'info') {
+		if (!statusEl) return;
+		statusEl.textContent = message;
+		if (!message) {
+			delete statusEl.dataset.kind;
+			return;
 		}
+		statusEl.dataset.kind = kind;
+	}
+
+	function syncEmptyState() {
+		const hasMessages = Boolean(messagesEl?.children.length);
+		if (emptyEl) emptyEl.hidden = hasMessages;
+		if (messagesEl) messagesEl.hidden = !hasMessages;
+	}
+
+	function isOwnMessage(msg) {
+		return Boolean(selfNickname && msg.nickname === selfNickname);
+	}
+
+	function whoLabel(msg) {
+		if (msg.local) return 'you (local): ';
+		return isOwnMessage(msg) ? `${msg.nickname} (you): ` : `${msg.nickname}: `;
 	}
 
 	function renderMessage(msg) {
 		const li = document.createElement('li');
 		li.dataset.ts = String(msg.ts);
 		li.dataset.id = msg.id;
+		if (isOwnMessage(msg) || msg.local) li.classList.add('mine');
+		if (msg.local) li.classList.add('local');
 
 		const who = document.createElement('span');
 		who.className = 'who';
-		who.textContent = msg.nickname + ': ';
+		who.textContent = whoLabel(msg);
 
 		const text = document.createElement('span');
 		text.className = 'text';
-		const displayText = msg.text.length > MAX_MESSAGE_CHARS
-			? msg.text.slice(0, MAX_MESSAGE_CHARS) + '...'
-			: msg.text;
-		text.textContent = displayText;
+		text.textContent = msg.text;
 
 		li.append(who, text);
 		messagesEl.appendChild(li);
+		syncEmptyState();
 		messagesEl.scrollTop = messagesEl.scrollHeight;
 	}
 
@@ -434,10 +492,11 @@
 		const existing = messagesEl.querySelector(`li[data-id="${msg.id}"]`);
 		if (existing) {
 			existing.dataset.ts = String(msg.ts);
+			existing.classList.toggle('mine', isOwnMessage(msg));
 			const who = existing.querySelector('.who');
 			const text = existing.querySelector('.text');
-			if (who) who.textContent = msg.nickname + ': ';
-			if (text) text.textContent = msg.text.length > MAX_MESSAGE_CHARS ? msg.text.slice(0, MAX_MESSAGE_CHARS) + '...' : msg.text;
+			if (who) who.textContent = whoLabel(msg);
+			if (text) text.textContent = msg.text;
 			return;
 		}
 		renderMessage(msg);
@@ -448,6 +507,7 @@
 		for (const li of Array.from(messagesEl.children)) {
 			if (Number(li.dataset.ts) < cutoff) li.remove();
 		}
+		syncEmptyState();
 	}
 	setInterval(sweepExpired, 1000);
 
@@ -464,10 +524,9 @@
 		widgetEl?.classList.remove('offline');
 		connectTimer = setTimeout(() => {
 			if (!isConnected) {
-				setStatus('Offline mode — you can still chat.');
+				setStatus('Offline mode, you can still chat.', 'offline');
 				widgetEl?.classList.remove('inactive');
 				widgetEl?.classList.add('offline');
-				statusEl?.classList.add('offline');
 			}
 		}, 5000);
 		ws = new WebSocket(WS_URL);
@@ -480,7 +539,6 @@
 			if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; }
 			widgetEl?.classList.remove('inactive');
 			widgetEl?.classList.remove('offline');
-			statusEl?.classList.remove('offline');
 			setStatus('');
 			if (input) input.disabled = false;
 			if (sendButton) {
@@ -494,6 +552,11 @@
 
 			switch (data.type) {
 				case 'welcome':
+					selfNickname = data.nickname;
+					if (lastNickname && data.nickname && lastNickname !== data.nickname) {
+						setStatus(`Rejoined as ${data.nickname}.`);
+					}
+					lastNickname = data.nickname;
 					if (nicknameEl) {
 						nicknameEl.textContent = data.nickname;
 					}
@@ -525,7 +588,7 @@
 
 				case 'error':
 					// Surface server-side rejection reason to users in the widget.
-					setStatus(String(data.reason ?? 'Server error'));
+					setStatus(String(data.reason ?? 'Server error'), 'error');
 					break;
 
 				default:
@@ -547,8 +610,7 @@
 				permanentlyDisabled = true;
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
-				statusEl?.classList.remove('offline');
-				setStatus('Chat unavailable — server appears disabled.');
+				setStatus('Chat unavailable, server appears disabled.', 'error');
 				if (input) input.disabled = true;
 				if (sendButton) sendButton.disabled = true;
 				return;
@@ -572,8 +634,7 @@
 				permanentlyDisabled = true;
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
-				statusEl?.classList.remove('offline');
-				setStatus('Chat unavailable — server appears disabled.');
+				setStatus('Chat unavailable, server appears disabled.', 'error');
 				if (input) input.disabled = true;
 				if (sendButton) sendButton.disabled = true;
 				return;
@@ -605,14 +666,16 @@
 			const localMsg = {
 				id: 'local-' + Math.random().toString(36).slice(2, 9),
 				ts: Date.now(),
-				nickname: (nicknameEl && nicknameEl.textContent) || 'You',
+				nickname: selfNickname || (nicknameEl && nicknameEl.textContent) || 'You',
 				text: censored,
+				local: true,
 			};
 			renderMessage(localMsg);
-			setStatus('Not connected — message shown locally.');
+			setStatus('Not connected, message shown locally.', 'offline');
 			input.value = '';
 		}
 	});
 
+	syncEmptyState();
 	connect();
 </script>

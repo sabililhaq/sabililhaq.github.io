@@ -52,8 +52,8 @@ const mediumPosts = [...MEDIUM_POSTS].sort(
 					)
 				}
 
-				<section class="group">
-					<h2>On Medium</h2>
+				<section class="group archive">
+					<h2>Earlier on Medium</h2>
 					<ul class="post-list hover-list">
 						{
 							mediumPosts.map((post) => (
@@ -93,6 +93,17 @@ const mediumPosts = [...MEDIUM_POSTS].sort(
 		margin: 0 0 1.15rem;
 		padding-top: 0.25rem;
 		border-top: 1px solid rgb(var(--gray-light));
+	}
+
+	.archive h2 {
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: rgb(var(--gray));
+	}
+
+	.archive .post-list a {
+		font-size: 1.05rem;
+		font-weight: 600;
 	}
 
 	.post-list a {
