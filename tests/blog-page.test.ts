@@ -54,7 +54,7 @@ describe('blog writings', () => {
 
 	it('renders Medium writings on the blog page', () => {
 		expect(blogSource).toContain('MEDIUM_POSTS');
-		expect(blogSource).toContain('On Medium');
+		expect(blogSource).toContain('Earlier on Medium');
 		expect(blogSource).toContain('SOCIALS.medium');
 		expect(blogSource).toContain("target=\"_blank\"");
 	});
