@@ -51,6 +51,8 @@ export type Project = {
   liveDemo?: string;
   sourceCode?: string;
   roadmap?: string;
+  image?: string;
+  imageAlt?: string;
 };
 
 export const PROJECTS: Project[] = [
@@ -66,6 +68,8 @@ export const PROJECTS: Project[] = [
     liveDemo: "/vim",
     sourceCode: "https://github.com/sabililhaq/vim-dojo",
     roadmap: "/vim/roadmap",
+    image: "/images/projects/vim-dojo.png",
+    imageAlt: "Vim Dojo challenge with a code buffer, hint controls, and practice categories",
   },
   {
     id: "doktergpt",
