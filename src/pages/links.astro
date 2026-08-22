@@ -41,7 +41,7 @@ const elsewhere = [
 						siteLinks.map((link) => (
 							<li>
 								<a href={link.url}>{link.label}</a>
-								{link.description && <span class="desc"> — {link.description}</span>}
+								{link.description && <span class="desc">, {link.description}</span>}
 							</li>
 						))
 					}
@@ -59,7 +59,7 @@ const elsewhere = [
 								>
 									{link.label}
 								</a>
-								{link.description && <span class="desc"> — {link.description}</span>}
+								{link.description && <span class="desc">, {link.description}</span>}
 							</li>
 						))
 					}

@@ -14,12 +14,12 @@
 
 	<div id="info-panel" class="info-panel" hidden>
 		<ul>
-			<li><strong>For fun only</strong> — this is a small personal project, not intended for important or private communication.</li>
-			<li><strong>Swearing filter</strong> — messages are filtered in the browser before they are sent.</li>
-			<li><strong>Temporary chat</strong> — messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
-			<li><strong>Built with WebSockets</strong> — this chat is a small demonstration of real-time WebSocket communication.</li>
+			<li><strong>For fun only</strong>, this is a small personal project, not intended for important or private communication.</li>
+			<li><strong>Swearing filter</strong>, messages are filtered in the browser before they are sent.</li>
+			<li><strong>Temporary chat</strong>, messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
+			<li><strong>Built with WebSockets</strong>, this chat is a small demonstration of real-time WebSocket communication.</li>
 			<li>
-				<strong>For developers</strong> — curious how it works? Open your browser's Network inspector, filter for WS,
+				<strong>For developers</strong>, curious how it works? Open your browser's Network inspector, filter for WS,
 				and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
 			</li>
 		</ul>
@@ -524,7 +524,7 @@
 		widgetEl?.classList.remove('offline');
 		connectTimer = setTimeout(() => {
 			if (!isConnected) {
-				setStatus('Offline mode — you can still chat.', 'offline');
+				setStatus('Offline mode, you can still chat.', 'offline');
 				widgetEl?.classList.remove('inactive');
 				widgetEl?.classList.add('offline');
 			}
@@ -610,7 +610,7 @@
 				permanentlyDisabled = true;
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
-				setStatus('Chat unavailable — server appears disabled.', 'error');
+				setStatus('Chat unavailable, server appears disabled.', 'error');
 				if (input) input.disabled = true;
 				if (sendButton) sendButton.disabled = true;
 				return;
@@ -634,7 +634,7 @@
 				permanentlyDisabled = true;
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				widgetEl?.classList.remove('offline');
-				setStatus('Chat unavailable — server appears disabled.', 'error');
+				setStatus('Chat unavailable, server appears disabled.', 'error');
 				if (input) input.disabled = true;
 				if (sendButton) sendButton.disabled = true;
 				return;
@@ -671,7 +671,7 @@
 				local: true,
 			};
 			renderMessage(localMsg);
-			setStatus('Not connected — message shown locally.', 'offline');
+			setStatus('Not connected, message shown locally.', 'offline');
 			input.value = '';
 		}
 	});
