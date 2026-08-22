@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+const pkgPath = fileURLToPath(new URL('../package.json', import.meta.url));
 const lockPath = fileURLToPath(new URL('../package-lock.json', import.meta.url));
+const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 const lock = JSON.parse(readFileSync(lockPath, 'utf-8'));
 
 describe('sabililhaq-chat/package-lock.json', () => {
@@ -11,8 +13,9 @@ describe('sabililhaq-chat/package-lock.json', () => {
     expect(lock.name).toBe('sabililhaq-chat-service');
   });
 
-  it('declares the same runtime dependency (ws) as package.json', () => {
-    expect(lock.packages[''].dependencies.ws).toBe('^8.18.0');
+  it('stays in sync with package.json so npm ci can install', () => {
+    expect(lock.packages[''].dependencies).toEqual(pkg.dependencies);
+    expect(lock.packages[''].devDependencies).toEqual(pkg.devDependencies);
   });
 
   it('pins a resolvable ws package entry', () => {
@@ -23,10 +26,12 @@ describe('sabililhaq-chat/package-lock.json', () => {
     expect(wsEntry.resolved).toMatch(/^https:\/\/registry\.npmjs\.org\/ws\//);
   });
 
-  it('pins resolvable tsx and typescript dev dependency entries', () => {
+  it('pins resolvable tsx, typescript, and vitest dev dependency entries', () => {
     expect(lock.packages['node_modules/tsx']).toBeDefined();
     expect(lock.packages['node_modules/typescript']).toBeDefined();
+    expect(lock.packages['node_modules/vitest']).toBeDefined();
     expect(lock.packages['node_modules/tsx'].dev).toBe(true);
     expect(lock.packages['node_modules/typescript'].dev).toBe(true);
+    expect(lock.packages['node_modules/vitest'].dev).toBe(true);
   });
 });
