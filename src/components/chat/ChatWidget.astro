@@ -211,6 +211,10 @@
 	.messages li.mine {
 		border-color: rgb(var(--gray));
 	}
+	.messages li.local {
+		border-style: dashed;
+		opacity: 0.85;
+	}
 	.messages .who {
 		font-weight: 600;
 		color: rgb(var(--black));
@@ -460,6 +464,7 @@
 	}
 
 	function whoLabel(msg) {
+		if (msg.local) return 'you (local): ';
 		return isOwnMessage(msg) ? `${msg.nickname} (you): ` : `${msg.nickname}: `;
 	}
 
@@ -467,7 +472,8 @@
 		const li = document.createElement('li');
 		li.dataset.ts = String(msg.ts);
 		li.dataset.id = msg.id;
-		if (isOwnMessage(msg)) li.classList.add('mine');
+		if (isOwnMessage(msg) || msg.local) li.classList.add('mine');
+		if (msg.local) li.classList.add('local');
 
 		const who = document.createElement('span');
 		who.className = 'who';
@@ -662,8 +668,9 @@
 			const localMsg = {
 				id: 'local-' + Math.random().toString(36).slice(2, 9),
 				ts: Date.now(),
-				nickname: (nicknameEl && nicknameEl.textContent) || 'You',
+				nickname: selfNickname || (nicknameEl && nicknameEl.textContent) || 'You',
 				text: censored,
+				local: true,
 			};
 			renderMessage(localMsg);
 			setStatus('Not connected — message shown locally.', 'offline');
