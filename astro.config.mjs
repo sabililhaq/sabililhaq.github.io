@@ -6,8 +6,8 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // Site URL is injected at build time via the SITE_URL environment variable.
 // Set it in GitHub Actions as a repository variable/secret, or in a local .env file.
-// Falls back to the default GitHub Pages URL when unset.
-const site = process.env.SITE_URL ?? 'https://sabililhaq.github.io';
+// Falls back to the public custom domain when unset.
+const site = process.env.SITE_URL ?? 'https://sabililhaq.com';
 
 // https://astro.build/config
 export default defineConfig({

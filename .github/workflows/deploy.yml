@@ -3,6 +3,8 @@ name: Deploy Astro to GitHub Pages
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,12 +30,21 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Install site dependencies
         run: npm ci
+
+      - name: Install chat service dependencies
+        run: npm ci --prefix sabililhaq-chat
+
+      - name: Test
+        run: npm test
+
+      - name: Typecheck
+        run: npm run check
 
       - name: Build
         env:
-          SITE_URL: https://sabililhaq.github.io
+          SITE_URL: https://sabililhaq.com
         run: npm run build
 
       - name: Upload Pages artifact
@@ -43,6 +54,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
 
     runs-on: ubuntu-latest
 
