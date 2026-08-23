@@ -1,0 +1,48 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Map | ${SITE_TITLE}`}
+      description="Search a place, style a map, export a poster."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;700&family=Cormorant+Garamond:wght@600&family=Dancing+Script:wght@400;700&family=Inter:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div data-cartis-host></div>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+    height: calc(100dvh - 10rem);
+  }
+
+  [data-cartis-host] {
+    height: 100%;
+  }
+</style>
+
+<script>
+  import { mountCartis } from 'cartis';
+
+  const host = document.querySelector('[data-cartis-host]');
+  if (host instanceof HTMLElement) {
+    mountCartis(host, { basePath: '/map' });
+  }
+</script>

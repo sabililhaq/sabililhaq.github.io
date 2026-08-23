@@ -146,6 +146,12 @@ export type Lab = {
 
 export const LABS: Lab[] = [
   {
+    label: "Map",
+    url: "/map",
+    description: "Search a place, style a map, export a poster",
+    note: "playground",
+  },
+  {
     label: "Chat",
     url: "/chat",
     description: "Anonymous, temporary chat",

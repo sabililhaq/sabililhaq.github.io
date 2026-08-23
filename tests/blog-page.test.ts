@@ -82,6 +82,7 @@ describe('blog writings', () => {
 			'labs',
 			'links',
 			'projects',
+			'map',
 			'qr',
 			'vim',
 		];

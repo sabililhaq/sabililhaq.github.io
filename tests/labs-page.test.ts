@@ -26,7 +26,7 @@ describe('labs', () => {
 
   it('does not remove any of the pre-existing lab entries', () => {
     const labels = LABS.map((lab) => lab.label);
-    for (const label of ['Files', 'Excalidraw', 'URL Shortener', 'QR Code Generator']) {
+    for (const label of ['Map', 'Files', 'Excalidraw', 'URL Shortener', 'QR Code Generator']) {
       expect(labels).toContain(label);
     }
   });
