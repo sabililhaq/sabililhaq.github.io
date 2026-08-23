@@ -70,6 +70,8 @@ describe('blog writings', () => {
 
 	it('highlights the latest post on the home page', () => {
 		expect(homeSource).toContain('.slice(0, 1)');
+		expect(homeSource).toContain('post.data.description');
+		expect(homeSource).toContain('post.description');
 	});
 
 	it('shows recent posts before labs on the home page', () => {
@@ -84,6 +86,8 @@ describe('blog writings', () => {
 		expect(homeSource).toContain("['Vim Dojo', 'Map']");
 		expect(homeSource).toContain('featuredLabs');
 		expect(homeSource).not.toContain('featuredLab ');
+		expect(homeSource).toContain('lab.description');
+		expect(homeSource).not.toContain(', {lab.description}');
 	});
 
 	it('reserves existing page slugs so local posts stay at the root', () => {

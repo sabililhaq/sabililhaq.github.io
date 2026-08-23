@@ -8,6 +8,7 @@ import { LABS, MEDIUM_POSTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } fro
 
 const localPosts = (await getCollection('blog')).map((post) => ({
 	title: post.data.title,
+	description: post.data.description,
 	url: `/${post.id}/`,
 	pubDate: post.data.pubDate,
 }));
@@ -59,6 +60,7 @@ const featuredLabs = ['Vim Dojo', 'Map']
 									{post.title}
 								</a>
 								<div class="post-date"><FormattedDate date={post.pubDate} /></div>
+								{post.description && <p class="desc">{post.description}</p>}
 							</li>
 						))}
 					</ul>
@@ -74,7 +76,7 @@ const featuredLabs = ['Vim Dojo', 'Map']
 							<li>
 								<a href={lab.url}>{lab.label}</a>
 								{lab.description && (
-									<span class="desc">, {lab.description}</span>
+									<p class="desc">{lab.description}</p>
 								)}
 							</li>
 						))}
@@ -154,6 +156,8 @@ const featuredLabs = ['Vim Dojo', 'Map']
 	.desc {
 		color: rgb(var(--gray));
 		font-size: 0.95rem;
+		line-height: 1.5;
+		margin: 0.35rem 0 0;
 	}
 
 	.recent-posts ul {
