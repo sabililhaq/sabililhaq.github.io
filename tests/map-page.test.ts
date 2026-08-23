@@ -22,6 +22,9 @@ describe('map lab', () => {
     expect(source).toContain('data-cartis-host');
     expect(source).toContain('class="map-lab"');
     expect(source).not.toContain('calc(100dvh - 10rem)');
+    expect(source).toContain('flex: 1 1 0%');
+    expect(source).toContain('height: 100dvh');
+    expect(source).toMatch(/html\.map-lab body > main[\s\S]*overflow: hidden/);
   });
 
   it('links Map from the labs page as an internal lab', () => {
