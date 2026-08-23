@@ -20,5 +20,12 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# editor swap files
+*.swp
+*.swo
+
+# local CodeGraph index
+.codegraph/
+
 # jetbrains setting folder
 .idea/

@@ -5,7 +5,6 @@ import {
   indonesianRecommendedTransformers,
   pattern,
 } from "obscenity";
-// import bannedWords from "../../../sabililhaq-chat/chat-service/src/dict.json" with { type: "json" };
 
 const bannedWords = ["sabililhaq"];
 
