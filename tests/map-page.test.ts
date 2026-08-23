@@ -20,6 +20,8 @@ describe('map lab', () => {
     expect(source).toMatch(/title=\{`Map \| \$\{SITE_TITLE\}`\}/);
     expect(source).toContain("basePath: '/map'");
     expect(source).toContain('data-cartis-host');
+    expect(source).toContain('class="map-lab"');
+    expect(source).not.toContain('calc(100dvh - 10rem)');
   });
 
   it('links Map from the labs page as an internal lab', () => {

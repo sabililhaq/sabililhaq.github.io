@@ -6,7 +6,7 @@ import { SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="map-lab">
   <head>
     <BaseHead
       title={`Map | ${SITE_TITLE}`}
@@ -25,16 +25,35 @@ import { SITE_TITLE } from '../consts';
   </body>
 </html>
 
-<style>
-  main {
-    max-width: none;
-    width: 100%;
-    padding: 0;
-    height: calc(100dvh - 10rem);
+<style is:global>
+  html.map-lab,
+  html.map-lab body {
+    height: 100%;
+    overflow: hidden;
   }
 
-  [data-cartis-host] {
+  html.map-lab body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  html.map-lab body > main {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  html.map-lab body > footer {
+    flex-shrink: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  html.map-lab [data-cartis-host] {
     height: 100%;
+    min-height: 0;
   }
 </style>
 
