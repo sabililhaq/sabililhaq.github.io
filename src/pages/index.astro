@@ -8,6 +8,7 @@ import { LABS, MEDIUM_POSTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } fro
 
 const localPosts = (await getCollection('blog')).map((post) => ({
 	title: post.data.title,
+	description: post.data.description,
 	url: `/${post.id}/`,
 	pubDate: post.data.pubDate,
 }));
@@ -16,7 +17,9 @@ const posts = [...localPosts, ...MEDIUM_POSTS]
 	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
 	.slice(0, 1);
 
-const featuredLab = LABS.find((lab) => lab.label === 'Vim Dojo');
+const featuredLabs = ['Vim Dojo', 'Map']
+	.map((label) => LABS.find((lab) => lab.label === label))
+	.filter((lab) => lab != null);
 ---
 
 <!doctype html>
@@ -43,21 +46,6 @@ const featuredLab = LABS.find((lab) => lab.label === 'Vim Dojo');
 				</p>
 			</section>
 
-			{featuredLab && (
-				<section class="labs">
-					<h2>Labs</h2>
-					<ul class="hover-list lab-list">
-						<li>
-							<a href={featuredLab.url}>{featuredLab.label}</a>
-							{featuredLab.description && (
-								<span class="desc">, {featuredLab.description}</span>
-							)}
-						</li>
-					</ul>
-					<a class="all-posts" href="/labs">All labs →</a>
-				</section>
-			)}
-
 			{posts.length > 0 && (
 				<section class="recent-posts">
 					<h2>Recent posts</h2>
@@ -72,10 +60,28 @@ const featuredLab = LABS.find((lab) => lab.label === 'Vim Dojo');
 									{post.title}
 								</a>
 								<div class="post-date"><FormattedDate date={post.pubDate} /></div>
+								{post.description && <p class="desc">{post.description}</p>}
 							</li>
 						))}
 					</ul>
 					<a class="all-posts" href="/blog">All posts →</a>
+				</section>
+			)}
+
+			{featuredLabs.length > 0 && (
+				<section class="labs">
+					<h2>Labs</h2>
+					<ul class="hover-list lab-list">
+						{featuredLabs.map((lab) => (
+							<li>
+								<a href={lab.url}>{lab.label}</a>
+								{lab.description && (
+									<p class="desc">{lab.description}</p>
+								)}
+							</li>
+						))}
+					</ul>
+					<a class="all-posts" href="/labs">All labs →</a>
 				</section>
 			)}
 		</main>
@@ -150,6 +156,8 @@ const featuredLab = LABS.find((lab) => lab.label === 'Vim Dojo');
 	.desc {
 		color: rgb(var(--gray));
 		font-size: 0.95rem;
+		line-height: 1.5;
+		margin: 0.35rem 0 0;
 	}
 
 	.recent-posts ul {
