@@ -72,6 +72,20 @@ describe('blog writings', () => {
 		expect(homeSource).toContain('.slice(0, 1)');
 	});
 
+	it('shows recent posts before labs on the home page', () => {
+		expect(homeSource.indexOf('class="recent-posts"')).toBeGreaterThan(-1);
+		expect(homeSource.indexOf('class="labs"')).toBeGreaterThan(-1);
+		expect(homeSource.indexOf('class="recent-posts"')).toBeLessThan(
+			homeSource.indexOf('class="labs"'),
+		);
+	});
+
+	it('features Vim Dojo and Map on the home page', () => {
+		expect(homeSource).toContain("['Vim Dojo', 'Map']");
+		expect(homeSource).toContain('featuredLabs');
+		expect(homeSource).not.toContain('featuredLab ');
+	});
+
 	it('reserves existing page slugs so local posts stay at the root', () => {
 		const slugPagePath = fileURLToPath(new URL('../src/pages/[slug].astro', import.meta.url));
 		const slugSource = readFileSync(slugPagePath, 'utf-8');
