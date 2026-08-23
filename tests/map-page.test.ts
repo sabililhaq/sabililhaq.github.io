@@ -49,7 +49,7 @@ describe('map lab', () => {
   it('imports cartis as an external package', () => {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 
-    expect(pkg.dependencies.cartis).toMatch(/^(file:|github:)/);
+    expect(pkg.dependencies.cartis).toMatch(/^github:/);
     expect(pkg.scripts['dev:map']).toBeUndefined();
     expect(pkg.scripts.build).toBe('astro build');
   });
