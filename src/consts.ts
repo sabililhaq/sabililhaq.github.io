@@ -58,6 +58,21 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
+    id: "geoproximity",
+    title: "Geoproximity",
+    overview: [
+      "Rank several places by how close they are to a destination. One map instead of checking each pair in Google Maps.",
+      "Runs entirely in the browser. No backend, calculations happen locally from coordinates, and location data never passes through an application server.",
+    ],
+    techStack: "TypeScript · Leaflet",
+    group: "now",
+    liveDemo: "/map",
+    sourceCode: "https://github.com/sabililhaq/geoproximity",
+    image: "/images/projects/geoproximity.png",
+    imageAlt:
+      "Geoproximity ranking Bandung locations by distance to Jalan Braga",
+  },
+  {
     id: "vim-dojo",
     title: "Vim Dojo",
     overview: [
@@ -150,7 +165,7 @@ export const LABS: Lab[] = [
   {
     label: "Map",
     url: "/map",
-    description: "Free geospatial map playgrounds; location proximity, geo art",
+    description: "Rank places by distance, or style a map poster.",
     note: "playground",
   },
   {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { LABS } from '../src/consts';
+import { LABS, PROJECTS } from '../src/consts';
 
 const mapPagePath = fileURLToPath(new URL('../src/pages/map.astro', import.meta.url));
 const labsPagePath = fileURLToPath(new URL('../src/pages/labs.astro', import.meta.url));
@@ -20,12 +20,17 @@ describe('map lab', () => {
     expect(source).toContain('mountCartis');
     expect(source).toContain('mountProximity');
     expect(source).toMatch(/title=\{`Map \| \$\{SITE_TITLE\}`\}/);
+    expect(source).toContain('Rank places by distance, or style a map poster.');
     expect(source).toContain("basePath: '/map'");
     expect(source).toContain('data-art-host');
     expect(source).toContain('data-proximity-host');
-    expect(source).toContain('data-map-mode="art"');
-    expect(source).toContain('data-map-mode="proximity"');
+    expect(source).toMatch(
+      /data-map-mode="proximity"[^>]*>Proximity<\/button>[\s\S]*data-map-mode="art"[^>]*>Poster<\/button>/,
+    );
     expect(source).toMatch(/data-map-mode="proximity"[^>]*aria-selected="true"/);
+    expect(source).toContain('sample: true');
+    expect(source).toContain('ensureArtFonts');
+    expect(source).not.toMatch(/<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com"/);
     expect(source).toContain('id="map-art-host"');
     expect(source).toMatch(/id="map-art-host"[^>]*hidden/);
     expect(source).toContain('class="map-lab"');
@@ -59,8 +64,7 @@ describe('map lab', () => {
     expect(lab).toBeDefined();
     expect(lab!.url).toBe('/map');
     expect(lab!.url.startsWith('http')).toBe(false);
-    expect(lab!.description.toLowerCase()).toMatch(/map/);
-    expect(lab!.description.toLowerCase()).toMatch(/proximity|destination/);
+    expect(lab!.description).toBe('Rank places by distance, or style a map poster.');
     expect(source).toContain('LABS');
   });
 
@@ -72,11 +76,34 @@ describe('map lab', () => {
     expect(headerSource).toContain("'map'");
   });
 
+  it('lists Geoproximity as a current project with a live map demo', () => {
+    const project = PROJECTS.find((entry) => entry.id === 'geoproximity');
+
+    expect(project).toBeDefined();
+    expect(project!.group).toBe('now');
+    expect(PROJECTS.findIndex((entry) => entry.id === 'geoproximity')).toBeLessThan(
+      PROJECTS.findIndex((entry) => entry.id === 'vim-dojo'),
+    );
+    expect(project!.liveDemo).toBe('/map');
+    expect(project!.sourceCode).toBe('https://github.com/sabililhaq/geoproximity');
+    expect(project!.roadmap).toBeUndefined();
+    expect(project!.image).toBe('/images/projects/geoproximity.png');
+    expect(
+      existsSync(fileURLToPath(new URL('../public/images/projects/geoproximity.png', import.meta.url))),
+    ).toBe(true);
+    expect(project!.overview.join(' ')).toMatch(/google maps/i);
+    expect(project!.overview.join(' ')).toMatch(/entirely in the browser/i);
+    expect(project!.overview.join(' ')).toMatch(/no backend/i);
+    expect(project!.overview.join(' ')).toMatch(/locally/);
+    expect(project!.overview.join(' ')).toMatch(/application server/i);
+    expect(project!.overview.join(' ')).not.toMatch(/street routing|roadmap/i);
+  });
+
   it('imports cartis and geoproximity as external packages', () => {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 
     expect(pkg.dependencies.cartis).toMatch(/^github:/);
-    expect(pkg.dependencies.geoproximity).toMatch(/^github:/);
+    expect(pkg.dependencies.geoproximity).toMatch(/^(file:|github:)/);
     expect(pkg.dependencies.leaflet).toBeDefined();
     expect(pkg.scripts['dev:map']).toBeUndefined();
     expect(pkg.scripts.build).toBe('astro build');

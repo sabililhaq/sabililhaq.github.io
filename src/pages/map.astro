@@ -10,11 +10,8 @@ import { SITE_TITLE } from '../consts';
   <head>
     <BaseHead
       title={`Map | ${SITE_TITLE}`}
-      description="Free geospatial playgrounds; location proximity, geo art"
+      description="Rank places by distance, or style a map poster."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;700&family=Cormorant+Garamond:wght@600&family=Dancing+Script:wght@400;700&family=Inter:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <Header />
@@ -22,11 +19,11 @@ import { SITE_TITLE } from '../consts';
       <div data-map-stage>
         <div class="map-mode-bar">
           <div class="map-mode-toggle" role="tablist" aria-label="Map mode">
-            <button type="button" role="tab" data-map-mode="art" aria-selected="false" aria-controls="map-art-host">Art</button>
             <button type="button" role="tab" data-map-mode="proximity" aria-selected="true" aria-controls="map-proximity-host">Proximity</button>
+            <button type="button" role="tab" data-map-mode="art" aria-selected="false" aria-controls="map-art-host">Poster</button>
           </div>
         </div>
-        <div id="map-art-host" data-art-host role="tabpanel" aria-label="Art map" hidden></div>
+        <div id="map-art-host" data-art-host role="tabpanel" aria-label="Poster map" hidden></div>
         <div id="map-proximity-host" data-proximity-host role="tabpanel" aria-label="Proximity map"></div>
       </div>
     </main>
@@ -194,6 +191,24 @@ import { SITE_TITLE } from '../consts';
   let pxMounted = false;
   let invalidatePx: ((root: HTMLElement) => void) | null = null;
   let applySeq = 0;
+  const artFontsHref =
+    'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;700&family=Cormorant+Garamond:wght@600&family=Dancing+Script:wght@400;700&family=Inter:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap';
+
+  function ensureArtFonts() {
+    if (document.querySelector('[data-map-art-fonts]')) return;
+    const preconnect = document.createElement('link');
+    preconnect.rel = 'preconnect';
+    preconnect.href = 'https://fonts.googleapis.com';
+    const preconnectStatic = document.createElement('link');
+    preconnectStatic.rel = 'preconnect';
+    preconnectStatic.href = 'https://fonts.gstatic.com';
+    preconnectStatic.crossOrigin = 'anonymous';
+    const sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    sheet.href = artFontsHref;
+    sheet.dataset.mapArtFonts = '';
+    document.head.append(preconnect, preconnectStatic, sheet);
+  }
 
   function currentMode(): MapMode {
     return parseMapMode(new URLSearchParams(location.search).get('mode'));
@@ -230,6 +245,7 @@ import { SITE_TITLE } from '../consts';
 
     if (art) {
       if (!artMounted) {
+        ensureArtFonts();
         const { mountCartis } = await import('cartis');
         if (seq !== applySeq) return;
         mountCartis(stageArt, { basePath: '/map' });
@@ -238,7 +254,7 @@ import { SITE_TITLE } from '../consts';
     } else if (!pxMounted) {
       const { mountProximity, invalidateProximity } = await import('geoproximity');
       if (seq !== applySeq) return;
-      mountProximity(stagePx, { basePath: '/map' });
+      mountProximity(stagePx, { basePath: '/map', sample: true });
       invalidatePx = invalidateProximity;
       pxMounted = true;
     } else {

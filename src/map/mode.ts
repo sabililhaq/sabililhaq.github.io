@@ -1,4 +1,4 @@
-export const MAP_MODES = ['art', 'proximity'] as const;
+export const MAP_MODES = ['proximity', 'art'] as const;
 
 export type MapMode = (typeof MAP_MODES)[number];
 
