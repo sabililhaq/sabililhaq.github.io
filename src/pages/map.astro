@@ -152,6 +152,11 @@ import { SITE_TITLE } from '../consts';
     });
   }
 
+  function activateButton(btn: HTMLButtonElement) {
+    btn.focus();
+    void applyMode(parseMapMode(btn.dataset.mapMode));
+  }
+
   async function applyMode(mode: MapMode, writeUrl = true) {
     if (!(stageArt instanceof HTMLElement) || !(stagePx instanceof HTMLElement)) return;
     const seq = ++applySeq;
@@ -194,6 +199,17 @@ import { SITE_TITLE } from '../consts';
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
       void applyMode(parseMapMode(btn.dataset.mapMode));
+    });
+    btn.addEventListener('keydown', (event) => {
+      const index = Array.from(buttons).indexOf(btn);
+      let nextIndex: number | null = null;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + buttons.length) % buttons.length;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % buttons.length;
+      if (event.key === 'Home') nextIndex = 0;
+      if (event.key === 'End') nextIndex = buttons.length - 1;
+      if (nextIndex === null) return;
+      event.preventDefault();
+      activateButton(buttons[nextIndex]);
     });
   });
 

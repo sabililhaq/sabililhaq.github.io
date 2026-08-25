@@ -6,6 +6,7 @@
 	--px-fill: rgb(var(--surface));
 	--px-wash: rgb(var(--bg));
 	box-sizing: border-box;
+
 	display: grid;
 	grid-template-areas: 'map' 'aside';
 	grid-template-rows: minmax(0, 1fr) minmax(320px, 52%);
@@ -403,7 +404,7 @@
 	padding: 0;
 	margin: -1px;
 	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
 	white-space: nowrap;
 	border: 0;
 }

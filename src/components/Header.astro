@@ -1,6 +1,13 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+
+const navItems = [
+	{ href: '/about', label: 'about' },
+	{ href: '/projects', label: 'projects' },
+	{ href: '/blog', label: 'blog' },
+	{ href: '/labs', label: 'labs' },
+] as const;
 ---
 
 <header>
@@ -8,65 +15,67 @@ import HeaderLink from './HeaderLink.astro';
 		<div class="site-name">
 			<a href="/">{SITE_TITLE}</a>
 		</div>
-		<button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark mode">
-			<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-				<path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"></path>
-			</svg>
-			<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-				<circle cx="12" cy="12" r="4"></circle>
-				<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
-			</svg>
-		</button>
-		<nav aria-label="Primary">
-			<HeaderLink href="/about">about</HeaderLink>
-			<span class="sep" aria-hidden="true">│</span>
-			<HeaderLink href="/projects">projects</HeaderLink>
-			<span class="sep" aria-hidden="true">│</span>
-			<HeaderLink href="/blog">blog</HeaderLink>
-			<span class="sep" aria-hidden="true">│</span>
-			<HeaderLink href="/labs">labs</HeaderLink>
+		<details class="header-menu" id="header-menu">
+			<summary class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-haspopup="true" aria-controls="header-menu-panel">
+				<svg class="icon-bars" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+					<path d="M4 7h16M4 12h16M4 17h16"></path>
+				</svg>
+				<svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+					<path d="M6 6l12 12M18 6L6 18"></path>
+				</svg>
+			</summary>
+			<div class="menu-panel" id="header-menu-panel">
+				<nav class="menu-nav" id="menu-nav" aria-label="Primary">
+					{navItems.map((item) => (
+						<HeaderLink href={item.href}>{item.label}</HeaderLink>
+					))}
+				</nav>
+				<div class="menu-settings">
+					<button type="button" class="menu-row" id="theme-toggle" aria-label="Switch to dark mode">
+						<span>Dark mode</span>
+						<span class="menu-row-control">
+							<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"></path>
+							</svg>
+							<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<circle cx="12" cy="12" r="4"></circle>
+								<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+							</svg>
+						</span>
+					</button>
+					<button type="button" class="menu-row" id="nav-toggle" aria-pressed="false">
+						<span>Hide navbar</span>
+						<span class="switch" aria-hidden="true"></span>
+					</button>
+					<div class="menu-row menu-row-static">
+						<span id="lang-label">Language</span>
+						<div class="lang-toggle" role="group" aria-labelledby="lang-label">
+							<button type="button" aria-pressed="true">ENG</button>
+							<button type="button" disabled title="Indonesian coming soon">INA</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</details>
+		<nav class="primary-nav" aria-label="Primary">
+			{navItems.map((item, index) => (
+				<>
+					{index > 0 && <span class="sep" aria-hidden="true">│</span>}
+					<HeaderLink href={item.href}>{item.label}</HeaderLink>
+				</>
+			))}
 		</nav>
 	</div>
 </header>
 
 <style>
 	header {
+		position: relative;
+		z-index: 1000;
 		margin: 0;
 		padding: 0 1.3rem;
 		background: rgb(var(--bg));
 		box-sizing: border-box;
-	}
-	.theme-toggle {
-		appearance: none;
-		position: absolute;
-		top: 1.15rem;
-		right: 0;
-		display: grid;
-		place-items: center;
-		width: 2rem;
-		height: 2rem;
-		padding: 0;
-		margin: 0;
-		border: none;
-		border-radius: 4px;
-		background: none;
-		color: rgb(var(--gray));
-		cursor: pointer;
-	}
-	.theme-toggle:hover {
-		color: rgb(var(--black));
-	}
-	.theme-toggle svg {
-		display: block;
-	}
-	.theme-toggle .icon-sun {
-		display: none;
-	}
-	:global(html[data-theme='dark']) .theme-toggle .icon-moon {
-		display: none;
-	}
-	:global(html[data-theme='dark']) .theme-toggle .icon-sun {
-		display: block;
 	}
 	.header-inner {
 		position: relative;
@@ -78,6 +87,7 @@ import HeaderLink from './HeaderLink.astro';
 		flex-direction: column;
 		align-items: center;
 		box-sizing: border-box;
+		border-bottom: 1px solid rgb(var(--gray-light));
 	}
 	.site-name {
 		font-size: 1.45rem;
@@ -96,13 +106,191 @@ import HeaderLink from './HeaderLink.astro';
 		text-underline-offset: 0.18em;
 		color: rgb(var(--black));
 	}
-	nav {
+	.header-menu {
+		position: absolute;
+		top: 1.15rem;
+		right: 0;
+		margin: 0;
+	}
+	.menu-toggle {
+		appearance: none;
+		list-style: none;
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		padding: 0;
+		margin: 0;
+		border: none;
+		border-radius: 4px;
+		background: none;
+		color: rgb(var(--gray));
+		cursor: pointer;
+	}
+	.menu-toggle::-webkit-details-marker,
+	.menu-toggle::marker {
+		display: none;
+		content: none;
+	}
+	.menu-toggle:hover {
+		color: rgb(var(--black));
+	}
+	.menu-toggle svg {
+		display: block;
+	}
+	.menu-toggle .icon-close {
+		display: none;
+	}
+	.header-menu[open] .icon-bars {
+		display: none;
+	}
+	.header-menu[open] .icon-close {
+		display: block;
+	}
+	.menu-panel {
+		position: absolute;
+		top: calc(100% + 0.4rem);
+		right: 0;
+		min-width: 14.5rem;
+		max-width: min(18rem, calc(100vw - 2.3rem));
+		padding: 0.35rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		background: rgb(var(--surface));
+		box-sizing: border-box;
+	}
+	.menu-nav {
+		display: none;
+		flex-direction: column;
+		padding: 0.1rem 0 0.2rem;
+	}
+	:global(html[data-nav-hidden='true']) .menu-nav {
+		display: flex;
+	}
+	.menu-nav :global(a) {
+		display: block;
+		padding: 0.4rem 0.6rem;
+		border-radius: 4px;
+		font-size: 0.9rem;
+	}
+	.menu-nav :global(a:hover) {
+		background: rgb(var(--row-hover));
+		text-decoration: none;
+	}
+	:global(html[data-nav-hidden='true']) .menu-settings {
+		border-top: 1px solid rgb(var(--gray-light));
+		margin-top: 0.2rem;
+		padding-top: 0.2rem;
+	}
+	.menu-row {
+		appearance: none;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.85rem;
+		width: 100%;
+		margin: 0;
+		padding: 0.42rem 0.6rem;
+		border: none;
+		border-radius: 4px;
+		background: none;
+		color: rgb(var(--black));
+		font: inherit;
+		font-size: 0.9rem;
+		text-align: left;
+		cursor: pointer;
+		box-sizing: border-box;
+	}
+	.menu-row:hover,
+	.menu-row:focus-visible {
+		background: rgb(var(--row-hover));
+	}
+	.menu-row-static {
+		cursor: default;
+	}
+	.menu-row-static:hover,
+	.menu-row-static:focus-visible {
+		background: none;
+	}
+	.menu-row-control {
+		display: grid;
+		place-items: center;
+		width: 1.7rem;
+		height: 1rem;
+		color: rgb(var(--gray));
+	}
+	.menu-row .icon-sun {
+		display: none;
+	}
+	:global(html[data-theme='dark']) .menu-row .icon-moon {
+		display: none;
+	}
+	:global(html[data-theme='dark']) .menu-row .icon-sun {
+		display: block;
+	}
+	.switch {
+		position: relative;
+		display: block;
+		width: 1.7rem;
+		height: 1rem;
+		flex-shrink: 0;
+		border-radius: 999px;
+		background: rgb(var(--gray-light));
+	}
+	.switch::after {
+		content: '';
+		position: absolute;
+		top: 0.125rem;
+		left: 0.125rem;
+		width: 0.75rem;
+		height: 0.75rem;
+		border-radius: 50%;
+		background: rgb(var(--surface));
+		box-shadow: 0 0 0 1px rgb(var(--gray-light));
+	}
+	.menu-row[aria-pressed='true'] .switch {
+		background: rgb(var(--black));
+	}
+	.menu-row[aria-pressed='true'] .switch::after {
+		transform: translateX(0.7rem);
+		box-shadow: none;
+		background: rgb(var(--bg));
+	}
+	.lang-toggle {
+		display: inline-flex;
+		padding: 2px;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		background: rgb(var(--bg));
+	}
+	.lang-toggle button {
+		appearance: none;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: rgb(var(--gray));
+		font: inherit;
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		padding: 0.18rem 0.55rem;
+		cursor: pointer;
+	}
+	.lang-toggle button[aria-pressed='true'] {
+		background: rgb(var(--black));
+		color: rgb(var(--bg));
+		cursor: default;
+	}
+	.lang-toggle button:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+	.primary-nav {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		border-bottom: 1px solid rgb(var(--gray-light));
 		padding: 0.35rem 0 0.7rem;
 		gap: 0.7rem;
 		flex-wrap: wrap;
@@ -112,6 +300,15 @@ import HeaderLink from './HeaderLink.astro';
 		color: rgb(var(--gray-light));
 		user-select: none;
 		font-size: 0.85rem;
+	}
+	:global(html[data-nav-hidden='true']) .primary-nav {
+		display: none;
+	}
+	:global(html[data-nav-hidden='true']) .site-name {
+		margin-bottom: 0;
+	}
+	:global(html[data-nav-hidden='true']) .header-inner {
+		padding-bottom: 0.7rem;
 	}
 	@media (max-width: 720px) {
 		header {
@@ -127,7 +324,7 @@ import HeaderLink from './HeaderLink.astro';
 			font-size: 1.15rem;
 		}
 
-		nav {
+		.primary-nav {
 			gap: 0.45rem;
 			font-size: 0.9rem;
 		}
@@ -136,7 +333,11 @@ import HeaderLink from './HeaderLink.astro';
 
 <script>
 	const STORAGE_KEY = 'theme';
+	const NAV_STORAGE_KEY = 'nav-hidden';
 	const button = document.getElementById('theme-toggle');
+	const navToggle = document.getElementById('nav-toggle');
+	const menu = document.getElementById('header-menu');
+	const menuToggle = document.getElementById('menu-toggle');
 
 	function currentTheme() {
 		return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
@@ -159,9 +360,63 @@ import HeaderLink from './HeaderLink.astro';
 		syncButton();
 	}
 
+	function navIsHidden() {
+		return document.documentElement.dataset.navHidden === 'true';
+	}
+
+	function syncNavToggle() {
+		if (!(navToggle instanceof HTMLButtonElement)) return;
+		navToggle.setAttribute('aria-pressed', navIsHidden() ? 'true' : 'false');
+	}
+
+	function applyNavHidden(hidden: boolean) {
+		if (hidden) document.documentElement.dataset.navHidden = 'true';
+		else delete document.documentElement.dataset.navHidden;
+		try {
+			localStorage.setItem(NAV_STORAGE_KEY, hidden ? 'true' : 'false');
+		} catch {
+			// Ignore private-mode storage failures.
+		}
+		syncNavToggle();
+	}
+
+	function closeMenu() {
+		if (menu instanceof HTMLDetailsElement && menu.open) {
+			menu.open = false;
+		}
+	}
+
+	function syncMenuToggle() {
+		if (!(menuToggle instanceof HTMLElement)) return;
+		const open = menu instanceof HTMLDetailsElement && menu.open;
+		menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+		menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+	}
+
 	button?.addEventListener('click', () => {
 		applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
 	});
 
+	navToggle?.addEventListener('click', () => {
+		applyNavHidden(!navIsHidden());
+	});
+
+	if (menu instanceof HTMLDetailsElement) {
+		menu.addEventListener('toggle', syncMenuToggle);
+		document.addEventListener('click', (event) => {
+			if (!menu.open) return;
+			if (!(event.target instanceof Node)) return;
+			if (!menu.contains(event.target)) closeMenu();
+		});
+		document.addEventListener('keydown', (event) => {
+			if (event.key !== 'Escape') return;
+			if (!menu.open) return;
+			closeMenu();
+			menuToggle instanceof HTMLElement && menuToggle.focus();
+		});
+	}
+
 	syncButton();
+	syncNavToggle();
+	syncMenuToggle();
 </script>

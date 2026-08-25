@@ -32,6 +32,9 @@ const { title, description, image = FallbackImage } = Astro.props;
 						? 'dark'
 						: 'light';
 			document.documentElement.dataset.theme = theme;
+			if (localStorage.getItem('nav-hidden') === 'true') {
+				document.documentElement.dataset.navHidden = 'true';
+			}
 		} catch {
 			document.documentElement.dataset.theme = 'light';
 		}

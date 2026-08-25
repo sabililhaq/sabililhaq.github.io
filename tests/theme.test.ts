@@ -7,7 +7,7 @@ const headPath = fileURLToPath(new URL('../src/components/BaseHead.astro', impor
 const cssPath = fileURLToPath(new URL('../src/styles/global.css', import.meta.url));
 
 describe('theme toggle', () => {
-  it('puts a dark/light icon trigger on the right of the header', () => {
+  it('keeps a dark/light trigger that persists the choice', () => {
     const source = readFileSync(headerPath, 'utf-8');
     expect(source).toContain('id="theme-toggle"');
     expect(source).toContain('icon-moon');

@@ -26,7 +26,8 @@ export type MediumPost = {
 
 export const MEDIUM_POSTS: MediumPost[] = [
   {
-    title: "Bahasa Indonesia: Fundamental Machine Learning: Kunci Era Baru Teknologi",
+    title:
+      "Bahasa Indonesia: Fundamental Machine Learning: Kunci Era Baru Teknologi",
     description:
       "Artikel ini memberikan pengetahuan/konsep dasar dan fundamental machine learning secara sederhana, tidak membahas sisi teknikal.",
     url: "https://medium.com/data-folks-indonesia/machine-learning-kunci-era-baru-teknologi-2a780254f6c1",
@@ -69,7 +70,8 @@ export const PROJECTS: Project[] = [
     sourceCode: "https://github.com/sabililhaq/vim-dojo",
     roadmap: "/vim/roadmap",
     image: "/images/projects/vim-dojo.png",
-    imageAlt: "Vim Dojo challenge with a code buffer, hint controls, and practice categories",
+    imageAlt:
+      "Vim Dojo challenge with a code buffer, hint controls, and practice categories",
   },
   {
     id: "doktergpt",
@@ -148,7 +150,7 @@ export const LABS: Lab[] = [
   {
     label: "Map",
     url: "/map",
-    description: "Free geospatial playgrounds; locations proximity, geo art",
+    description: "Free geospatial playgrounds; location proximity, geo art",
     note: "playground",
   },
   {
