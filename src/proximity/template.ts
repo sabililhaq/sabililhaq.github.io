@@ -27,7 +27,7 @@ export const proximityMarkup = `
 			</section>
 
 			<section class="px-section">
-				<h2>Travel locations</h2>
+				<h2>transport hub locations</h2>
 				<form data-loc-form class="px-search">
 					<label class="px-sr" for="px-loc-input">Add a travel location</label>
 					<input id="px-loc-input" data-loc-input type="search" placeholder="Add a city or place" autocomplete="off" enterkeyhint="search" />

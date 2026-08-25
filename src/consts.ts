@@ -148,7 +148,7 @@ export const LABS: Lab[] = [
   {
     label: "Map",
     url: "/map",
-    description: "Map art posters, or compare how close travel locations are to a destination.",
+    description: "Free geolocation playgrounds; locations proximity, geo art",
     note: "playground",
   },
   {
