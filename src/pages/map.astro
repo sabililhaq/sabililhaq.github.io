@@ -10,7 +10,7 @@ import { SITE_TITLE } from '../consts';
   <head>
     <BaseHead
       title={`Map | ${SITE_TITLE}`}
-      description="Search a place, style a map, export a poster."
+      description="Free geospatial playgrounds; location proximity, geo art"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,16 @@ import { SITE_TITLE } from '../consts';
   <body>
     <Header />
     <main>
-      <div data-cartis-host></div>
+      <div data-map-stage>
+        <div class="map-mode-bar">
+          <div class="map-mode-toggle" role="tablist" aria-label="Map mode">
+            <button type="button" role="tab" data-map-mode="art" aria-selected="false" aria-controls="map-art-host">Art</button>
+            <button type="button" role="tab" data-map-mode="proximity" aria-selected="true" aria-controls="map-proximity-host">Proximity</button>
+          </div>
+        </div>
+        <div id="map-art-host" data-art-host role="tabpanel" aria-label="Art map" hidden></div>
+        <div id="map-proximity-host" data-proximity-host role="tabpanel" aria-label="Proximity map"></div>
+      </div>
     </main>
     <Footer />
   </body>
@@ -60,20 +69,204 @@ import { SITE_TITLE } from '../consts';
     padding: 0.75rem 1.3rem;
   }
 
-  html.map-lab [data-cartis-host] {
+  html.map-lab .map-mode-bar {
+    position: absolute;
+    top: 0.55rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    display: flex;
+    justify-content: center;
+    width: max-content;
+    padding: 0;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  html.map-lab .map-mode-toggle {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 999px;
+    background: color-mix(in srgb, rgb(var(--surface)) 92%, transparent);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    pointer-events: auto;
+  }
+
+  html.map-lab .map-mode-toggle button {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: rgb(var(--gray));
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0.32rem 0.95rem;
+    cursor: pointer;
+  }
+
+  html.map-lab .map-mode-toggle button[aria-selected='true'] {
+    background: rgb(var(--black));
+    color: rgb(var(--bg));
+  }
+
+  html.map-lab [data-map-stage] {
     flex: 1 1 0%;
     min-height: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+
+  html.map-lab [data-art-host],
+  html.map-lab [data-proximity-host] {
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 0;
+  }
+
+  html.map-lab [data-art-host][hidden],
+  html.map-lab [data-proximity-host][hidden] {
+    display: none !important;
+  }
+
+  html.map-lab [data-cartis] aside,
+  html.map-lab [data-cartis] .sheet-panel {
+    background: rgb(var(--bg));
+  }
+
+  html.map-lab [data-cartis] .input-field {
+    background: rgb(var(--surface));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-900,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-800,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-700,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-900,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-800,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-700 {
+    color: rgb(var(--black));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-500,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-400,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-500,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-400 {
+    color: rgb(var(--gray));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-white,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-white\/95,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-slate-50,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-slate-50\/50,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-slate-100,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-white,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-50,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-50\/50,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-100 {
+    background-color: rgb(var(--surface));
+    color: rgb(var(--gray-dark));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .border-slate-100,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .border-slate-200,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .border-slate-100,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .border-slate-200 {
+    border-color: rgb(var(--gray-light));
   }
 </style>
 
 <script>
-  import { mountCartis } from 'cartis';
+  import { parseMapMode, searchWithMode, type MapMode } from '../map/mode';
 
-  const host = document.querySelector('[data-cartis-host]');
-  if (host instanceof HTMLElement) {
-    mountCartis(host, { basePath: '/map' });
+  const stageArt = document.querySelector('[data-art-host]');
+  const stagePx = document.querySelector('[data-proximity-host]');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-map-mode]');
+
+  let artMounted = false;
+  let pxMounted = false;
+  let invalidatePx: ((root: HTMLElement) => void) | null = null;
+  let applySeq = 0;
+
+  function currentMode(): MapMode {
+    return parseMapMode(new URLSearchParams(location.search).get('mode'));
   }
+
+  function syncButtons(mode: MapMode) {
+    buttons.forEach((btn) => {
+      const on = btn.dataset.mapMode === mode;
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.tabIndex = on ? 0 : -1;
+    });
+  }
+
+  function activateButton(btn: HTMLButtonElement) {
+    btn.focus();
+    void applyMode(parseMapMode(btn.dataset.mapMode));
+  }
+
+  async function applyMode(mode: MapMode, writeUrl = true) {
+    if (!(stageArt instanceof HTMLElement) || !(stagePx instanceof HTMLElement)) return;
+    const seq = ++applySeq;
+
+    if (writeUrl) {
+      const next = `${location.pathname}${searchWithMode(location.search, mode)}${location.hash}`;
+      history.replaceState({}, '', next);
+    }
+
+    const art = mode === 'art';
+    stageArt.hidden = !art;
+    stagePx.hidden = art;
+    stageArt.inert = !art;
+    stagePx.inert = art;
+    syncButtons(mode);
+
+    if (art) {
+      if (!artMounted) {
+        const { mountCartis } = await import('cartis');
+        if (seq !== applySeq) return;
+        mountCartis(stageArt, { basePath: '/map' });
+        artMounted = true;
+      }
+    } else if (!pxMounted) {
+      const prox = await import('../proximity');
+      if (seq !== applySeq) return;
+      prox.mountProximity(stagePx, { basePath: '/map' });
+      invalidatePx = prox.invalidateProximity;
+      pxMounted = true;
+    } else {
+      invalidatePx?.(stagePx);
+    }
+
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+      if (!art) invalidatePx?.(stagePx);
+    });
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      void applyMode(parseMapMode(btn.dataset.mapMode));
+    });
+    btn.addEventListener('keydown', (event) => {
+      const index = Array.from(buttons).indexOf(btn);
+      let nextIndex: number | null = null;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + buttons.length) % buttons.length;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % buttons.length;
+      if (event.key === 'Home') nextIndex = 0;
+      if (event.key === 'End') nextIndex = buttons.length - 1;
+      if (nextIndex === null) return;
+      event.preventDefault();
+      activateButton(buttons[nextIndex]);
+    });
+  });
+
+  void applyMode(currentMode(), false);
 </script>
