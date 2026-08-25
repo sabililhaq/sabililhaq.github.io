@@ -15,11 +15,19 @@ describe('map lab', () => {
 
     expect(source).toMatch(/import Header from ['"]\.\.\/components\/Header\.astro['"]/);
     expect(source).toMatch(/import Footer from ['"]\.\.\/components\/Footer\.astro['"]/);
-    expect(source).toMatch(/from ['"]cartis['"]/);
+    expect(source).toMatch(/import\(['"]cartis['"]\)/);
+    expect(source).toMatch(/import\(['"]\.\.\/proximity['"]\)/);
     expect(source).toContain('mountCartis');
+    expect(source).toContain('mountProximity');
     expect(source).toMatch(/title=\{`Map \| \$\{SITE_TITLE\}`\}/);
     expect(source).toContain("basePath: '/map'");
-    expect(source).toContain('data-cartis-host');
+    expect(source).toContain('data-art-host');
+    expect(source).toContain('data-proximity-host');
+    expect(source).toContain('data-map-mode="art"');
+    expect(source).toContain('data-map-mode="proximity"');
+    expect(source).toMatch(/data-map-mode="proximity"[^>]*aria-selected="true"/);
+    expect(source).toContain('id="map-art-host"');
+    expect(source).toMatch(/id="map-art-host"[^>]*hidden/);
     expect(source).toContain('class="map-lab"');
     expect(source).not.toContain('calc(100dvh - 10rem)');
     expect(source).toContain('flex: 1 1 0%');
@@ -35,6 +43,7 @@ describe('map lab', () => {
     expect(lab!.url).toBe('/map');
     expect(lab!.url.startsWith('http')).toBe(false);
     expect(lab!.description.toLowerCase()).toMatch(/map/);
+    expect(lab!.description.toLowerCase()).toMatch(/proximity|destination/);
     expect(source).toContain('LABS');
   });
 
@@ -50,6 +59,7 @@ describe('map lab', () => {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 
     expect(pkg.dependencies.cartis).toMatch(/^github:/);
+    expect(pkg.dependencies.leaflet).toBeDefined();
     expect(pkg.scripts['dev:map']).toBeUndefined();
     expect(pkg.scripts.build).toBe('astro build');
   });

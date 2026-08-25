@@ -10,7 +10,7 @@ import { SITE_TITLE } from '../consts';
   <head>
     <BaseHead
       title={`Map | ${SITE_TITLE}`}
-      description="Search a place, style a map, export a poster."
+      description="Map art posters, or compare how close travel locations are to a destination."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,16 @@ import { SITE_TITLE } from '../consts';
   <body>
     <Header />
     <main>
-      <div data-cartis-host></div>
+      <div class="map-mode-bar">
+        <div class="map-mode-toggle" role="tablist" aria-label="Map mode">
+          <button type="button" role="tab" data-map-mode="art" aria-selected="false" aria-controls="map-art-host">Art</button>
+          <button type="button" role="tab" data-map-mode="proximity" aria-selected="true" aria-controls="map-proximity-host">Proximity</button>
+        </div>
+      </div>
+      <div data-map-stage>
+        <div id="map-art-host" data-art-host role="tabpanel" aria-label="Art map" hidden></div>
+        <div id="map-proximity-host" data-proximity-host role="tabpanel" aria-label="Proximity map"></div>
+      </div>
     </main>
     <Footer />
   </body>
@@ -60,20 +69,133 @@ import { SITE_TITLE } from '../consts';
     padding: 0.75rem 1.3rem;
   }
 
-  html.map-lab [data-cartis-host] {
+  html.map-lab .map-mode-bar {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0.4rem 1rem 0.55rem;
+    background: rgb(var(--bg));
+  }
+
+  html.map-lab .map-mode-toggle {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 999px;
+    background: rgb(var(--surface));
+  }
+
+  html.map-lab .map-mode-toggle button {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: rgb(var(--gray));
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0.32rem 0.95rem;
+    cursor: pointer;
+  }
+
+  html.map-lab .map-mode-toggle button[aria-selected='true'] {
+    background: rgb(var(--black));
+    color: rgb(var(--bg));
+  }
+
+  html.map-lab [data-map-stage] {
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  html.map-lab [data-art-host],
+  html.map-lab [data-proximity-host] {
     flex: 1 1 0%;
     min-height: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
   }
+
+  html.map-lab [data-art-host][hidden],
+  html.map-lab [data-proximity-host][hidden] {
+    display: none !important;
+  }
 </style>
 
 <script>
-  import { mountCartis } from 'cartis';
+  import { parseMapMode, searchWithMode, type MapMode } from '../map/mode';
 
-  const host = document.querySelector('[data-cartis-host]');
-  if (host instanceof HTMLElement) {
-    mountCartis(host, { basePath: '/map' });
+  const stageArt = document.querySelector('[data-art-host]');
+  const stagePx = document.querySelector('[data-proximity-host]');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-map-mode]');
+
+  let artMounted = false;
+  let pxMounted = false;
+  let invalidatePx: ((root: HTMLElement) => void) | null = null;
+  let applySeq = 0;
+
+  function currentMode(): MapMode {
+    return parseMapMode(new URLSearchParams(location.search).get('mode'));
   }
+
+  function syncButtons(mode: MapMode) {
+    buttons.forEach((btn) => {
+      const on = btn.dataset.mapMode === mode;
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.tabIndex = on ? 0 : -1;
+    });
+  }
+
+  async function applyMode(mode: MapMode, writeUrl = true) {
+    if (!(stageArt instanceof HTMLElement) || !(stagePx instanceof HTMLElement)) return;
+    const seq = ++applySeq;
+
+    if (writeUrl) {
+      const next = `${location.pathname}${searchWithMode(location.search, mode)}${location.hash}`;
+      history.replaceState({}, '', next);
+    }
+
+    const art = mode === 'art';
+    stageArt.hidden = !art;
+    stagePx.hidden = art;
+    stageArt.inert = !art;
+    stagePx.inert = art;
+    syncButtons(mode);
+
+    if (art) {
+      if (!artMounted) {
+        const { mountCartis } = await import('cartis');
+        if (seq !== applySeq) return;
+        mountCartis(stageArt, { basePath: '/map' });
+        artMounted = true;
+      }
+    } else if (!pxMounted) {
+      const prox = await import('../proximity');
+      if (seq !== applySeq) return;
+      prox.mountProximity(stagePx, { basePath: '/map' });
+      invalidatePx = prox.invalidateProximity;
+      pxMounted = true;
+    } else {
+      invalidatePx?.(stagePx);
+    }
+
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+      if (!art) invalidatePx?.(stagePx);
+    });
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      void applyMode(parseMapMode(btn.dataset.mapMode));
+    });
+  });
+
+  void applyMode(currentMode(), false);
 </script>
