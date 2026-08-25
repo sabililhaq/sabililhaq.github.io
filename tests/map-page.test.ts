@@ -41,6 +41,15 @@ describe('map lab', () => {
     expect(source).toMatch(
       /html\.map-lab \[data-art-host\],\s*html\.map-lab \[data-proximity-host\][\s\S]*z-index: 0/,
     );
+    expect(source).toMatch(
+      /html\.map-lab \[data-cartis\] aside[\s\S]*background:\s*rgb\(var\(--bg\)\)/,
+    );
+    expect(source).toMatch(
+      /html\.map-lab \[data-cartis\] \.input-field[\s\S]*background:\s*rgb\(var\(--surface\)\)/,
+    );
+    expect(source).toMatch(
+      /html\.map-lab\[data-theme='dark'\] \[data-cartis\] aside \.text-slate-900[\s\S]*color:\s*rgb\(var\(--black\)\)/,
+    );
   });
 
   it('links Map from the labs page as an internal lab', () => {

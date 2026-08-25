@@ -136,6 +136,51 @@ import { SITE_TITLE } from '../consts';
   html.map-lab [data-proximity-host][hidden] {
     display: none !important;
   }
+
+  html.map-lab [data-cartis] aside,
+  html.map-lab [data-cartis] .sheet-panel {
+    background: rgb(var(--bg));
+  }
+
+  html.map-lab [data-cartis] .input-field {
+    background: rgb(var(--surface));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-900,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-800,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-700,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-900,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-800,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-700 {
+    color: rgb(var(--black));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-500,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .text-slate-400,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-500,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-400 {
+    color: rgb(var(--gray));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-white,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-white\/95,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-slate-50,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-slate-50\/50,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .bg-slate-100,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-white,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-50,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-50\/50,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-100 {
+    background-color: rgb(var(--surface));
+    color: rgb(var(--gray-dark));
+  }
+
+  html.map-lab[data-theme='dark'] [data-cartis] aside .border-slate-100,
+  html.map-lab[data-theme='dark'] [data-cartis] aside .border-slate-200,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .border-slate-100,
+  html.map-lab[data-theme='dark'] [data-cartis] .sheet-panel .border-slate-200 {
+    border-color: rgb(var(--gray-light));
+  }
 </style>
 
 <script>
