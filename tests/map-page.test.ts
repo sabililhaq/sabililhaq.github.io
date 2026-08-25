@@ -16,7 +16,7 @@ describe('map lab', () => {
     expect(source).toMatch(/import Header from ['"]\.\.\/components\/Header\.astro['"]/);
     expect(source).toMatch(/import Footer from ['"]\.\.\/components\/Footer\.astro['"]/);
     expect(source).toMatch(/import\(['"]cartis['"]\)/);
-    expect(source).toMatch(/import\(['"]\.\.\/proximity['"]\)/);
+    expect(source).toMatch(/import\(['"]geoproximity['"]\)/);
     expect(source).toContain('mountCartis');
     expect(source).toContain('mountProximity');
     expect(source).toMatch(/title=\{`Map \| \$\{SITE_TITLE\}`\}/);
@@ -72,10 +72,11 @@ describe('map lab', () => {
     expect(headerSource).toContain("'map'");
   });
 
-  it('imports cartis as an external package', () => {
+  it('imports cartis and geoproximity as external packages', () => {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 
     expect(pkg.dependencies.cartis).toMatch(/^github:/);
+    expect(pkg.dependencies.geoproximity).toMatch(/^github:/);
     expect(pkg.dependencies.leaflet).toBeDefined();
     expect(pkg.scripts['dev:map']).toBeUndefined();
     expect(pkg.scripts.build).toBe('astro build');

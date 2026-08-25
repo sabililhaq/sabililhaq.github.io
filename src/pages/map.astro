@@ -236,10 +236,10 @@ import { SITE_TITLE } from '../consts';
         artMounted = true;
       }
     } else if (!pxMounted) {
-      const prox = await import('../proximity');
+      const { mountProximity, invalidateProximity } = await import('geoproximity');
       if (seq !== applySeq) return;
-      prox.mountProximity(stagePx, { basePath: '/map' });
-      invalidatePx = prox.invalidateProximity;
+      mountProximity(stagePx, { basePath: '/map' });
+      invalidatePx = invalidateProximity;
       pxMounted = true;
     } else {
       invalidatePx?.(stagePx);
