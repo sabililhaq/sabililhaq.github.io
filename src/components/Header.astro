@@ -1,5 +1,6 @@
 ---
 import { SITE_TITLE } from '../consts';
+import DesktopOnlyToast from './DesktopOnlyToast.astro';
 import HeaderLink from './HeaderLink.astro';
 
 const navItems = [
@@ -67,6 +68,7 @@ const navItems = [
 		</nav>
 	</div>
 </header>
+<DesktopOnlyToast />
 
 <style>
 	header {

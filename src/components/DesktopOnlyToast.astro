@@ -1,0 +1,206 @@
+---
+import { DESKTOP_TOAST_MS, isDesktopOnly } from '../responsive';
+
+const show = isDesktopOnly(Astro.url.pathname);
+---
+
+{
+	show && (
+		<div class="desktop-toast-layer" data-desktop-toast-layer hidden>
+			<div class="desktop-toast-backdrop" data-desktop-toast-backdrop aria-hidden="true"></div>
+			<div
+				class="desktop-toast"
+				data-desktop-toast
+				role="status"
+				aria-live="polite"
+				style={`--desktop-toast-ms: ${DESKTOP_TOAST_MS}ms`}
+			>
+				<p>Currently only desktop is supported.</p>
+				<div class="auto-continue">
+					<span class="auto-continue-track" aria-hidden="true">
+						<span class="auto-continue-fill"></span>
+					</span>
+					<span data-desktop-toast-label></span>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+<style>
+	.desktop-toast-layer {
+		position: fixed;
+		inset: 0;
+		z-index: 1100;
+	}
+
+	.desktop-toast-layer[hidden] {
+		display: none;
+	}
+
+	.desktop-toast-backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgb(15 18 25 / 0.52);
+		animation: desktop-toast-dim 180ms ease-out;
+	}
+
+	.desktop-toast {
+		position: absolute;
+		left: 50%;
+		bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+		z-index: 1;
+		box-sizing: border-box;
+		width: min(42rem, calc(100vw - 2rem));
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		padding: 0.7rem 0.85rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		background: rgb(var(--bg));
+		color: rgb(var(--gray-dark));
+		cursor: pointer;
+		animation: desktop-toast-in 180ms ease-out;
+	}
+
+	.desktop-toast p {
+		font-size: 0.9rem;
+		line-height: 1.45;
+		margin: 0;
+		color: rgb(var(--black));
+	}
+
+	.auto-continue {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		color: rgb(var(--gray));
+		font-size: 0.82rem;
+	}
+
+	.auto-continue-track {
+		display: block;
+		height: 3px;
+		overflow: hidden;
+		border-radius: 999px;
+		background: rgb(var(--gray-light));
+	}
+
+	.auto-continue-fill {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left center;
+	}
+
+	.desktop-toast-layer:not([hidden]) .auto-continue-fill {
+		animation: desktop-toast-continue var(--desktop-toast-ms, 5s) linear forwards;
+	}
+
+	@keyframes desktop-toast-continue {
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes desktop-toast-in {
+		from {
+			opacity: 0;
+			transform: translate(-50%, 10px);
+		}
+		to {
+			opacity: 1;
+			transform: translate(-50%, 0);
+		}
+	}
+
+	@keyframes desktop-toast-dim {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.desktop-toast,
+		.desktop-toast-backdrop {
+			animation: none;
+		}
+
+		.desktop-toast {
+			transform: translateX(-50%);
+		}
+
+		.desktop-toast-layer:not([hidden]) .auto-continue-fill {
+			animation: none;
+			transform: scaleX(1);
+		}
+	}
+</style>
+
+<script>
+	import { DESKTOP_MIN_WIDTH, DESKTOP_TOAST_MS, shouldShowDesktopToast } from '../responsive';
+
+	function mountDesktopToast(layer: HTMLElement) {
+		const toast = layer.querySelector('[data-desktop-toast]');
+		const backdrop = layer.querySelector('[data-desktop-toast-backdrop]');
+		const label = layer.querySelector('[data-desktop-toast-label]');
+		const media = window.matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`);
+		let dismissed = false;
+		let timer: number | undefined;
+		let ticker: number | undefined;
+		let deadline = 0;
+
+		function hide() {
+			layer.setAttribute('hidden', '');
+			document.documentElement.removeAttribute('data-desktop-toast');
+			window.clearTimeout(timer);
+			window.clearInterval(ticker);
+		}
+
+		function dismiss() {
+			dismissed = true;
+			hide();
+		}
+
+		function updateLabel() {
+			if (!(label instanceof HTMLElement)) return;
+			const seconds = Math.max(0, Math.ceil((deadline - performance.now()) / 1000));
+			label.textContent = `Hiding in ${seconds}s`;
+		}
+
+		function showToast() {
+			if (dismissed) return;
+			if (!shouldShowDesktopToast(location.pathname, window.innerWidth)) {
+				hide();
+				return;
+			}
+
+			deadline = performance.now() + DESKTOP_TOAST_MS;
+			layer.removeAttribute('hidden');
+			document.documentElement.setAttribute('data-desktop-toast', 'true');
+			updateLabel();
+			window.clearTimeout(timer);
+			window.clearInterval(ticker);
+			ticker = window.setInterval(updateLabel, 200);
+			timer = window.setTimeout(dismiss, DESKTOP_TOAST_MS);
+		}
+
+		toast?.addEventListener('click', dismiss);
+		backdrop?.addEventListener('click', dismiss);
+		media.addEventListener('change', () => {
+			if (media.matches) hide();
+			else showToast();
+		});
+		showToast();
+	}
+
+	const layer = document.querySelector('[data-desktop-toast-layer]');
+	if (layer instanceof HTMLElement) mountDesktopToast(layer);
+</script>
