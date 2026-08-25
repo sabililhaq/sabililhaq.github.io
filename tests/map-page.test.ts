@@ -33,6 +33,14 @@ describe('map lab', () => {
     expect(source).toContain('flex: 1 1 0%');
     expect(source).toContain('height: 100dvh');
     expect(source).toMatch(/html\.map-lab body > main[\s\S]*overflow: hidden/);
+    expect(source).toMatch(/data-map-stage[\s\S]*class="map-mode-bar"/);
+    expect(source).toMatch(/html\.map-lab \.map-mode-bar[\s\S]*position: absolute/);
+    expect(source).toMatch(/html\.map-lab \.map-mode-bar[\s\S]*left: 50%/);
+    expect(source).toMatch(/html\.map-lab \.map-mode-bar[\s\S]*pointer-events: none/);
+    expect(source).not.toMatch(/html\.map-lab \.map-mode-bar[\s\S]*flex-shrink: 0/);
+    expect(source).toMatch(
+      /html\.map-lab \[data-art-host\],\s*html\.map-lab \[data-proximity-host\][\s\S]*z-index: 0/,
+    );
   });
 
   it('links Map from the labs page as an internal lab', () => {

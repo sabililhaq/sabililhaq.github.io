@@ -19,13 +19,13 @@ import { SITE_TITLE } from '../consts';
   <body>
     <Header />
     <main>
-      <div class="map-mode-bar">
-        <div class="map-mode-toggle" role="tablist" aria-label="Map mode">
-          <button type="button" role="tab" data-map-mode="art" aria-selected="false" aria-controls="map-art-host">Art</button>
-          <button type="button" role="tab" data-map-mode="proximity" aria-selected="true" aria-controls="map-proximity-host">Proximity</button>
-        </div>
-      </div>
       <div data-map-stage>
+        <div class="map-mode-bar">
+          <div class="map-mode-toggle" role="tablist" aria-label="Map mode">
+            <button type="button" role="tab" data-map-mode="art" aria-selected="false" aria-controls="map-art-host">Art</button>
+            <button type="button" role="tab" data-map-mode="proximity" aria-selected="true" aria-controls="map-proximity-host">Proximity</button>
+          </div>
+        </div>
         <div id="map-art-host" data-art-host role="tabpanel" aria-label="Art map" hidden></div>
         <div id="map-proximity-host" data-proximity-host role="tabpanel" aria-label="Proximity map"></div>
       </div>
@@ -70,11 +70,17 @@ import { SITE_TITLE } from '../consts';
   }
 
   html.map-lab .map-mode-bar {
-    flex-shrink: 0;
+    position: absolute;
+    top: 0.55rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
     display: flex;
     justify-content: center;
-    padding: 0.4rem 1rem 0.55rem;
-    background: rgb(var(--bg));
+    width: max-content;
+    padding: 0;
+    pointer-events: none;
+    background: transparent;
   }
 
   html.map-lab .map-mode-toggle {
@@ -82,7 +88,9 @@ import { SITE_TITLE } from '../consts';
     padding: 3px;
     border: 1px solid rgb(var(--gray-light));
     border-radius: 999px;
-    background: rgb(var(--surface));
+    background: color-mix(in srgb, rgb(var(--surface)) 92%, transparent);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    pointer-events: auto;
   }
 
   html.map-lab .map-mode-toggle button {
@@ -120,6 +128,8 @@ import { SITE_TITLE } from '../consts';
     width: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 0;
   }
 
   html.map-lab [data-art-host][hidden],
