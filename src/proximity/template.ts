@@ -5,11 +5,12 @@ export const proximityMarkup = `
 			<h1>Proximity</h1>
 			<p>How far are travel locations from a destination?</p>
 			<div class="px-io-row">
+				<button type="button" data-sample>Sample</button>
 				<button type="button" data-import>Import</button>
 				<button type="button" data-export>Export</button>
 				<input data-import-file type="file" accept="application/json,.json" hidden />
 			</div>
-			<p data-io-status class="px-io-status" hidden></p>
+			<p data-io-status class="px-io-status" role="status" aria-live="polite" hidden></p>
 		</div>
 
 		<div class="px-sidebar-body">
@@ -20,7 +21,7 @@ export const proximityMarkup = `
 					<input id="px-dest-input" data-dest-input type="search" placeholder="Search a destination" autocomplete="off" enterkeyhint="search" />
 					<div data-dest-results class="px-results" hidden></div>
 				</form>
-				<div class="px-btn-row">
+				<div class="px-btn-row" data-dest-tools>
 					<button type="button" data-use-location>Use my location</button>
 				</div>
 				<div data-dest-current class="px-dest-card" hidden></div>
@@ -33,7 +34,8 @@ export const proximityMarkup = `
 					<input id="px-loc-input" data-loc-input type="search" placeholder="Add a city or place" autocomplete="off" enterkeyhint="search" />
 					<div data-loc-results class="px-results" hidden></div>
 				</form>
-				<ul data-loc-list class="px-list"></ul>
+				<p data-loc-empty class="px-list-empty">Search a place, or click the map.</p>
+				<ul data-loc-list class="px-list" hidden></ul>
 			</section>
 		</div>
 
@@ -52,16 +54,19 @@ export const proximityMarkup = `
 				</div>
 			</div>
 			<div class="px-io-row">
-				<button type="button" data-fit>Fit all</button>
-				<button type="button" data-clear class="px-danger">Clear</button>
+				<button type="button" data-fit disabled>Fit all</button>
+				<button type="button" data-clear class="px-danger" disabled>Clear</button>
 			</div>
 		</div>
 	</aside>
 
 	<div class="px-map-wrap">
 		<div data-px-map class="px-map" role="application" aria-label="Proximity map"></div>
-		<p data-px-hint class="px-hint">Click the map to set a destination</p>
-		<p data-px-empty class="px-map-empty">Set a destination, then add travel locations to compare distance.</p>
+		<p data-px-hint class="px-hint" hidden>Click the map to set a destination</p>
+		<div data-px-empty class="px-map-empty">
+			<p>Set a destination, then add travel locations to compare distance.</p>
+			<button type="button" data-sample>Sample</button>
+		</div>
 	</div>
 </div>
 `;

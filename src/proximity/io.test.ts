@@ -1,5 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parseProximityJson, serializeProximity } from './io';
+
+const samplePath = fileURLToPath(new URL('./sample-proximity.json', import.meta.url));
 
 const paris = { name: 'Paris', lat: 48.8566, lon: 2.3522 };
 const london = { name: 'London', lat: 51.5074, lon: -0.1278 };
@@ -55,5 +59,18 @@ describe('parseProximityJson', () => {
 		expect(parseProximityJson(JSON.stringify({ destination: { name: 'x', lat: 99, lon: 0 } })).ok).toBe(
 			false,
 		);
+	});
+
+	it('reads the bundled Bandung sample', () => {
+		const result = parseProximityJson(readFileSync(samplePath, 'utf-8'));
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+		expect(result.data.destination?.name).toBe('Jalan Braga');
+		expect(result.data.locations.map((node) => node.name)).toEqual([
+			'Universitas Komputer Indonesia',
+			'Jackal Holidays',
+			'Warunk Upnormal',
+			'Bandung Basin Metropolitan Area BRT Corridor',
+		]);
 	});
 });

@@ -6,6 +6,7 @@ import {
   serializeProximity,
   type ProximityFile,
 } from "./io";
+import sampleProximity from "./sample-proximity.json";
 import type { Place, ProximityState } from "./types";
 
 const persisted: ProximityState = {
@@ -164,16 +165,21 @@ export function startProximity(root: HTMLElement): () => void {
   const destForm = qs<HTMLFormElement>(root, "[data-dest-form]");
   const destInput = qs<HTMLInputElement>(root, "[data-dest-input]");
   const destResults = qs(root, "[data-dest-results]");
+  const destTools = qs(root, "[data-dest-tools]");
   const destCurrent = qs(root, "[data-dest-current]");
   const locForm = qs<HTMLFormElement>(root, "[data-loc-form]");
   const locInput = qs<HTMLInputElement>(root, "[data-loc-input]");
   const locResults = qs(root, "[data-loc-results]");
   const locList = qs<HTMLUListElement>(root, "[data-loc-list]");
+  const locEmpty = qs(root, "[data-loc-empty]");
   const useLocationBtn = qs<HTMLButtonElement>(root, "[data-use-location]");
   const fitBtn = qs<HTMLButtonElement>(root, "[data-fit]");
   const clearBtn = qs<HTMLButtonElement>(root, "[data-clear]");
   const importBtn = qs<HTMLButtonElement>(root, "[data-import]");
   const exportBtn = qs<HTMLButtonElement>(root, "[data-export]");
+  const sampleButtons = Array.from(
+    root.querySelectorAll<HTMLButtonElement>("[data-sample]"),
+  );
   const importFile = qs<HTMLInputElement>(root, "[data-import-file]");
   const ioStatus = qs(root, "[data-io-status]");
   const hint = qs(root, "[data-px-hint]");
@@ -244,16 +250,38 @@ export function startProximity(root: HTMLElement): () => void {
       );
     }
 
+    overlay.clearLayers();
+    const markers = new Map<string, L.Marker>();
+
+    function focusPlace(place: Place) {
+      map.setView([place.lat, place.lon], Math.max(map.getZoom(), 13));
+      markers.get(place.id)?.openPopup();
+    }
+
+    destForm.hidden = Boolean(dest);
+    destTools.hidden = Boolean(dest);
+
     if (dest) {
+      const destMarker = L.marker([dest.lat, dest.lon], {
+        icon: destIcon(),
+        zIndexOffset: 600,
+      })
+        .bindPopup(dest.name)
+        .addTo(overlay);
+      markers.set(dest.id, destMarker);
+
       destCurrent.hidden = false;
       destCurrent.classList.add("has-place");
       destCurrent.replaceChildren();
       const copy = document.createElement("div");
+      copy.className = "px-dest-copy";
       const title = document.createElement("strong");
       title.textContent = dest.name;
       const meta = document.createElement("span");
       meta.textContent = `${dest.lat.toFixed(4)}, ${dest.lon.toFixed(4)}`;
       copy.append(title, meta);
+      copy.title = "Show on map";
+      copy.addEventListener("click", () => focusPlace(dest));
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "px-dest-remove";
@@ -270,57 +298,19 @@ export function startProximity(root: HTMLElement): () => void {
     }
 
     locList.replaceChildren();
-    if (ranked.length === 0) {
-      locList.hidden = true;
-    } else {
-      locList.hidden = false;
-      for (const [index, place] of ranked.entries()) {
-        const row = document.createElement("li");
-        row.className = "px-row";
-        const rank = document.createElement("span");
-        rank.className = "px-rank";
-        rank.textContent = String(index + 1);
-        const name = document.createElement("span");
-        name.className = "px-row-name";
-        name.textContent = place.name;
-        name.title = place.name;
-        const dist = document.createElement("span");
-        dist.className = "px-row-dist";
-        dist.textContent = Number.isFinite(place.km)
-          ? formatDistance(place.km, persisted.unit)
-          : "—";
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.className = "px-row-remove";
-        remove.setAttribute("aria-label", `Remove ${place.name}`);
-        remove.textContent = "×";
-        remove.addEventListener("click", () => {
-          persisted.locations = persisted.locations.filter(
-            (item) => item.id !== place.id,
-          );
-          render();
-        });
-        row.append(rank, name, dist, remove);
-        locList.append(row);
-      }
-    }
-
-    overlay.clearLayers();
-    if (dest) {
-      L.marker([dest.lat, dest.lon], { icon: destIcon(), zIndexOffset: 600 })
-        .bindPopup(dest.name)
-        .addTo(overlay);
-    }
+    locEmpty.hidden = ranked.length > 0;
+    locList.hidden = ranked.length === 0;
     for (const [index, place] of ranked.entries()) {
       const kmLabel = Number.isFinite(place.km)
         ? formatDistance(place.km, persisted.unit)
         : "";
-      L.marker([place.lat, place.lon], {
+      const locMarker = L.marker([place.lat, place.lon], {
         icon: locIcon(index + 1),
         zIndexOffset: 400,
       })
         .bindPopup(kmLabel ? `${place.name} · ${kmLabel}` : place.name)
         .addTo(overlay);
+      markers.set(place.id, locMarker);
       if (dest) {
         L.polyline(
           [
@@ -330,12 +320,45 @@ export function startProximity(root: HTMLElement): () => void {
           { color, weight: 2, opacity: 0.7, dashArray: "6 6" },
         ).addTo(overlay);
       }
+
+      const row = document.createElement("li");
+      row.className = "px-row";
+      row.title = "Show on map";
+      const rank = document.createElement("span");
+      rank.className = "px-rank";
+      rank.textContent = String(index + 1);
+      const name = document.createElement("span");
+      name.className = "px-row-name";
+      name.textContent = place.name;
+      name.title = place.name;
+      const dist = document.createElement("span");
+      dist.className = "px-row-dist";
+      dist.textContent = kmLabel || "—";
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "px-row-remove";
+      remove.setAttribute("aria-label", `Remove ${place.name}`);
+      remove.textContent = "×";
+      remove.addEventListener("click", (event) => {
+        event.stopPropagation();
+        persisted.locations = persisted.locations.filter(
+          (item) => item.id !== place.id,
+        );
+        render();
+      });
+      row.addEventListener("click", () => focusPlace(place));
+      row.append(rank, name, dist, remove);
+      locList.append(row);
     }
 
+    const hasNodes = Boolean(dest) || persisted.locations.length > 0;
     hint.textContent = dest
       ? "Click the map to add a location"
       : "Click the map to set a destination";
-    empty.hidden = Boolean(dest);
+    hint.hidden = !hasNodes;
+    empty.hidden = hasNodes;
+    fitBtn.disabled = !hasNodes;
+    clearBtn.disabled = !hasNodes;
   }
 
   function showStatus(message: string) {
@@ -424,9 +447,25 @@ export function startProximity(root: HTMLElement): () => void {
 
   fitBtn.addEventListener("click", () => fit(true), { signal: session.signal });
 
+  function loadSample() {
+    const result = parseProximityJson(JSON.stringify(sampleProximity));
+    if (!result.ok) {
+      showStatus(result.error);
+      return;
+    }
+    applyFile(result.data);
+    const count =
+      result.data.locations.length + (result.data.destination ? 1 : 0);
+    showStatus(`Loaded sample · ${count} nodes.`);
+  }
+
   importBtn.addEventListener("click", () => importFile.click(), {
     signal: session.signal,
   });
+
+  for (const btn of sampleButtons) {
+    btn.addEventListener("click", loadSample, { signal: session.signal });
+  }
 
   exportBtn.addEventListener(
     "click",

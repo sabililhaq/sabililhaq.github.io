@@ -77,12 +77,21 @@
 .px-sidebar-body {
 	flex: 1 1 0%;
 	min-height: 0;
-	overflow: auto;
+	overflow: hidden;
 	padding: 0.9rem 1rem 1rem;
+	display: flex;
+	flex-direction: column;
 }
 
 .px-section + .px-section {
 	margin-top: 1.15rem;
+}
+
+.px-section:last-child {
+	flex: 1 1 0%;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
 }
 
 .px-section h2 {
@@ -159,9 +168,14 @@
 	margin-top: 0.5rem;
 }
 
+.px-btn-row[hidden] {
+	display: none;
+}
+
 .px-btn-row button,
 .px-actions button,
 .px-sidebar-head button,
+.px-map-empty button,
 .px-row-remove,
 .px-dest-remove {
 	appearance: none;
@@ -178,14 +192,25 @@
 .px-btn-row button:hover,
 .px-actions button:hover,
 .px-sidebar-head button:hover,
+.px-map-empty button:hover,
 .px-row-remove:hover,
 .px-dest-remove:hover {
 	border-color: var(--accent);
 	color: var(--accent);
 }
 
+.px-actions button:disabled:hover {
+	border-color: var(--px-border);
+	color: var(--px-ink);
+}
+
+.px-btn-row button:disabled,
+.px-actions button:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
 .px-btn-row button:disabled {
-	opacity: 0.55;
 	cursor: wait;
 }
 
@@ -209,6 +234,16 @@
 	color: var(--px-ink);
 }
 
+.px-dest-copy {
+	min-width: 0;
+	flex: 1 1 auto;
+	cursor: pointer;
+}
+
+.px-dest-copy:hover strong {
+	color: var(--accent);
+}
+
 .px-dest-card strong {
 	display: block;
 	font-size: 0.92rem;
@@ -229,6 +264,9 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.4rem;
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: auto;
 }
 
 .px-row {
@@ -240,6 +278,11 @@
 	border: 1px solid var(--px-border);
 	border-radius: 8px;
 	background: var(--px-wash);
+	cursor: pointer;
+}
+
+.px-row:hover {
+	border-color: var(--accent);
 }
 
 .px-rank {
@@ -385,9 +428,13 @@
 	top: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 400;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.65rem;
 	width: min(18rem, calc(100% - 2rem));
 	margin: 0;
-	padding: 0.7rem 0.85rem;
+	padding: 0.85rem 0.95rem;
 	border-radius: 10px;
 	background: color-mix(in srgb, var(--px-fill) 90%, transparent);
 	border: 1px solid var(--px-border);
@@ -395,6 +442,19 @@
 	font-size: 0.86rem;
 	text-align: center;
 	pointer-events: none;
+}
+
+.px-map-empty p {
+	margin: 0;
+}
+
+.px-map-empty button {
+	pointer-events: auto;
+}
+
+.px-map-empty[hidden],
+.px-list[hidden] {
+	display: none;
 }
 
 .px-sr {
