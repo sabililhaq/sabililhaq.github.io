@@ -254,7 +254,12 @@ import { SITE_TITLE } from '../consts';
     } else if (!pxMounted) {
       const { mountProximity, invalidateProximity } = await import('geoproximity');
       if (seq !== applySeq) return;
-      mountProximity(stagePx, { basePath: '/map', sample: true, share: true});
+      mountProximity(stagePx, {
+        basePath: '/map',
+        sample: true,
+        share: true,
+        cartoApiKey: import.meta.env.PUBLIC_CARTO_API_KEY,
+      });
       invalidatePx = invalidateProximity;
       pxMounted = true;
     } else {

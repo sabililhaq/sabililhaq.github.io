@@ -21,7 +21,7 @@
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6",
     "cartis": "github:sabililhaq/cartis#v0.1.4",
-    "geoproximity": "github:sabililhaq/geoproximity#v0.1.2",
+    "geoproximity": "github:sabililhaq/geoproximity#v0.1.3",
     "leaflet": "^1.9.4",
     "obscenity": "github:sabililhaq/obscenity#dist-id-profanity-v1",
     "qr-code-styling": "^1.9.2",

@@ -45,6 +45,7 @@ jobs:
       - name: Build
         env:
           SITE_URL: https://sabililhaq.com
+          PUBLIC_CARTO_API_KEY: ${{ secrets.CARTO_API_KEY }}
         run: npm run build
 
       - name: Upload Pages artifact

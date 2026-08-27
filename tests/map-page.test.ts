@@ -22,6 +22,7 @@ describe('map lab', () => {
     expect(source).toMatch(/title=\{`Map \| \$\{SITE_TITLE\}`\}/);
     expect(source).toContain('Rank places by distance, or style a map poster.');
     expect(source).toContain("basePath: '/map'");
+    expect(source).toContain('cartoApiKey: import.meta.env.PUBLIC_CARTO_API_KEY');
     expect(source).toContain('data-art-host');
     expect(source).toContain('data-proximity-host');
     expect(source).toMatch(

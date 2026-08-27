@@ -26,6 +26,12 @@ describe('public site URL', () => {
     expect(deployWorkflow).not.toMatch(/SITE_URL:\s*https:\/\/sabililhaq\.github\.io/);
   });
 
+  it('injects the CARTO basemap key from a repository secret at build time', () => {
+    expect(deployWorkflow).toMatch(
+      /PUBLIC_CARTO_API_KEY:\s*\$\{\{\s*secrets\.CARTO_API_KEY\s*\}\}/,
+    );
+  });
+
   it('publishes the same host in CNAME', () => {
     expect(cname).toBe('sabililhaq.com');
   });
