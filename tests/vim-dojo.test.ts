@@ -71,4 +71,14 @@ describe('Vim Dojo site integration', () => {
     expect(pkg.dependencies['vim-dojo']).toMatch(/^(file:|github:)/);
     expect(pkg.dependencies['@replit/codemirror-vim']).toBeUndefined();
   });
+
+  it('does not vendor challenge data, so new categories ship from vim-dojo', () => {
+    const source = readFileSync(vimPagePath, 'utf-8');
+
+    expect(source).toContain('mountVimDojo');
+    expect(source).not.toContain('intendedMove');
+    expect(source).not.toContain('challengeSets');
+    expect(source).not.toContain('register-01');
+    expect(source).not.toContain('multi-cursor');
+  });
 });
