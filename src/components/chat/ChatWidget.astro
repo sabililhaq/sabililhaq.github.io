@@ -8,7 +8,28 @@
 		<span class="nickname" id="nickname">connecting…</span>
 		<div class="topbar-right">
 			<span class="presence" id="presence" aria-live="polite" hidden></span>
-			<button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel">ⓘ</button>
+			<button type="button" id="config-toggle" aria-expanded="false" aria-controls="config-panel" title="Advanced Configurations">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="12" cy="12" r="3"></circle>
+					<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+				</svg>
+			</button>
+			<button type="button" id="info-toggle" aria-expanded="false" aria-controls="info-panel" title="Information">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="12" cy="12" r="10"></circle>
+					<line x1="12" y1="16" x2="12" y2="12"></line>
+					<line x1="12" y1="8" x2="12.01" y2="8"></line>
+				</svg>
+			</button>
+		</div>
+	</div>
+
+	<div id="config-panel" class="info-panel" hidden>
+		<div style="margin-bottom: 0.5rem;"><strong>Advanced Configuration</strong></div>
+		<label for="ws-url-input" style="display: block; font-size: 0.85rem; margin-bottom: 0.25rem;">WebSocket Server URL</label>
+		<div style="display: flex; gap: 0.5rem;">
+			<input type="text" id="ws-url-input" class="config-input" placeholder="wss://ws.sabililhaq.com" />
+			<button type="button" id="ws-url-save" class="config-button">Connect</button>
 		</div>
 	</div>
 
@@ -17,7 +38,7 @@
 			<li><strong>For fun only</strong>, this is a small personal project, not intended for important or private communication.</li>
 			<li><strong>Swearing filter</strong>, messages are filtered in the browser before they are sent.</li>
 			<li><strong>Temporary chat</strong>, messages disappear after <span id="expiration-seconds">…</span> seconds.</li>
-			<li><strong>Built with WebSockets</strong>, this chat is a small demonstration of real-time WebSocket communication.</li>
+			<li><strong>Built with WebSockets</strong>, this chat is a small demonstration of real-time WebSocket communication. You can connect to your own server in the advanced settings (⚙️).</li>
 			<li>
 				<strong>For developers</strong>, curious how it works? Open your browser's Network inspector, filter for WS,
 				and watch the WebSocket connection. You can see messages travel between your browser and the server in real time.
@@ -46,6 +67,7 @@
 
 <style>
 	.chat-widget {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
@@ -96,7 +118,8 @@
 		white-space: nowrap;
 		line-height: 1.4;
 	}
-	#info-toggle {
+	#info-toggle,
+	#config-toggle {
 		appearance: none;
 		background: rgb(var(--surface));
 		border: 1px solid rgb(var(--gray-light));
@@ -111,18 +134,51 @@
 		font-size: 0.95rem;
 		flex-shrink: 0;
 	}
-	#info-toggle:hover {
+	#info-toggle:hover,
+	#config-toggle:hover {
 		background: rgb(var(--gray-light));
 		border-color: rgb(var(--gray));
 		color: rgb(var(--gray-dark));
 	}
-	#info-toggle:focus-visible {
+	#info-toggle:focus-visible,
+	#config-toggle:focus-visible {
 		outline: 2px solid var(--accent);
 		outline-offset: 2px;
 	}
+	.config-input {
+		flex: 1;
+		min-width: 0;
+		padding: 0.4rem 0.6rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 0.25rem;
+		font-size: 0.9rem;
+		background: rgb(var(--bg));
+		color: rgb(var(--black));
+	}
+	.config-input:focus {
+		border-color: var(--accent);
+		outline: none;
+	}
+	.config-button {
+		padding: 0.4rem 0.8rem;
+		background: rgb(var(--black));
+		color: rgb(var(--bg));
+		border: none;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		font-size: 0.9rem;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+	.config-button:hover {
+		background: rgb(var(--gray-dark));
+	}
 	.info-panel {
-		position: relative;
-		z-index: 1;
+		position: absolute;
+		z-index: 10;
+		top: 3.5rem;
+		right: 1rem;
+		left: 1rem;
 		background: rgb(var(--surface));
 		border: 1px solid rgb(var(--gray-light));
 		border-radius: 0.5rem;
@@ -130,6 +186,7 @@
 		font-size: 0.9rem;
 		color: rgb(var(--gray-dark));
 		line-height: 1.6;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	}
 	.info-panel ul {
 		margin: 0;
@@ -376,8 +433,10 @@
 <script type="module">
 	import { censorMessage } from './filter.ts';
 
-	const WS_URL = (() => {
+	let WS_URL = (() => {
 		try {
+			const stored = localStorage.getItem('chat_ws_url');
+			if (stored) return stored;
 			const host = location.hostname;
 			if (host === 'localhost' || host === '127.0.0.1' || host === '[::1]') {
 				return 'ws://127.0.0.1:8080';
@@ -392,6 +451,10 @@
 	const presenceEl = document.getElementById('presence');
 	const infoToggle = document.getElementById('info-toggle');
 	const infoPanel = document.getElementById('info-panel');
+	const configToggle = document.getElementById('config-toggle');
+	const configPanel = document.getElementById('config-panel');
+	const wsUrlInput = document.getElementById('ws-url-input');
+	const wsUrlSave = document.getElementById('ws-url-save');
 	const expirationEl = document.getElementById('expiration-seconds');
 	const messagesEl = document.getElementById('messages');
 	const emptyEl = document.getElementById('messages-empty');
@@ -428,6 +491,46 @@
 		setPresence(0);
 	}
 
+	if (configToggle && configPanel) {
+		configToggle.addEventListener('click', () => {
+			const expanded = configToggle.getAttribute('aria-expanded') === 'true';
+			configToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+			if (expanded) {
+				configPanel.hidden = true;
+			} else {
+				configPanel.hidden = false;
+				if (infoPanel) {
+					infoPanel.hidden = true;
+					if (infoToggle) infoToggle.setAttribute('aria-expanded', 'false');
+				}
+				if (wsUrlInput) wsUrlInput.value = WS_URL;
+			}
+		});
+	}
+
+	if (wsUrlSave && wsUrlInput) {
+		wsUrlSave.addEventListener('click', () => {
+			const newUrl = wsUrlInput.value.trim();
+			if (newUrl) {
+				WS_URL = newUrl;
+				try { localStorage.setItem('chat_ws_url', newUrl); } catch (e) {}
+				
+				permanentlyDisabled = false;
+				reconnectAttempts = 0;
+				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+				
+				if (ws) {
+					ws.close();
+					ws = null;
+				}
+				connect();
+				
+				configPanel.hidden = true;
+				configToggle.setAttribute('aria-expanded', 'false');
+			}
+		});
+	}
+
 	// Wire info-panel toggle behavior: keep `aria-expanded` and `hidden` in sync.
 	if (infoToggle && infoPanel) {
 		infoToggle.addEventListener('click', () => {
@@ -437,6 +540,10 @@
 				infoPanel.hidden = true;
 			} else {
 				infoPanel.hidden = false;
+				if (configPanel) {
+					configPanel.hidden = true;
+					if (configToggle) configToggle.setAttribute('aria-expanded', 'false');
+				}
 			}
 		});
 	}
