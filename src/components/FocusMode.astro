@@ -1,0 +1,330 @@
+---
+import { SITE_TITLE } from '../consts';
+
+/**
+ * FocusMode — drop this anywhere inside <body>.
+ *
+ * Renders:
+ *  • A fixed expand/collapse button (bottom-right) that toggles
+ *    `html.focus-mode`. Host pages key their collapse CSS on that class.
+ *  • A faint identity watermark (top-right, beside the button).
+ *  • A one-per-session nudge tooltip that briefly highlights the button
+ *    ~1.8 s after first page load, then auto-dismisses.
+ *
+ * Keyboard:  f  →  toggle   |   Escape  →  exit
+ * Shortcut is silenced when the caret is in an input/textarea/contenteditable.
+ */
+---
+
+<!-- Focus toggle button -->
+<button
+  type="button"
+  id="focus-mode-btn"
+  class="focus-mode-btn"
+  aria-label="Enter focus mode"
+  aria-pressed="false"
+  aria-keyshortcuts="f"
+  title="Focus mode (f)"
+>
+  <!-- expand — shown when NOT focused -->
+  <svg
+    class="icon-expand"
+    xmlns="http://www.w3.org/2000/svg"
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+  </svg>
+  <!-- collapse — shown when focused -->
+  <svg
+    class="icon-collapse"
+    xmlns="http://www.w3.org/2000/svg"
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/>
+  </svg>
+</button>
+
+<!-- Watermark: top-right, always present but faint; links home -->
+<a
+  href="/"
+  class="focus-watermark"
+  aria-label={`${SITE_TITLE} — go to homepage`}
+  tabindex="-1"
+>
+  {SITE_TITLE}
+</a>
+
+<!-- Nudge tooltip: shown once per session, auto-dismissed -->
+<div
+  id="focus-nudge"
+  class="focus-nudge"
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+  hidden
+>
+  <span class="focus-nudge-text">Try focus mode</span>
+  <span class="focus-nudge-bar" aria-hidden="true">
+    <span class="focus-nudge-fill"></span>
+  </span>
+</div>
+
+<style is:global>
+  /* ─── Button ────────────────────────────────────────────────────── */
+  .focus-mode-btn {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 9000;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 10px;
+    background: color-mix(in srgb, rgb(var(--surface)) 90%, transparent);
+    color: rgb(var(--gray));
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0.55;
+    transition: opacity 0.18s, color 0.15s, box-shadow 0.15s;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    /* Ensure tappable hit target on mobile */
+    touch-action: manipulation;
+  }
+
+  .focus-mode-btn:hover {
+    opacity: 1;
+    color: rgb(var(--black));
+  }
+
+  /* Visible focus ring — keyboard users */
+  .focus-mode-btn:focus-visible {
+    opacity: 1;
+    color: rgb(var(--black));
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .focus-mode-btn .icon-collapse {
+    display: none;
+  }
+
+  /* ─── Watermark ─────────────────────────────────────────────────── */
+  .focus-watermark {
+    position: fixed;
+    top: 0.75rem;
+    right: 1rem;
+    z-index: 8999;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    color: rgb(var(--gray));
+    text-decoration: none;
+    pointer-events: none;
+    user-select: none;
+    /* Always present but invisible until focus mode; then softly visible */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Watermark visible in focus mode */
+  html.focus-mode .focus-watermark {
+    opacity: 0.35;
+    pointer-events: auto;
+  }
+
+  html.focus-mode .focus-watermark:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ─── Nudge tooltip ─────────────────────────────────────────────── */
+  .focus-nudge {
+    position: fixed;
+    bottom: 4.2rem;        /* above the button */
+    right: 1rem;
+    z-index: 9001;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 8px;
+    background: rgb(var(--surface));
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    min-width: 10rem;
+    max-width: 14rem;
+    pointer-events: none;
+    /* entrance animation */
+    animation: focus-nudge-in 200ms ease-out both;
+  }
+
+  .focus-nudge[hidden] {
+    display: none;
+  }
+
+  /* small arrow pointing down toward the button */
+  .focus-nudge::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 1.1rem;
+    width: 10px;
+    height: 10px;
+    background: rgb(var(--surface));
+    border-right: 1px solid rgb(var(--gray-light));
+    border-bottom: 1px solid rgb(var(--gray-light));
+    transform: rotate(45deg);
+  }
+
+  .focus-nudge-text {
+    font-size: 0.82rem;
+    color: rgb(var(--black));
+    line-height: 1.4;
+  }
+
+  .focus-nudge-bar {
+    display: block;
+    height: 3px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgb(var(--gray-light));
+  }
+
+  .focus-nudge-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .focus-nudge:not([hidden]) .focus-nudge-fill {
+    animation: focus-nudge-drain var(--nudge-ms, 3000ms) linear forwards;
+  }
+
+  @keyframes focus-nudge-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0);   }
+  }
+
+  @keyframes focus-nudge-drain {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .focus-nudge {
+      animation: none;
+    }
+    .focus-nudge:not([hidden]) .focus-nudge-fill {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
+
+  /* ─── Focus-mode active state ───────────────────────────────────── */
+  html.focus-mode .focus-mode-btn {
+    opacity: 1;
+  }
+
+  html.focus-mode .focus-mode-btn .icon-expand {
+    display: none;
+  }
+
+  html.focus-mode .focus-mode-btn .icon-collapse {
+    display: block;
+  }
+
+  /* ─── Nudge highlight ring on the button ────────────────────────── */
+  .focus-mode-btn.is-nudging {
+    opacity: 1;
+    color: rgb(var(--black));
+    box-shadow: 0 0 0 3px var(--accent), 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  const NUDGE_KEY = 'focus-nudge-seen';
+  const NUDGE_DELAY_MS = 1800;
+  const NUDGE_DURATION_MS = 3000;
+
+  const btn  = document.getElementById('focus-mode-btn') as HTMLButtonElement | null;
+  const nudge = document.getElementById('focus-nudge') as HTMLElement | null;
+  const html = document.documentElement;
+
+  // ── Focus toggle ────────────────────────────────────────────────
+  function isFocused(): boolean {
+    return html.classList.contains('focus-mode');
+  }
+
+  function setFocus(on: boolean): void {
+    html.classList.toggle('focus-mode', on);
+    if (btn) {
+      btn.setAttribute('aria-label', on ? 'Exit focus mode' : 'Enter focus mode');
+      btn.setAttribute('aria-pressed', String(on));
+    }
+    requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+  }
+
+  btn?.addEventListener('click', () => setFocus(!isFocused()));
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    const target = e.target as HTMLElement;
+    const tag = target?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+    if (e.key === 'f' && !e.metaKey && !e.ctrlKey && !e.altKey) setFocus(!isFocused());
+    if (e.key === 'Escape' && isFocused()) setFocus(false);
+  });
+
+  // ── Nudge ───────────────────────────────────────────────────────
+  let nudgeTimer: number | undefined;
+
+  function dismissNudge(): void {
+    if (!nudge) return;
+    nudge.setAttribute('hidden', '');
+    btn?.classList.remove('is-nudging');
+    window.clearTimeout(nudgeTimer);
+    try { sessionStorage.setItem(NUDGE_KEY, '1'); } catch { /* private mode */ }
+  }
+
+  function showNudge(): void {
+    if (!nudge || !btn) return;
+    try { if (sessionStorage.getItem(NUDGE_KEY)) return; } catch { /* private mode */ }
+
+    nudge.style.setProperty('--nudge-ms', `${NUDGE_DURATION_MS}ms`);
+    nudge.removeAttribute('hidden');
+    btn.classList.add('is-nudging');
+
+    nudgeTimer = window.setTimeout(dismissNudge, NUDGE_DURATION_MS);
+  }
+
+  // Dismiss if the user interacts with the button themselves before the nudge hides
+  btn?.addEventListener('click', dismissNudge);
+
+  window.setTimeout(showNudge, NUDGE_DELAY_MS);
+</script>

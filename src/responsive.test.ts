@@ -8,14 +8,11 @@ import {
 } from './responsive';
 
 describe('desktop-only routes', () => {
-	it('lists /map and /vim as the current desktop-only set', () => {
-		expect([...DESKTOP_ONLY]).toEqual(['/map', '/vim']);
+	it('lists /vim as the current desktop-only set', () => {
+		expect([...DESKTOP_ONLY]).toEqual(['/vim']);
 	});
 
 	it('treats those routes and their nested paths as not mobile-ready', () => {
-		expect(isDesktopOnly('/map')).toBe(true);
-		expect(isDesktopOnly('/map/')).toBe(true);
-		expect(isDesktopOnly('/map?mode=art')).toBe(true);
 		expect(isDesktopOnly('/vim')).toBe(true);
 		expect(isDesktopOnly('/vim/roadmap')).toBe(true);
 	});
@@ -26,6 +23,9 @@ describe('desktop-only routes', () => {
 		expect(isDesktopOnly('/labs')).toBe(false);
 		expect(isDesktopOnly('/chat')).toBe(false);
 		expect(isDesktopOnly('/qr')).toBe(false);
+		expect(isDesktopOnly('/map')).toBe(false);
+		expect(isDesktopOnly('/map/')).toBe(false);
+		expect(isDesktopOnly('/map?mode=art')).toBe(false);
 		expect(isDesktopOnly('/maps')).toBe(false);
 		expect(isDesktopOnly('/vimdojo')).toBe(false);
 	});
@@ -41,12 +41,12 @@ describe('normalizePathname', () => {
 
 describe('shouldShowDesktopToast', () => {
 	it('shows on narrow viewports for desktop-only routes', () => {
-		expect(shouldShowDesktopToast('/map', DESKTOP_MIN_WIDTH - 1)).toBe(true);
 		expect(shouldShowDesktopToast('/vim', 375)).toBe(true);
 		expect(shouldShowDesktopToast('/vim/roadmap', 390)).toBe(true);
 	});
 
 	it('hides on desktop and on the rest of the site', () => {
+		expect(shouldShowDesktopToast('/map', DESKTOP_MIN_WIDTH - 1)).toBe(false);
 		expect(shouldShowDesktopToast('/map', DESKTOP_MIN_WIDTH)).toBe(false);
 		expect(shouldShowDesktopToast('/about', 375)).toBe(false);
 		expect(shouldShowDesktopToast('/', 390)).toBe(false);

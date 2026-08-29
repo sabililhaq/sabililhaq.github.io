@@ -1,5 +1,5 @@
 /** Routes that are not mobile-ready yet. Narrow viewports get the desktop toast. */
-export const DESKTOP_ONLY = ['/map', '/vim'] as const;
+export const DESKTOP_ONLY = ['/vim'] as const;
 
 export const DESKTOP_MIN_WIDTH = 768;
 

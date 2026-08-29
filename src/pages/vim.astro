@@ -1,12 +1,13 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import FocusMode from '../components/FocusMode.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="vim-lab">
   <head>
     <BaseHead
       title={`Vim Dojo | ${SITE_TITLE}`}
@@ -22,6 +23,7 @@ import { SITE_TITLE } from '../consts';
       </p>
     </main>
     <Footer />
+    <FocusMode />
   </body>
 </html>
 
@@ -50,6 +52,44 @@ import { SITE_TITLE } from '../consts';
 
   .dojo-nav a:hover {
     text-decoration: underline;
+  }
+</style>
+
+<style is:global>
+  /* ── Vim Dojo focus mode ────────────────────────────────────────── */
+  html.vim-lab.focus-mode body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  html.vim-lab.focus-mode body > header,
+  html.vim-lab.focus-mode body > footer {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    transition: max-height 0.22s ease, opacity 0.18s ease, visibility 0.18s;
+  }
+
+  html.vim-lab.focus-mode body > main {
+    flex: 1 1 0%;
+    min-height: 0;
+    overflow: auto;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 1rem 1.3rem;
+    box-sizing: border-box;
+  }
+
+  html.vim-lab.focus-mode [data-vim-dojo-host] {
+    height: 100%;
   }
 </style>
 
