@@ -4,13 +4,13 @@ description: "A small map for a case where you have one destination and many loc
 pubDate: 2026-08-30
 ---
 
-I was looking at travel drop-off points for a trip to Bandung, the <a href="#fn-1" id="fnref-1">"Paris of Indonesia,"</a> so they said. Every travel agency has its own set of <a href="#fn-2" id="fnref-2">hubs</a>, and I wanted to know which one made the most sense for me.
+I was looking at travel drop-off points for a trip to Bandung, the <a href="#fn-1" id="fnref-1">"Paris of Indonesia,"</a> so they said. Every travel agency has its own set of <a href="#fn-2" id="fnref-2">hubs</a>, and I wanted to know which one fit me the best.
 
-Travel apps like Traveloka and tiket.com let me sort by distance, but none of them give me much visual context. They give me a ranked list.
+Travel apps like Traveloka and tiket.com let me sort by distance, but none of them give me much visual context, only the list.
 
 For my case, I also wanted to see where each option actually sat relative to my other stops. Google Maps worked fine, but I had to check each option separately. It's pretty annoying.
 
-That's how I ended up building Geoproximity.
+That's how I ended up building <a href="/map">Geoproximity.</a> 
 
 <figure style="width: 90%; margin-left: auto; margin-right: auto;">
 	<img src="/images/blog/geoproximity-map.png" alt="Geoproximity map with one destination pin, several comparison location pins, and a ranked distance list." />
@@ -24,7 +24,7 @@ But what I wanted was slightly different.
 
 I wanted to put all the options in one place and compare them at the same time.
 
-It's great when I want to look at one option. Geoproximity is for when I want to compare many options at once.
+It's great when I want to look at one option. Mine is for when I want to compare many options at once.
 
 ## The idea
 One destination, several locations to compare against it.
@@ -48,7 +48,7 @@ you get the comparison in one picture:
 
 **The ranking isn't really the point. The visualization is.**
 
-A location can be 2 km away while another one is 3 km away, so obviously the first one wins on paper. But maybe that second location is actually in a much more useful direction for the rest of my itinerary.
+A location can be 2 km away while another one is 3 km away, so obviously the first one wins on distance. But perhaps that second location is actually a better fit for me, e.g. closer to the other places I want to visit, easier to reach, or whatever matters for my trip.
 
 You can't tell that without geographical context.
 
@@ -83,7 +83,7 @@ The geocoder I use relies on open-source geocoding and location data, which isn'
 
 There is a practical workaround, though.
 
-Geoproximity also supports manual coordinate input. If the geocoder can't find a specific location, you can search for it on Google Maps, copy its longitude and latitude, and paste them into Geoproximity.
+Geoproximity also *supports manual coordinate input*. If the geocoder can't find a specific location, you can search for it on Google Maps, copy its longitude and latitude, and paste them into Geoproximity.
 
 <figure style="width: 80%; margin-left: auto; margin-right: auto;">
 	<img src="/images/blog/google-maps-copy-latlng.png" alt="Google Maps showing a place with longitude and latitude that can be copied into Geoproximity." />
@@ -100,7 +100,7 @@ A comparison can also be shared through a link, so someone else can open the sam
 	<figcaption>Send the same map, not a screenshot. (red rectangle)</figcaption>
 </figure>
 
-This is useful when you're actually trying to make a decision together, rather than just exploring the map yourself.
+This is useful when you're actually trying to make a decision together.
 
 ## More use cases
 My travel case is just one example.
@@ -109,11 +109,11 @@ The general problem is:
 
 "I have several locations. Which one makes the most sense geographically?"
 
-It could be picking a meeting point, or choosing a restaurant that's fair to everyone's commute.
+It could be picking a meeting point, or choosing a restaurant that's fair for everyone to commute.
 
 The specific problem changes, but the idea stays the same: put the alternatives on a map and compare them together.
 
-## Summary
+## Thats basically it
 I built this because lists hide geography. If you have a destination and a pile of options, put them on one map.
 
 It's free, simple to use, and pretty simple to implement.

@@ -21,12 +21,12 @@
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6",
     "cartis": "github:sabililhaq/cartis#v0.1.4",
-    "geoproximity": "github:sabililhaq/geoproximity#v0.1.5",
+    "geoproximity": "github:sabililhaq/geoproximity#v0.1.6",
     "leaflet": "^1.9.4",
     "obscenity": "github:sabililhaq/obscenity#dist-id-profanity-v1",
     "qr-code-styling": "^1.9.2",
     "sharp": "^0.35.0",
-    "vim-dojo": "github:sabililhaq/vim-dojo#v0.1.9"
+    "vim-dojo": "github:sabililhaq/vim-dojo#v0.1.10"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
