@@ -291,6 +291,8 @@ import { SITE_TITLE } from '../consts';
     requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
   }
 
+  setFocus(isFocused());
+
   btn?.addEventListener('click', () => setFocus(!isFocused()));
 
   document.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -314,6 +316,7 @@ import { SITE_TITLE } from '../consts';
 
   function showNudge(): void {
     if (!nudge || !btn) return;
+    if (isFocused()) return;
     try { if (sessionStorage.getItem(NUDGE_KEY)) return; } catch { /* private mode */ }
 
     nudge.style.setProperty('--nudge-ms', `${NUDGE_DURATION_MS}ms`);
