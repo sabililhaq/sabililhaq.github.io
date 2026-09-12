@@ -1,0 +1,36 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import FairshareLab from '../components/fairshare/FairshareLab.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Fairshare | ${SITE_TITLE}`}
+			description="Watch a flood hit an origin. Same attack, four edge policies, entirely in the browser."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1 class="page-title">Fairshare</h1>
+			<p class="lede">
+				Click the map to attack. Auto flood runs too. Each square is a seat at the origin.
+			</p>
+			<FairshareLab />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.lede {
+		color: rgb(var(--gray));
+		margin: -0.75rem 0 1.5rem;
+		line-height: 1.55;
+	}
+</style>

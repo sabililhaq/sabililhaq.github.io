@@ -169,6 +169,12 @@ export const LABS: Lab[] = [
     note: "playground",
   },
   {
+    label: "Fairshare",
+    url: "/fairshare",
+    description: "Watch a flood hit an origin.",
+    note: "playground",
+  },
+  {
     label: "Chat",
     url: "/chat",
     description: "Anonymous, temporary chat",

@@ -100,6 +100,7 @@ describe('blog writings', () => {
 			'labs',
 			'links',
 			'projects',
+			'fairshare',
 			'map',
 			'qr',
 			'vim',

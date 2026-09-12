@@ -23,6 +23,7 @@ describe('desktop-only routes', () => {
 		expect(isDesktopOnly('/labs')).toBe(false);
 		expect(isDesktopOnly('/chat')).toBe(false);
 		expect(isDesktopOnly('/qr')).toBe(false);
+		expect(isDesktopOnly('/fairshare')).toBe(false);
 		expect(isDesktopOnly('/map')).toBe(false);
 		expect(isDesktopOnly('/map/')).toBe(false);
 		expect(isDesktopOnly('/map?mode=art')).toBe(false);

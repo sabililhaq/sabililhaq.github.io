@@ -1,0 +1,887 @@
+---
+---
+
+<div class="fairshare">
+	<div class="policy-toggle" role="tablist" aria-label="Edge policy">
+		<button type="button" role="tab" data-policy="open" aria-selected="true">Open</button>
+		<button type="button" role="tab" data-policy="per-ip" aria-selected="false">Per-IP</button>
+		<button type="button" role="tab" data-policy="prefix-cap" aria-selected="false">Prefix cap</button>
+		<button type="button" role="tab" data-policy="fair-share" aria-selected="false">Fair share</button>
+	</div>
+	<p class="blurb" id="policy-blurb"></p>
+
+	<div class="world-wrap">
+		<canvas
+			id="world"
+			width="96"
+			height="48"
+			role="img"
+			aria-label="Pixel world map. Click land to launch a volumetric attack from that /24. The origin is in Jakarta, behind the edge."
+		></canvas>
+		<p class="map-hint" id="map-hint">Click land to attack from that /24. Auto flood runs on its own.</p>
+		<div class="map-toolbar">
+			<label class="check">
+				<input id="auto-flood" type="checkbox" checked />
+				Auto flood
+			</label>
+			<button type="button" id="clear-attacks">Clear my attacks</button>
+		</div>
+		<div class="selected" id="selected-panel" hidden>
+			<p id="selected-label"></p>
+			<label class="slider tight">
+				<span>Volume <strong id="selected-volume-label"></strong></span>
+				<input id="selected-volume" type="range" min="5" max="80" step="5" value="25" />
+			</label>
+			<button type="button" id="selected-remove">Remove</button>
+		</div>
+	</div>
+
+	<div class="run-bar">
+		<button type="button" id="run-toggle">Pause</button>
+		<button type="button" id="run-replay">Replay</button>
+		<p class="clock" id="clock"></p>
+	</div>
+	<p class="verdict" id="verdict"></p>
+
+	<section class="origin" aria-live="polite">
+		<h2>Origin seats</h2>
+		<p class="seat-stat" id="seat-stat"></p>
+		<div
+			class="seats"
+			id="seats"
+			role="img"
+			aria-label="Origin capacity. Blue seats are legit users, gray is the auto flood, rust is your attack."
+		></div>
+		<p class="legend">
+			<span class="swatch good"></span> legit
+			<span class="swatch attack"></span> auto
+			<span class="swatch user"></span> you
+			<span class="swatch empty"></span> empty
+		</p>
+	</section>
+
+	<div class="tape-wrap">
+		<p class="tape-label">Legit users through, each second</p>
+		<div class="tape" id="tape" role="img" aria-label="Legit success over time"></div>
+	</div>
+
+	<div class="controls">
+		<label class="slider">
+			<span>Origin capacity <strong id="capacity-label"></strong></span>
+			<input id="capacity" type="range" min="50" max="200" step="10" value="100" />
+		</label>
+	</div>
+
+	<p class="footnote">
+		Click land to own a /24 and push volume through the edge in front of the origin.
+		Auto flood is a handful of other /24s that ramp up on their own.
+		Nothing is sent to a network.
+	</p>
+</div>
+
+<style>
+	.fairshare {
+		display: flex;
+		flex-direction: column;
+		gap: 1.15rem;
+		min-width: 0;
+		max-width: 100%;
+	}
+
+	.policy-toggle {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 3px;
+		padding: 3px;
+		width: fit-content;
+		max-width: 100%;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		background: rgb(var(--surface));
+	}
+
+	@media (max-width: 640px) {
+		.policy-toggle {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			width: 100%;
+			max-width: 100%;
+			box-sizing: border-box;
+			border-radius: 12px;
+		}
+
+		.policy-toggle button {
+			width: 100%;
+			padding: 0.4rem 0.5rem;
+		}
+	}
+
+	.policy-toggle button {
+		appearance: none;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: rgb(var(--gray));
+		font: inherit;
+		font-size: 0.85rem;
+		font-weight: 700;
+		letter-spacing: 0.01em;
+		padding: 0.35rem 0.85rem;
+		cursor: pointer;
+		min-width: 0;
+	}
+
+	.policy-toggle button[aria-selected='true'] {
+		background: rgb(var(--black));
+		color: rgb(var(--bg));
+	}
+
+	.blurb {
+		margin: 0;
+		color: rgb(var(--gray));
+		font-size: 0.95rem;
+		line-height: 1.55;
+	}
+
+	.world-wrap {
+		min-width: 0;
+	}
+
+	#world {
+		display: block;
+		width: 100%;
+		height: auto;
+		image-rendering: pixelated;
+		image-rendering: crisp-edges;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		background: rgb(var(--bg));
+		cursor: crosshair;
+	}
+
+	.map-hint {
+		margin: 0.45rem 0 0;
+		color: rgb(var(--gray));
+		font-size: 0.85rem;
+	}
+
+	.map-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1rem;
+		margin-top: 0.65rem;
+	}
+
+	.check {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.9rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+	}
+
+	.map-toolbar button,
+	.selected button,
+	.run-bar button {
+		appearance: none;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		background: rgb(var(--surface));
+		color: rgb(var(--black));
+		font: inherit;
+		font-size: 0.85rem;
+		font-weight: 700;
+		padding: 0.28rem 0.8rem;
+		cursor: pointer;
+	}
+
+	.map-toolbar button:hover,
+	.selected button:hover,
+	.run-bar button:hover {
+		border-color: rgb(var(--gray));
+	}
+
+	.selected {
+		margin-top: 0.75rem;
+		padding: 0.85rem 1rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 10px;
+		background: rgb(var(--surface));
+		display: grid;
+		gap: 0.65rem;
+	}
+
+	.selected[hidden] {
+		display: none;
+	}
+
+	.selected p {
+		margin: 0;
+		font-size: 0.9rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+	}
+
+	.run-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.55rem 0.85rem;
+	}
+
+	.clock {
+		margin: 0;
+		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+		color: rgb(var(--black));
+		font-size: 0.9rem;
+	}
+
+	.verdict {
+		margin: 0;
+		font-size: 1.15rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		color: rgb(var(--black));
+		line-height: 1.35;
+	}
+
+	.origin h2,
+	.tape-label {
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: rgb(var(--gray));
+		margin: 0 0 0.35rem;
+	}
+
+	.seat-stat {
+		margin: 0 0 0.55rem;
+		font-size: 0.9rem;
+		font-variant-numeric: tabular-nums;
+		color: rgb(var(--gray-dark));
+	}
+
+	.origin {
+		padding: 1rem 1.05rem 1.1rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 10px;
+		background: rgb(var(--surface));
+	}
+
+	.seats {
+		display: grid;
+		grid-template-columns: repeat(10, 1fr);
+		gap: 4px;
+		max-width: 17rem;
+	}
+
+	.seats :global(.seat) {
+		aspect-ratio: 1;
+		border-radius: 3px;
+		background: rgb(var(--gray-light));
+	}
+
+	.seats :global(.seat.good) {
+		background: var(--accent);
+	}
+
+	.seats :global(.seat.attack) {
+		background: rgb(var(--gray));
+	}
+
+	.seats :global(.seat.user) {
+		background: #c45c26;
+	}
+
+	:global(html[data-theme='dark']) .seats :global(.seat.user) {
+		background: #e09a72;
+	}
+
+	.legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35rem 0.9rem;
+		margin: 0.75rem 0 0;
+		color: rgb(var(--gray));
+		font-size: 0.8rem;
+	}
+
+	.swatch {
+		display: inline-block;
+		width: 0.7rem;
+		height: 0.7rem;
+		border-radius: 2px;
+		margin-right: 0.3rem;
+		vertical-align: -0.1rem;
+	}
+
+	.swatch.good {
+		background: var(--accent);
+	}
+
+	.swatch.attack {
+		background: rgb(var(--gray));
+	}
+
+	.swatch.user {
+		background: #c45c26;
+	}
+
+	:global(html[data-theme='dark']) .swatch.user {
+		background: #e09a72;
+	}
+
+	.swatch.empty {
+		background: rgb(var(--gray-light));
+	}
+
+	.tape-wrap {
+		min-width: 0;
+	}
+
+	.tape {
+		display: flex;
+		align-items: flex-end;
+		gap: 2px;
+		height: 56px;
+		width: 100%;
+	}
+
+	.tape :global(.bar) {
+		flex: 1 1 0;
+		min-width: 0;
+		max-width: 16px;
+		border-radius: 1px 1px 0 0;
+		background: var(--accent);
+	}
+
+	.tape :global(.bar.crash) {
+		opacity: 0.45;
+	}
+
+	.controls {
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	.slider {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		font-size: 0.9rem;
+		color: rgb(var(--gray-dark));
+	}
+
+	.slider.tight {
+		margin: 0;
+	}
+
+	.slider strong {
+		font-weight: 700;
+		color: rgb(var(--black));
+	}
+
+	.slider input[type='range'] {
+		width: 100%;
+		accent-color: var(--accent);
+	}
+
+	.footnote {
+		margin: 0;
+		color: rgb(var(--gray));
+		font-size: 0.85rem;
+		line-height: 1.5;
+	}
+</style>
+
+<script>
+	import {
+		DEFAULT_CONFIG,
+		DEFAULT_USER_BOTS,
+		DEFAULT_USER_RATE,
+		buildWorldFlows,
+		type UserSource,
+	} from '../../fairshare/scenario';
+	import { parsePolicy, searchWithPolicy, type Policy } from '../../fairshare/policy';
+	import { createSim, type TickResult } from '../../fairshare/simulate';
+	import {
+		AUTO_CELLS,
+		MAP_H,
+		MAP_W,
+		SERVER_CELL,
+		cellKey,
+		formatCell,
+		isLand,
+		type Cell,
+	} from '../../fairshare/world';
+
+	const TICK_MS = 320;
+	const HISTORY = 36;
+	const USER_LIGHT = '#c45c26';
+	const USER_DARK = '#e09a72';
+
+	function requireEl<T extends HTMLElement>(id: string, ctor: { new (...args: never[]): T }): T {
+		const el = document.getElementById(id);
+		if (!(el instanceof ctor)) {
+			throw new Error(`Fairshare markup is missing #${id}`);
+		}
+		return el;
+	}
+
+	const blurbEl = requireEl('policy-blurb', HTMLParagraphElement);
+	const verdictEl = requireEl('verdict', HTMLParagraphElement);
+	const capacityLabel = requireEl('capacity-label', HTMLElement);
+	const capacityInput = requireEl('capacity', HTMLInputElement);
+	const clockEl = requireEl('clock', HTMLParagraphElement);
+	const runToggle = requireEl('run-toggle', HTMLButtonElement);
+	const runReplay = requireEl('run-replay', HTMLButtonElement);
+	const seatsEl = requireEl('seats', HTMLElement);
+	const seatStat = requireEl('seat-stat', HTMLParagraphElement);
+	const tapeEl = requireEl('tape', HTMLElement);
+	const canvas = requireEl('world', HTMLCanvasElement);
+	const hintEl = requireEl('map-hint', HTMLParagraphElement);
+	const autoFlood = requireEl('auto-flood', HTMLInputElement);
+	const clearAttacks = requireEl('clear-attacks', HTMLButtonElement);
+	const selectedPanel = requireEl('selected-panel', HTMLElement);
+	const selectedLabel = requireEl('selected-label', HTMLParagraphElement);
+	const selectedVolume = requireEl('selected-volume', HTMLInputElement);
+	const selectedVolumeLabel = requireEl('selected-volume-label', HTMLElement);
+	const selectedRemove = requireEl('selected-remove', HTMLButtonElement);
+	const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-policy]')];
+
+	function must2d(node: HTMLCanvasElement): CanvasRenderingContext2D {
+		const g = node.getContext('2d');
+		if (!g) throw new Error('Fairshare map needs a 2D canvas');
+		return g;
+	}
+	const gfx: CanvasRenderingContext2D = must2d(canvas);
+
+	let policy = parsePolicy(new URLSearchParams(location.search).get('policy'));
+	let originCapacity = DEFAULT_CONFIG.originCapacity;
+	let autoOn = true;
+	let playing = true;
+	let pixel = 8;
+	const samples: TickResult[] = [];
+	const userSources: UserSource[] = [];
+	let selected: string | null = null;
+	let hover: Cell | null = null;
+	let lastResult: TickResult | null = null;
+
+	const sim = createSim({ ...DEFAULT_CONFIG, policy, originCapacity }, buildWorldFlows({ autoOn }));
+
+	function userColor(): string {
+		return document.documentElement.dataset.theme === 'dark' ? USER_DARK : USER_LIGHT;
+	}
+
+	function cssRgb(name: string, fallback: string): string {
+		const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+		return raw ? `rgb(${raw})` : fallback;
+	}
+
+	function blurbFor(next: Policy, cap: number, share: number, perIp: number): string {
+		const ceiling = Math.round(share * cap);
+		const pctShare = Math.round(share * 100);
+		switch (next) {
+			case 'open':
+				return 'No edge policy. Every request reaches the origin. Excess is dropped in proportion to volume, so a flood buries real users.';
+			case 'per-ip':
+				return `Each address gets ${perIp} req/s. One noisy host is tamed. A botnet of many polite addresses is not — they still crowd the origin.`;
+			case 'prefix-cap':
+				return `No /24 may send more than ${ceiling} req/s (${pctShare}% of capacity). A whole office NAT can get clipped with the botnet.`;
+			case 'fair-share':
+				return 'Capacity is split across /24s with max-min fairness. Light prefixes get what they need. Hungry prefixes get leftover seats.';
+		}
+	}
+
+	function syncButtons(): void {
+		buttons.forEach((btn) => {
+			const on = btn.dataset.policy === policy;
+			btn.setAttribute('aria-selected', on ? 'true' : 'false');
+			btn.tabIndex = on ? 0 : -1;
+		});
+	}
+
+	function syncPlay(): void {
+		runToggle.textContent = playing ? 'Pause' : 'Play';
+	}
+
+	function applyPolicy(next: Policy, writeUrl = true): void {
+		policy = next;
+		sim.setConfig({ ...DEFAULT_CONFIG, policy, originCapacity });
+		syncButtons();
+		if (writeUrl) {
+			const href = `${location.pathname}${searchWithPolicy(location.search, policy)}${location.hash}`;
+			history.replaceState({}, '', href);
+		}
+	}
+
+	function currentFlows() {
+		return buildWorldFlows({ autoOn, userSources });
+	}
+
+	function syncFlows(paintNow = true): void {
+		sim.setConfig({ ...DEFAULT_CONFIG, policy, originCapacity });
+		sim.setFlows(currentFlows());
+		if (!paintNow) return;
+		const result = sim.tick();
+		samples.push(result);
+		if (samples.length > HISTORY) samples.shift();
+		render(result);
+	}
+
+	function rebuildSeats(): void {
+		seatsEl.replaceChildren(
+			...Array.from({ length: originCapacity }, () => {
+				const seat = document.createElement('span');
+				seat.className = 'seat';
+				return seat;
+			}),
+		);
+	}
+
+	function sourceAt(cell: Cell): UserSource | undefined {
+		return userSources.find((s) => s.x === cell.x && s.y === cell.y);
+	}
+
+	function isAutoCell(cell: Cell): boolean {
+		return AUTO_CELLS.some((c) => c.x === cell.x && c.y === cell.y);
+	}
+
+	function isServer(cell: Cell): boolean {
+		return cell.x === SERVER_CELL.x && cell.y === SERVER_CELL.y;
+	}
+
+	function selectCell(cell: Cell | null): void {
+		selected = cell ? cellKey(cell) : null;
+		const source = cell ? sourceAt(cell) : undefined;
+		if (!source || !cell) {
+			selectedPanel.hidden = true;
+			return;
+		}
+		selectedPanel.hidden = false;
+		selectedLabel.textContent = `Your /24 at ${formatCell(cell)}`;
+		selectedVolume.value = String(source.bots);
+		selectedVolumeLabel.textContent = `${source.bots} bots × ${source.botRate} rps`;
+	}
+
+	function addAttack(cell: Cell): void {
+		if (isServer(cell) || isAutoCell(cell) || !isLand(cell)) return;
+		if (!sourceAt(cell)) {
+			userSources.push({
+				x: cell.x,
+				y: cell.y,
+				bots: DEFAULT_USER_BOTS,
+				botRate: DEFAULT_USER_RATE,
+			});
+			syncFlows();
+		}
+		selectCell(cell);
+	}
+
+	function cellFromEvent(event: MouseEvent): Cell | null {
+		const rect = canvas.getBoundingClientRect();
+		if (rect.width <= 0 || rect.height <= 0) return null;
+		const x = Math.floor(((event.clientX - rect.left) / rect.width) * MAP_W);
+		const y = Math.floor(((event.clientY - rect.top) / rect.height) * MAP_H);
+		if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return null;
+		return { x, y };
+	}
+
+	function hintFor(cell: Cell | null): string {
+		if (!cell) return 'Click land to attack from that /24. Auto flood runs on its own.';
+		if (isServer(cell)) return 'Origin. Jakarta, behind the edge.';
+		if (isAutoCell(cell)) return `Auto flood /24 · ${formatCell(cell)}`;
+		const mine = sourceAt(cell);
+		if (mine) return `Your attack · ${formatCell(cell)} · ${mine.bots} bots × ${mine.botRate} rps`;
+		if (isLand(cell)) return `Land · ${formatCell(cell)} · click to attack`;
+		return 'Ocean.';
+	}
+
+	function sizeCanvas(): number {
+		const wrap = canvas.parentElement;
+		const cssW = wrap?.clientWidth ?? 640;
+		pixel = Math.max(3, Math.floor(cssW / MAP_W));
+		const w = MAP_W * pixel;
+		const h = MAP_H * pixel;
+		const dpr = Math.min(2, window.devicePixelRatio || 1);
+		canvas.width = Math.floor(w * dpr);
+		canvas.height = Math.floor(h * dpr);
+		canvas.style.width = `${w}px`;
+		canvas.style.height = `${h}px`;
+		gfx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		gfx.imageSmoothingEnabled = false;
+		return pixel;
+	}
+
+	function drawCell(x: number, y: number, color: string): void {
+		gfx.fillStyle = color;
+		gfx.fillRect(x * pixel, y * pixel, pixel, pixel);
+	}
+
+	function drawWorld(result: TickResult | null): void {
+		const ocean = cssRgb('--bg', '#f0efed');
+		const land = cssRgb('--gray-light', '#dad6ce');
+		const ink = cssRgb('--black', '#161614');
+		const auto = cssRgb('--gray', '#5c5852');
+		const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#007acc';
+		const rust = userColor();
+		const scale = result?.attackScale ?? 0;
+
+		gfx.fillStyle = ocean;
+		gfx.fillRect(0, 0, MAP_W * pixel, MAP_H * pixel);
+
+		for (let y = 0; y < MAP_H; y++) {
+			for (let x = 0; x < MAP_W; x++) {
+				if (!isLand({ x, y })) continue;
+				drawCell(x, y, land);
+			}
+		}
+
+		if (autoOn) {
+			for (const cell of AUTO_CELLS) {
+				gfx.globalAlpha = 0.25 + 0.75 * scale;
+				drawCell(cell.x, cell.y, auto);
+			}
+			gfx.globalAlpha = 1;
+		}
+
+		for (const source of userSources) {
+			drawCell(source.x, source.y, rust);
+		}
+
+		if (hover && isLand(hover) && !isServer(hover)) {
+			gfx.globalAlpha = 0.45;
+			drawCell(hover.x, hover.y, ink);
+			gfx.globalAlpha = 1;
+		}
+
+		if (selected) {
+			const [sx, sy] = selected.split(',').map(Number);
+			gfx.strokeStyle = ink;
+			gfx.lineWidth = 1;
+			gfx.strokeRect(sx! * pixel + 0.5, sy! * pixel + 0.5, pixel - 1, pixel - 1);
+		}
+
+		const ox = SERVER_CELL.x * pixel + pixel / 2;
+		const oy = SERVER_CELL.y * pixel + pixel / 2;
+
+		gfx.globalAlpha = 0.45;
+		gfx.lineWidth = Math.max(1, pixel / 3);
+		gfx.lineCap = 'square';
+		if (autoOn && scale > 0) {
+			gfx.strokeStyle = auto;
+			for (const cell of AUTO_CELLS) {
+				gfx.beginPath();
+				gfx.moveTo(cell.x * pixel + pixel / 2, cell.y * pixel + pixel / 2);
+				gfx.lineTo(ox, oy);
+				gfx.stroke();
+			}
+		}
+		gfx.strokeStyle = rust;
+		for (const source of userSources) {
+			gfx.beginPath();
+			gfx.moveTo(source.x * pixel + pixel / 2, source.y * pixel + pixel / 2);
+			gfx.lineTo(ox, oy);
+			gfx.stroke();
+		}
+		gfx.globalAlpha = 1;
+
+		for (let dy = -2; dy <= 2; dy++) {
+			for (let dx = -2; dx <= 2; dx++) {
+				if (Math.max(Math.abs(dx), Math.abs(dy)) !== 2) continue;
+				drawCell(SERVER_CELL.x + dx, SERVER_CELL.y + dy, accent);
+			}
+		}
+		drawCell(SERVER_CELL.x, SERVER_CELL.y, ink);
+		drawCell(SERVER_CELL.x + 1, SERVER_CELL.y, ink);
+		drawCell(SERVER_CELL.x, SERVER_CELL.y + 1, ink);
+		drawCell(SERVER_CELL.x + 1, SERVER_CELL.y + 1, ink);
+	}
+
+	function paintSeats(result: TickResult): void {
+		const seats = seatsEl.children;
+		let i = 0;
+		for (let g = 0; g < result.originAcceptGood && i < seats.length; g++, i++) {
+			seats[i]!.className = 'seat good';
+		}
+		for (let a = 0; a < result.originAcceptAuto && i < seats.length; a++, i++) {
+			seats[i]!.className = 'seat attack';
+		}
+		for (let u = 0; u < result.originAcceptUser && i < seats.length; u++, i++) {
+			seats[i]!.className = 'seat user';
+		}
+		for (; i < seats.length; i++) seats[i]!.className = 'seat';
+		const empty =
+			result.originCapacity - result.originAcceptGood - result.originAcceptAuto - result.originAcceptUser;
+		seatStat.textContent = `${result.originAcceptGood} legit · ${result.originAcceptAuto} auto · ${result.originAcceptUser} you · ${Math.max(0, empty)} empty`;
+	}
+
+	function paintTape(): void {
+		tapeEl.replaceChildren(
+			...samples.map((sample) => {
+				const share = sample.offeredGood === 0 ? 1 : sample.originAcceptGood / sample.offeredGood;
+				const bar = document.createElement('span');
+				bar.className = share < 0.8 ? 'bar crash' : 'bar';
+				bar.style.height = `${Math.max(6, share * 100)}%`;
+				bar.title = `t=${sample.t}s ${Math.round(share * 100)}%`;
+				return bar;
+			}),
+		);
+	}
+
+	function verdictCopy(result: TickResult): string {
+		const share = result.offeredGood === 0 ? 1 : result.originAcceptGood / result.offeredGood;
+		const flood = result.attackScale > 0 || result.originAcceptUser > 0 || result.offeredAttack > 0;
+		if (!flood) return 'Quiet. Only legit users. The origin has empty seats.';
+		if (result.attackScale > 0 && result.attackScale < 1 && result.originAcceptUser === 0) {
+			return 'Auto flood ramping up.';
+		}
+		if (share >= 0.95) return 'Flood is on. Legit users kept their seats.';
+		if (share >= 0.5) return 'Flood is on. Some legit users were crowded out.';
+		return 'Flood is on. Attack traffic took the origin.';
+	}
+
+	function render(result: TickResult): void {
+		lastResult = result;
+		clockEl.textContent = `t = ${result.t}s`;
+		verdictEl.textContent = verdictCopy(result);
+		blurbEl.textContent = blurbFor(
+			policy,
+			originCapacity,
+			DEFAULT_CONFIG.prefixCapShare,
+			DEFAULT_CONFIG.perIpRate,
+		);
+		paintSeats(result);
+		paintTape();
+		drawWorld(result);
+	}
+
+	function step(): void {
+		const result = sim.tick();
+		samples.push(result);
+		if (samples.length > HISTORY) samples.shift();
+		render(result);
+	}
+
+	function replay(): void {
+		syncFlows(false);
+		sim.reset();
+		samples.length = 0;
+		playing = true;
+		syncPlay();
+		step();
+	}
+
+	function activateButton(btn: HTMLButtonElement): void {
+		btn.focus();
+		applyPolicy(parsePolicy(btn.dataset.policy));
+		replay();
+	}
+
+	canvas.addEventListener('mousemove', (event) => {
+		hover = cellFromEvent(event);
+		hintEl.textContent = hintFor(hover);
+		drawWorld(lastResult);
+	});
+	canvas.addEventListener('mouseleave', () => {
+		hover = null;
+		hintEl.textContent = hintFor(null);
+		drawWorld(lastResult);
+	});
+	canvas.addEventListener('click', (event) => {
+		const cell = cellFromEvent(event);
+		if (!cell) return;
+		if (isServer(cell)) {
+			hintEl.textContent = hintFor(cell);
+			return;
+		}
+		if (isAutoCell(cell)) {
+			hintEl.textContent = hintFor(cell);
+			return;
+		}
+		if (!isLand(cell)) {
+			hintEl.textContent = hintFor(cell);
+			return;
+		}
+		addAttack(cell);
+		drawWorld(lastResult);
+	});
+
+	autoFlood.addEventListener('change', () => {
+		autoOn = autoFlood.checked;
+		syncFlows();
+	});
+	clearAttacks.addEventListener('click', () => {
+		userSources.length = 0;
+		selectCell(null);
+		syncFlows();
+		drawWorld(lastResult);
+	});
+	selectedVolume.addEventListener('input', () => {
+		const source = userSources.find((s) => cellKey(s) === selected);
+		if (!source) return;
+		source.bots = Number(selectedVolume.value) || DEFAULT_USER_BOTS;
+		selectedVolumeLabel.textContent = `${source.bots} bots × ${source.botRate} rps`;
+		syncFlows();
+	});
+	selectedRemove.addEventListener('click', () => {
+		const idx = userSources.findIndex((s) => cellKey(s) === selected);
+		if (idx >= 0) userSources.splice(idx, 1);
+		selectCell(null);
+		syncFlows();
+		drawWorld(lastResult);
+	});
+
+	buttons.forEach((btn) => {
+		btn.addEventListener('click', () => {
+			applyPolicy(parsePolicy(btn.dataset.policy));
+			replay();
+		});
+		btn.addEventListener('keydown', (event) => {
+			const index = buttons.indexOf(btn);
+			let nextIndex: number | null = null;
+			if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+				nextIndex = (index - 1 + buttons.length) % buttons.length;
+			}
+			if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+				nextIndex = (index + 1) % buttons.length;
+			}
+			if (event.key === 'Home') nextIndex = 0;
+			if (event.key === 'End') nextIndex = buttons.length - 1;
+			if (nextIndex === null) return;
+			event.preventDefault();
+			activateButton(buttons[nextIndex]!);
+		});
+	});
+
+	capacityInput.addEventListener('input', () => {
+		originCapacity = Number(capacityInput.value) || DEFAULT_CONFIG.originCapacity;
+		capacityLabel.textContent = `${originCapacity} seats`;
+		sim.setConfig({ ...DEFAULT_CONFIG, policy, originCapacity });
+		rebuildSeats();
+		if (lastResult) paintSeats({ ...lastResult, originCapacity });
+	});
+	runToggle.addEventListener('click', () => {
+		playing = !playing;
+		syncPlay();
+	});
+	runReplay.addEventListener('click', replay);
+
+	window.addEventListener('resize', () => {
+		sizeCanvas();
+		drawWorld(lastResult);
+	});
+
+	applyPolicy(policy, false);
+	capacityLabel.textContent = `${originCapacity} seats`;
+	rebuildSeats();
+	sizeCanvas();
+	syncPlay();
+	replay();
+	window.setInterval(() => {
+		if (playing) step();
+	}, TICK_MS);
+</script>
