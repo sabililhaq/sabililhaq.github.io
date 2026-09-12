@@ -1,0 +1,157 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import FocusMode from '../components/FocusMode.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+
+const artFontsHref =
+  'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;700&family=Cormorant+Garamond:wght@600&family=Dancing+Script:wght@400;700&family=Inter:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap';
+---
+
+<!doctype html>
+<html lang="en" class="poster-lab focus-mode">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={artFontsHref} />
+    <BaseHead
+      title={`Poster | ${SITE_TITLE}`}
+      description="Style a map poster."
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div data-map-stage>
+        <div id="map-art-host" data-art-host></div>
+      </div>
+    </main>
+    <Footer />
+    <FocusMode />
+  </body>
+</html>
+
+<style is:global>
+  html.poster-lab,
+  html.poster-lab body {
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  html.poster-lab body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  html.poster-lab body > header {
+    flex-shrink: 0;
+  }
+
+  html.poster-lab body > main {
+    flex: 1 1 0%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  html.poster-lab body > footer {
+    flex-shrink: 0;
+    padding: 0.75rem 1.3rem;
+  }
+
+  html.poster-lab [data-map-stage] {
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  html.poster-lab [data-art-host] {
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 0;
+  }
+
+  html.poster-lab [data-cartis] aside,
+  html.poster-lab [data-cartis] .sheet-panel {
+    background: rgb(var(--bg));
+  }
+
+  html.poster-lab [data-cartis] .input-field {
+    background: rgb(var(--surface));
+  }
+
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .text-slate-900,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .text-slate-800,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .text-slate-700,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-900,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-800,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-700 {
+    color: rgb(var(--black));
+  }
+
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .text-slate-500,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .text-slate-400,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-500,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .text-slate-400 {
+    color: rgb(var(--gray));
+  }
+
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .bg-white,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .bg-white\/95,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .bg-slate-50,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .bg-slate-50\/50,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .bg-slate-100,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-white,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-50,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-50\/50,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .bg-slate-100 {
+    background-color: rgb(var(--surface));
+    color: rgb(var(--gray-dark));
+  }
+
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .border-slate-100,
+  html.poster-lab[data-theme='dark'] [data-cartis] aside .border-slate-200,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .border-slate-100,
+  html.poster-lab[data-theme='dark'] [data-cartis] .sheet-panel .border-slate-200 {
+    border-color: rgb(var(--gray-light));
+  }
+
+  /* ── Focus mode: collapse header + footer ──────────────────────── */
+  html.poster-lab.focus-mode body > header,
+  html.poster-lab.focus-mode body > footer {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    transition: max-height 0.22s ease, opacity 0.18s ease, visibility 0.18s;
+  }
+</style>
+
+<script>
+  const host = document.querySelector('[data-art-host]');
+  if (host instanceof HTMLElement) {
+    const { mountCartis } = await import('cartis');
+    mountCartis(host, { basePath: '/poster' });
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+</script>

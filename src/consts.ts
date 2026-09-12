@@ -165,7 +165,13 @@ export const LABS: Lab[] = [
   {
     label: "Map",
     url: "/map",
-    description: "Rank places by distance, or style a map poster.",
+    description: "Rank places by distance.",
+    note: "playground",
+  },
+  {
+    label: "Poster",
+    url: "/poster",
+    description: "Style a map poster.",
     note: "playground",
   },
   {

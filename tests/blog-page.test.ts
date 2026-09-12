@@ -101,6 +101,7 @@ describe('blog writings', () => {
 			'links',
 			'projects',
 			'map',
+			'poster',
 			'qr',
 			'vim',
 		];

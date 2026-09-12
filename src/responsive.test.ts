@@ -26,6 +26,7 @@ describe('desktop-only routes', () => {
 		expect(isDesktopOnly('/map')).toBe(false);
 		expect(isDesktopOnly('/map/')).toBe(false);
 		expect(isDesktopOnly('/map?mode=art')).toBe(false);
+		expect(isDesktopOnly('/poster')).toBe(false);
 		expect(isDesktopOnly('/maps')).toBe(false);
 		expect(isDesktopOnly('/vimdojo')).toBe(false);
 	});
