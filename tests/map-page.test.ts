@@ -86,12 +86,12 @@ describe("map lab", () => {
       "https://github.com/sabililhaq/geoproximity",
     );
     expect(project!.roadmap).toBeUndefined();
-    expect(project!.image).toBe("/images/projects/geoproximity.png");
+    expect(project!.image).toBeDefined();
     expect(
       existsSync(
         fileURLToPath(
           new URL(
-            "../public/images/projects/geoproximity.png",
+            "../src/assets/projects/geoproximity.png",
             import.meta.url,
           ),
         ),

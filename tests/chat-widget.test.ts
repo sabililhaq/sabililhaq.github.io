@@ -2,17 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-// ChatWidget.astro embeds its client-side logic in an inline <script> tag
-// rather than exporting it from a standalone module, so we can't unit-test
-// its behavior directly. These tests instead guard the component's public
-// contract (DOM hooks and key client-side constants) against regressions.
+// Guard the widget DOM hooks and bundled client behavior.
 const widgetPath = fileURLToPath(
   new URL('../src/components/chat/ChatWidget.astro', import.meta.url),
 );
-const source = readFileSync(widgetPath, 'utf-8');
+const widgetSource = readFileSync(widgetPath, 'utf-8');
+const source = widgetSource + readFileSync(new URL('../src/components/chat/client.js', import.meta.url), 'utf-8');
 
 describe('src/components/chat/ChatWidget.astro', () => {
-  it('exposes the DOM hooks the inline script depends on', () => {
+  it('exposes the DOM hooks the client script depends on', () => {
     for (const id of [
       'nickname',
       'presence',
@@ -33,6 +31,11 @@ describe('src/components/chat/ChatWidget.astro', () => {
     expect(source).toMatch(/case\s+['"]presence['"]/);
     expect(source).toMatch(/setPresence\(/);
     expect(source).toMatch(/1 online/);
+  });
+
+  it('bundles the client through Astro instead of serving raw TypeScript', () => {
+    expect(widgetSource).toContain("<script>\n\timport './client.js';");
+    expect(widgetSource).not.toContain('is:inline');
   });
 
   it('imports the shared profanity filter from filter.ts', () => {

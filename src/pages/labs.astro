@@ -2,7 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+import { LABS, LAB_GROUPS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
@@ -18,9 +18,12 @@ import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
     <main>
       <article>
         <h1 class="page-title">Labs</h1>
+        {LAB_GROUPS.map((group) => (
+          <section class="lab-group">
+            <h2>{group}</h2>
         <ul class="link-list hover-list">
           {
-            LABS.map((lab) => (
+            LABS.filter((lab) => lab.group === group).map((lab) => (
               <li>
                 <a
                   href={lab.url}
@@ -37,6 +40,8 @@ import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
             ))
           }
         </ul>
+          </section>
+        ))}
       </article>
     </main>
     <Footer />
@@ -44,6 +49,8 @@ import { LABS, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 </html>
 
 <style>
+  .lab-group { margin-bottom: 2rem; }
+  .lab-group h2 { font-size: 1.05rem; margin-bottom: 0.75rem; }
   .link-list a {
     font-weight: 700;
     font-size: 1.1rem;

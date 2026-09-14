@@ -68,10 +68,8 @@ describe('blog writings', () => {
 		expect(SOCIALS.medium).toBe('https://sabililhaq.medium.com/');
 	});
 
-	it('highlights the latest post on the home page', () => {
-		expect(homeSource).toContain('.slice(0, 1)');
-		expect(homeSource).toContain('post.data.description');
-		expect(homeSource).toContain('post.description');
+	it('highlights the latest two posts on the home page', () => {
+		expect(homeSource).toContain('.slice(0, 2)');
 	});
 
 	it('shows recent posts before labs on the home page', () => {
@@ -82,12 +80,13 @@ describe('blog writings', () => {
 		);
 	});
 
-	it('features Vim Dojo and Map on the home page', () => {
-		expect(homeSource).toContain("['Vim Dojo', 'Map']");
-		expect(homeSource).toContain('featuredLabs');
-		expect(homeSource).not.toContain('featuredLab ');
-		expect(homeSource).toContain('lab.description');
-		expect(homeSource).not.toContain(', {lab.description}');
+	it('features Geoproximity and Vim Dojo before recent posts', () => {
+		expect(homeSource).toContain("['geoproximity', 'vim-dojo']");
+		expect(homeSource).toContain('featuredProjects');
+		expect(homeSource.indexOf('class="featured-projects"')).toBeGreaterThan(-1);
+		expect(homeSource.indexOf('class="featured-projects"')).toBeLessThan(
+			homeSource.indexOf('class="recent-posts"'),
+		);
 	});
 
 	it('reserves existing page slugs so local posts stay at the root', () => {

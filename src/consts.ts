@@ -1,3 +1,7 @@
+import type { ImageMetadata } from 'astro';
+import geoproximityImage from './assets/projects/geoproximity.png';
+import vimDojoImage from './assets/projects/vim-dojo.png';
+
 // Place any global data in this file.
 // You can import this data from anywhere in your site by using the `import` keyword.
 
@@ -52,7 +56,7 @@ export type Project = {
   liveDemo?: string;
   sourceCode?: string;
   roadmap?: string;
-  image?: string;
+  image?: ImageMetadata;
   imageAlt?: string;
 };
 
@@ -68,7 +72,7 @@ export const PROJECTS: Project[] = [
     group: "now",
     liveDemo: "/map",
     sourceCode: "https://github.com/sabililhaq/geoproximity",
-    image: "/images/projects/geoproximity.png",
+    image: geoproximityImage,
     imageAlt:
       "Geoproximity ranking Bandung locations by distance to Jalan Braga",
   },
@@ -84,7 +88,7 @@ export const PROJECTS: Project[] = [
     liveDemo: "/vim",
     sourceCode: "https://github.com/sabililhaq/vim-dojo",
     roadmap: "/vim/roadmap",
-    image: "/images/projects/vim-dojo.png",
+    image: vimDojoImage,
     imageAlt:
       "Vim Dojo challenge with a code buffer, hint controls, and practice categories",
   },
@@ -154,7 +158,10 @@ export const PROJECT_GROUPS: { id: ProjectGroup; label: string }[] = [
   { id: "earlier", label: "Earlier" },
 ];
 
+export const LAB_GROUPS = ["Playground", "Practice", "Utilities"] as const;
+
 export type Lab = {
+  group: (typeof LAB_GROUPS)[number];
   label: string;
   url: string;
   description: string;
@@ -164,48 +171,56 @@ export type Lab = {
 export const LABS: Lab[] = [
   {
     label: "Map",
+    group: "Playground",
     url: "/map",
     description: "Rank places by distance.",
     note: "playground",
   },
   {
     label: "Poster",
+    group: "Playground",
     url: "/poster",
     description: "Style a map poster.",
     note: "playground",
   },
   {
     label: "Chat",
+    group: "Playground",
     url: "/chat",
     description: "Anonymous, temporary chat",
     note: "single room, messages expire",
   },
   {
     label: "Vim Dojo",
+    group: "Practice",
     url: "/vim",
     description: "Practice Vim. Don't learn Vim.",
     note: "I use this",
   },
   {
     label: "Files",
+    group: "Utilities",
     url: "https://files.sabililhaq.com",
     description: "My public read only file system",
     note: "I use this",
   },
   {
     label: "Excalidraw",
+    group: "Playground",
     url: "https://draw.sabililhaq.com",
     description: "Whiteboard playground",
     note: "playground",
   },
   {
     label: "URL Shortener",
+    group: "Utilities",
     url: "https://go.sabililhaq.com",
     description: "Personal URL shortener",
     note: "I use this",
   },
   {
     label: "QR Code Generator",
+    group: "Utilities",
     url: "/qr",
     description: "Generate QR codes instantly from URL",
     note: "runs in the browser",

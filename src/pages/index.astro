@@ -1,25 +1,23 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { LABS, MEDIUM_POSTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
+import { PROJECTS, MEDIUM_POSTS, SITE_DESCRIPTION, SITE_SHORT_NAME, SITE_TITLE } from '../consts';
 
 const localPosts = (await getCollection('blog')).map((post) => ({
 	title: post.data.title,
-	description: post.data.description,
 	url: `/${post.id}/`,
 	pubDate: post.data.pubDate,
 }));
-
 const posts = [...localPosts, ...MEDIUM_POSTS]
 	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
-	.slice(0, 1);
-
-const featuredLabs = ['Vim Dojo', 'Map']
-	.map((label) => LABS.find((lab) => lab.label === label))
-	.filter((lab) => lab != null);
+	.slice(0, 2);
+const featuredProjects = ['geoproximity', 'vim-dojo']
+	.map((id) => PROJECTS.find((project) => project.id === id))
+	.filter((project) => project != null);
 ---
 
 <!doctype html>
@@ -42,143 +40,112 @@ const featuredLabs = ['Vim Dojo', 'Map']
 					or look around my <a href="/projects">projects</a> and <a href="/blog">blog</a>.
 				</p>
 				<p class="intro-links">
-					<a href="/about">More about me →</a>
+					<a href="/about">About me →</a>
 				</p>
+			</section>
+
+			<section class="featured-projects">
+				<h2>Featured projects</h2>
+				<div class="project-grid">
+					{featuredProjects.map((project) => (
+						<article>
+							{project.image && project.liveDemo && (
+								<a class="project-preview" href={project.liveDemo} aria-label={`Try ${project.title}`} data-project={project.id}>
+									<Image src={project.image} alt={project.imageAlt ?? project.title}
+									widths={[320, 640, 960, 1280].filter((width) => width <= project.image!.width)}
+                                    sizes="(max-width: 480px) calc(100vw - 2rem), (max-width: 672px) calc((100vw - 4.1rem) / 2), 296px"
+                                    format="webp" quality={85}
+									loading="lazy" decoding="async" />
+									</a>
+							)}
+							<h3>{project.title}</h3>
+							<p class="desc">{project.id === 'geoproximity'
+								? 'Compare places by distance to a destination, all on one map.'
+								: 'Practice Vim with small coding challenges in your browser.'}</p>
+							<p class="project-links">
+								{project.liveDemo && <a href={project.liveDemo} aria-label={`Try ${project.title}`}>Try it →</a>}
+							</p>
+						</article>
+					))}
+				</div>
+				<p><a class="more-link" href="/projects">All projects →</a></p>
 			</section>
 
 			{posts.length > 0 && (
 				<section class="recent-posts">
-					<h2>Recent posts</h2>
+					<h2>Latest writing</h2>
 					<ul class="hover-list">
 						{posts.map((post) => (
 							<li>
-								<a
-									href={post.url}
+								<a href={post.url}
 									target={post.url.startsWith('http') ? '_blank' : undefined}
-									rel={post.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-								>
+									rel={post.url.startsWith('http') ? 'noopener noreferrer' : undefined}>
 									{post.title}
 								</a>
 								<div class="post-date"><FormattedDate date={post.pubDate} /></div>
-								{post.description && <p class="desc">{post.description}</p>}
 							</li>
 						))}
 					</ul>
-					<a class="all-posts" href="/blog">All posts →</a>
+					<a class="more-link" href="/blog">All posts →</a>
 				</section>
 			)}
 
-			{featuredLabs.length > 0 && (
-				<section class="labs">
-					<h2>Labs</h2>
-					<ul class="hover-list lab-list">
-						{featuredLabs.map((lab) => (
-							<li>
-								<a href={lab.url}>{lab.label}</a>
-								{lab.description && (
-									<p class="desc">{lab.description}</p>
-								)}
-							</li>
-						))}
-					</ul>
-					<a class="all-posts" href="/labs">All labs →</a>
-				</section>
-			)}
+			<section class="labs">
+				<h2>Playground</h2>
+				<p class="desc">Smaller experiments: a <a href="/qr">QR generator</a>,
+					<a href="/poster">map posters</a>, and <a href="/chat">bad-word chat filter</a>.</p>
+				<a class="more-link" href="/labs">All labs →</a>
+			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
 
 <style>
-	.intro {
-		margin-bottom: 2.75rem;
-		padding-top: 1.25rem;
-	}
-
-	.intro h1 {
-		font-size: 1.5rem;
-		margin-bottom: 0.85rem;
-		letter-spacing: -0.02em;
-	}
-
-	.intro p {
-		margin-bottom: 1rem;
-		color: rgb(var(--gray-dark));
-	}
-
-	.intro-links {
-		margin-top: 0.35rem;
-	}
-
-	.intro-links a {
+	section { margin-bottom: 2.5rem; }
+	.intro { padding-top: 1.25rem; }
+	.intro h1 { font-size: 1.5rem; margin-bottom: 0.85rem; }
+	h2 { font-size: 1.05rem; margin-bottom: 1rem; }
+	.intro-links, .project-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
 		font-size: 0.95rem;
-		color: rgb(var(--gray));
-		text-decoration: none;
-		box-shadow: none;
 	}
-
-	.intro-links a:hover {
-		color: var(--accent);
-		text-decoration: underline;
-		text-underline-offset: 0.18em;
+	.intro-links a { box-shadow: none; }
+	.project-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.5rem;
 	}
-
-	.labs,
-	.recent-posts {
-		margin-bottom: 2.5rem;
+	.project-preview { display: block; border-radius: 4px; }
+	.project-preview img { object-position: center center; }
+	.project-grid img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+		background: rgb(var(--surface));
+		border: 1px solid rgb(var(--gray-light));
+		box-sizing: border-box;
+		margin-bottom: 0.85rem;
 	}
-
-	.labs h2,
-	.recent-posts h2 {
-		font-size: 1.05rem;
-		font-weight: 700;
-		color: rgb(var(--black));
-		margin: 0 0 0.85rem;
-	}
-
-	.lab-list a,
-	.recent-posts li a {
-		color: var(--accent);
-		text-decoration: none;
-		box-shadow: 0 1px 0 0 currentColor;
-		font-weight: 700;
-	}
-
-	.lab-list a:hover,
-	.recent-posts li a:hover {
-		box-shadow: none;
-	}
-
-	.lab-list {
-		margin: 0 0 1rem;
-	}
-
+	.project-links { margin: 0.65rem 0 0; }
 	.desc {
 		color: rgb(var(--gray));
 		font-size: 0.95rem;
 		line-height: 1.5;
 		margin: 0.35rem 0 0;
 	}
-
-	.recent-posts ul {
-		margin: 0 0 1rem;
-	}
-
-	.all-posts {
-		font-size: 0.95rem;
-		color: rgb(var(--gray));
-		text-decoration: none;
-	}
-
-	.all-posts:hover {
-		color: var(--accent);
-		text-decoration: underline;
-		text-underline-offset: 0.18em;
-	}
-
-	.post-date {
-		color: rgb(var(--gray));
-		font-size: 0.9rem;
-		margin-top: 0.2rem;
+	.recent-posts ul { margin-bottom: 1rem; }
+	.recent-posts li a { font-weight: 700; }
+	.post-date { color: rgb(var(--gray)); font-size: 0.9rem; margin-top: 0.2rem; }
+	.labs .desc { margin-bottom: 0.75rem; }
+	.more-link { color: rgb(var(--gray)); font-size: 0.95rem; }
+	a { text-decoration: none; }
+	a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+	@media (max-width: 480px) {
+		.project-grid { grid-template-columns: 1fr; }
 	}
 </style>
