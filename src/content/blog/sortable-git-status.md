@@ -6,7 +6,7 @@ pubDate: 2026-08-16
 
 When running an AI agent, I often get into this situation:
 
-Agent changes a lot of files, then I need to nitpick all <a href="#fn-1" id="fnref-1">their changes</a> (`git add`).
+Agent changes a lot of files, then I need to nitpick all their changes<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" aria-label="Footnote 1">1</a></sup> (`git add`).
 
 At the same time, I got a lot of irrelevant changes that I forgot to stash, or any old files I won't care in a particular session.
 
@@ -53,6 +53,6 @@ Example usage:
 
 <ol class="footnotes">
 <li id="fn-1">
-I could ask the agent to add their changes, but they often make annoying mistakes, they add everything, stash stuff they shouldn't, or stage half the wrong files. <a href="#fnref-1" class="footnote-backref" aria-label="Back to reference">↩</a>
+I could ask the agent to add their changes, but they often make annoying mistakes, they add everything, stash stuff they shouldn't, or stage half the wrong files. <a href="#fnref-1" class="footnote-backref" aria-label="Back to reference 1">↩</a>
 </li>
 </ol>

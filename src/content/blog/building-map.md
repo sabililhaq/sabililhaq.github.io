@@ -4,7 +4,7 @@ description: "A small map for a case where you have one destination and many loc
 pubDate: 2026-08-30
 ---
 
-I was looking at travel drop-off points for a trip to Bandung, the <a href="#fn-1" id="fnref-1">"Paris of Indonesia,"</a> so they said. Every travel agency has its own set of <a href="#fn-2" id="fnref-2">hubs</a>, and I wanted to know which one fit me the best.
+I was looking at travel drop-off points for a trip to Bandung, the "Paris of Indonesia,"<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" aria-label="Footnote 1">1</a></sup> so they said. Every travel agency has its own set of hubs<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" aria-label="Footnote 2">2</a></sup>, and I wanted to know which one fit me the best.
 
 Travel apps like Traveloka and tiket.com let me sort by distance, but none of them give me much visual context, only the list.
 
@@ -66,7 +66,7 @@ Everything else runs in the browser, with no backend.
 cations → coordinates → distance calculation → ranking → map
 ```
 
-The distance calculation is the trivial part (<a href="#fn-3" id="fnref-3">great-circle</a>).
+The distance calculation is the trivial part (great-circle<sup class="footnote-ref"><a href="#fn-3" id="fnref-3" aria-label="Footnote 3">3</a></sup>).
 
 The harder part is getting the coordinates given a location.
 
@@ -128,13 +128,13 @@ Try it here: [sabililhaq.com/map](https://sabililhaq.com/map)
 
 <ol class="footnotes">
 <li id="fn-1">
-Paris van Java, if you want the local version ;D <a href="#fnref-1" class="footnote-backref" aria-label="Back to reference">↩</a>
+Paris van Java, if you want the local version ;D <a href="#fnref-1" class="footnote-backref" aria-label="Back to reference 1">↩</a>
 </li>
 <li id="fn-2">
-DayTrans, Jackal Holidays, Cititrans, each with several locations of their own. <a href="#fnref-2" class="footnote-backref" aria-label="Back to reference">↩</a>
+DayTrans, Jackal Holidays, Cititrans, each with several locations of their own. <a href="#fnref-2" class="footnote-backref" aria-label="Back to reference 2">↩</a>
 </li>
 <li id="fn-3">
-Great-circle distance: the shortest path between two points on the surface of a sphere. <a href="#fnref-3" class="footnote-backref" aria-label="Back to reference">↩</a>
+Great-circle distance: the shortest path between two points on the surface of a sphere. <a href="#fnref-3" class="footnote-backref" aria-label="Back to reference 3">↩</a>
 </li>
 </ol>
 

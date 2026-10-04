@@ -12,11 +12,12 @@ Fair point. I gave it a try, and now that I'm used to it, I'm not coming back. T
 ## Why
 I use Esc a lot, especially in <a href="/vim" target="_blank" rel="noopener noreferrer">vim</a> and tmux. I have small hands, and reaching for it was pretty awkward. Caps Lock is much closer, so pressing it to exit vim insert mode feels natural and fast.
 
-Meanwhile, I never use Caps Lock. Shift is enough for capital letters, and there's a <a href="#fn-1" id="fnref-1">quick command</a> for converting whole chunks of text to uppercase. A <a href="#fn-2" id="fnref-2">small team's experiment</a> also found Caps Lock was among their least-used keys.
+Meanwhile, I never use Caps Lock. Shift is enough for capital letters, and there's a quick command<sup class="footnote-ref"><a href="#fn-1" id="fnref-1" aria-label="Footnote 1">1</a></sup> for converting whole chunks of text to uppercase. A small team's experiment<sup class="footnote-ref"><a href="#fn-2" id="fnref-2" aria-label="Footnote 2">2</a></sup> also found Caps Lock was among their least-used keys.
 
 I haven't measured whether this makes me faster. It just feels more comfortable.
 
-## How
+<details class="post-instructions">
+<summary>How (MacOS &amp; Windows)</summary>
 
 ### macOS
 
@@ -38,24 +39,26 @@ On Windows 11, install [Windows PowerToys](https://learn.microsoft.com/en-us/win
 
 Keep PowerToys running in the background for the remapping to work. See the [Keyboard Manager guide](https://learn.microsoft.com/en-us/windows/powertoys/keyboard-manager) for details.
 
+</details>
+
 <hr />
 
 <ol class="footnotes">
 <li id="fn-1">
 <p>In a macOS or Linux terminal, you can turn text into uppercase with:</p>
-<pre><code>echo "your text here" | tr '[:lower:]' '[:upper:]'</code></pre>
+<pre tabindex="0" aria-label="Uppercase text command"><code>echo "your text here" | tr '[:lower:]' '[:upper:]'</code></pre>
 
 <figure>
   <img src="/images/blog/caps-lock-uppercase-example.png" alt="Terminal example converting text to uppercase" />
   <figcaption>Example quick uppercase</figcaption>
 </figure>
-<a href="#fnref-1" class="footnote-backref" aria-label="Back to reference">↩</a>
+<a href="#fnref-1" class="footnote-backref" aria-label="Back to reference 1">↩</a>
 </li>
 
 <li id="fn-2">
 <a href="https://medium.com/t-superpower/geeks-vs-writers-f81e77a5d3c9">Geeks vs. Writers</a>: an experiment in keyboard usage.
 
-<a href="#fnref-2" class="footnote-backref" aria-label="Back to reference">↩</a>
+<a href="#fnref-2" class="footnote-backref" aria-label="Back to reference 2">↩</a>
 </li>
 
 </ol>
