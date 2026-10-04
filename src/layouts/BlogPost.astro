@@ -77,9 +77,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin-bottom: 0;
 			}
 			.post :global(a) {
-				color: var(--accent);
-				text-decoration: none;
-				box-shadow: 0 1px 0 0 currentColor;
+				color: var(--accent-dark);
+				text-decoration: underline;
+				text-underline-offset: 0.18em;
 			}
 			.post :global(a:hover),
 			.post :global(a:active) {
@@ -140,6 +140,20 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 				font-size: 0.86em;
 			}
+			.post :global(sup.footnote-ref) {
+				font-family: var(--font-atkinson);
+				font-size: 0.7em;
+				line-height: 0;
+				vertical-align: super;
+			}
+			.post :global(sup.footnote-ref a) {
+				color: var(--accent-dark);
+				box-shadow: none;
+				text-decoration: none;
+			}
+			.post :global(sup.footnote-ref a:hover) {
+				text-decoration: underline;
+			}
 			.post :global(ol.footnotes) {
 				margin: 0;
 				padding-left: 1.4rem;
@@ -151,12 +165,39 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin-bottom: 0.75em;
 			}
 			.post :global(a.footnote-backref) {
+				text-decoration: none;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-width: 24px;
+				min-height: 24px;
+				color: var(--accent-dark);
 				box-shadow: none;
 				margin-left: 0.15em;
 			}
 			.post :global(a.footnote-backref:hover) {
 				text-decoration: underline;
 				text-underline-offset: 0.15em;
+			}
+			.post :global(sup.footnote-ref a:focus-visible),
+			.post :global(a.footnote-backref:focus-visible) {
+				outline: 2px solid var(--accent-dark);
+				outline-offset: 2px;
+			}
+			.post :global(ol.footnotes li[id]),
+			.post :global(sup.footnote-ref a[id]) {
+				scroll-margin-top: 1rem;
+			}
+			.post :global(details.post-instructions) {
+				margin: 2.4rem 0 1.75rem;
+			}
+			.post :global(details.post-instructions > summary) {
+				font-family: var(--font-atkinson);
+				font-size: 1.25rem;
+				font-weight: 700;
+				color: rgb(var(--black));
+				cursor: pointer;
+				padding-block: 0.5rem;
 			}
 			@media (max-width: 480px) {
 				.title h1 {
