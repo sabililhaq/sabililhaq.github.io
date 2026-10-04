@@ -1,25 +1,20 @@
 ---
-title: "Remap your Caps-lock to Esc"
-description: "Sounds silly advice, but it works"
-pubDate: 2026-07-08
+title: "Remap your Caps Lock to Esc"
+description: "Sounds like silly advice, but it works."
+pubDate: 2026-10-04
 ---
+"Remap your Caps Lock to Esc, bro. Your pinky finger will thank u!" my friend said during some random engineering chit-chat.
 
-"Replace your caps lock to ESC bro, your pinky finger will thank u!", told my friend in random engineering chit-chat.
+It sounded silly at first. Then he added, "When was the last time you used Caps Lock?"
 
-Sounds silly at first, then he add "Just think about when did the last time you use caps lock, it barely used at all!".
-
-Thats a random advice my friend gave me on random night, sounds silly at first, then i give it a try.
-
-Now that im getting used to it, and, i want to write it for you who might find it useful.
-Im not coming back, thanks lol.
+Fair point. I gave it a try, and now that I'm used to it, I'm not coming back. Thanks lol.
 
 ## Why
+I use Esc a lot, especially in <a href="/vim" target="_blank" rel="noopener noreferrer">vim</a> and tmux. I have small hands, and reaching for it was pretty awkward. Caps Lock is much closer, so pressing it to exit vim insert mode feels natural and fast.
 
-I use Esc a lot, especially in vim and tmux. I have small hands, and reaching for it was pretty irritating. Caps Lock is much closer, so pressing it to exit vim insert mode feels natural and fast.
+Meanwhile, I never use Caps Lock. Shift is enough for capital letters, and there's a <a href="#fn-1" id="fnref-1">quick command</a> for converting whole chunks of text to uppercase. A <a href="#fn-2" id="fnref-2">small team's experiment</a> also found Caps Lock was among their least-used keys.
 
-Meanwhile, I barely use Caps Lock. Shift handles the occasional capital letter, and there's a <a href="#fn-1" id="fnref-1">quick command for uppercase text</a>.
-
-I don't have any practical evidence of how this improve my workflow, but my feeling told so. I guess this <a href="#fn-2" id="fnref-2">findings</a> show how caps lock is nearly useless.
+I haven't measured whether this makes me faster. It just feels more comfortable.
 
 ## How
 
@@ -58,7 +53,7 @@ Keep PowerToys running in the background for the remapping to work. See the [Key
 </li>
 
 <li id="fn-2">
-Caps lock as least used key: https://medium.com/t-superpower/geeks-vs-writers-f81e77a5d3c9
+<a href="https://medium.com/t-superpower/geeks-vs-writers-f81e77a5d3c9">Geeks vs. Writers</a>: an experiment in keyboard usage.
 
 <a href="#fnref-2" class="footnote-backref" aria-label="Back to reference">↩</a>
 </li>
