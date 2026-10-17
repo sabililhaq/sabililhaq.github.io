@@ -1,0 +1,53 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Stabilo | ${SITE_TITLE}`} description="A small tool for highlighting text and adding notes. Try it here." />
+    <link rel="stylesheet" href="/vendor/stabilo/content.css" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1 class="page-title">Stabilo</h1>
+      <p>A small browser extension for highlighting text and adding notes. You can try it on this page without installing it.</p>
+      <p>Select some text and click the marker. Click a highlight to add a note or remove it.</p>
+      <p class="muted">Highlights and notes stay in this tab and disappear when you reload or leave this page.</p>
+      <p id="stabilo-unsupported" hidden>This demo needs a browser with text highlighting support. Try opening it in a recent Chrome or Edge.</p>
+      <noscript><p>Enable JavaScript to try highlighting.</p></noscript>
+
+      <article aria-labelledby="passage-title">
+        <h2 id="passage-title">A passage to try</h2>
+        <p>When I read something unfamiliar, I sometimes pause at a sentence and write it in my own words. A short note is enough: what I think it means, a question, or an example that makes it clearer.</p>
+        <p>The note does not have to capture everything. It is just a place to keep a thought while I work through the rest of the article. Sometimes, a later paragraph answers the question I wrote down earlier.</p>
+      </article>
+
+      <details>
+        <summary>Keyboard shortcuts</summary>
+        <p>Select text, then press Tab and Enter to highlight it. Alt+Shift+H also works. Use Alt+Shift+N to visit highlight notes, and Escape to close a note.</p>
+      </details>
+      <p class="source"><a href="https://github.com/sabililhaq/stabilo#install">Install the extension</a><span aria-hidden="true"> · </span><a href="https://github.com/sabililhaq/stabilo">Source</a></p>
+    </main>
+    <Footer />
+    <script is:inline src="/vendor/stabilo/content.js" defer></script>
+    <script>
+      const supported = 'Highlight' in globalThis && 'highlights' in CSS;
+      const notice = document.getElementById('stabilo-unsupported');
+      if (notice) notice.hidden = supported;
+    </script>
+  </body>
+</html>
+
+<style>
+  .muted, details { color: rgb(var(--gray)); font-size: 0.9rem; }
+  article { margin: 2rem 0 1.5rem; padding: 1.5rem; border: 1px solid rgb(var(--gray-light)); border-radius: 4px; background: rgb(var(--surface)); }
+  article h2 { font-size: 1rem; }
+  article p:last-child { margin-bottom: 0; }
+  summary { cursor: pointer; }
+  .source { margin-top: 1.5rem; font-size: 0.95rem; }
+</style>

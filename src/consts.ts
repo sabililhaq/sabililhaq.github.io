@@ -62,6 +62,18 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
+    id: "stabilo",
+    title: "Stabilo",
+    overview: [
+      "A small browser extension for highlighting text and adding notes. I use it to put unfamiliar passages into my own words while reading.",
+      "Highlights and notes last for the page session. No account or backend.",
+    ],
+    techStack: "JavaScript · CSS · Browser Extension",
+    group: "now",
+    liveDemo: "/stabilo",
+    sourceCode: "https://github.com/sabililhaq/stabilo",
+  },
+  {
     id: "geoproximity",
     title: "Geoproximity",
     overview: [
@@ -169,6 +181,13 @@ export type Lab = {
 };
 
 export const LABS: Lab[] = [
+  {
+    label: "Stabilo",
+    group: "Playground",
+    url: "/stabilo",
+    description: "Highlight text and add a note.",
+    note: "temporary notes, runs in the browser",
+  },
   {
     label: "Map",
     group: "Playground",
