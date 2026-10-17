@@ -22,6 +22,7 @@
     "astro": "^7.1.6",
     "cartis": "github:sabililhaq/cartis#v0.1.4",
     "geoproximity": "github:sabililhaq/geoproximity#v0.1.18",
+    "hls.js": "^1.7.3",
     "leaflet": "^1.9.4",
     "obscenity": "github:sabililhaq/obscenity#dist-id-profanity-v1",
     "qr-code-styling": "^1.9.2",

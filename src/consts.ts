@@ -225,6 +225,12 @@ export const LABS: Lab[] = [
     description: "Generate QR codes instantly from URL",
     note: "runs in the browser",
   },
+  {
+    label: "HLS Player",
+    group: "Utilities",
+    url: "/hls",
+    description: "Play HLS video streams.",
+  },
 ];
 
 export type SkillGroup = {

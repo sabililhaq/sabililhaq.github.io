@@ -1,0 +1,584 @@
+---
+// Client-side HLS video player component
+const DEFAULT_STREAM =
+  'https://dki-jkt.balitower.co.id:7028/501478_JKS_SATPOLPP_TAMAN-LITERASI-C01_CCTV-01/tracks-v1/index.fmp4.m3u8';
+---
+
+<div class="hls-player">
+  <form id="hls-form" class="controls-form" action="#" onsubmit="return false;">
+    <div class="field">
+      <label for="hls-url">Stream URL (.m3u8)</label>
+      <div class="input-row">
+        <input
+          id="hls-url"
+          type="url"
+          placeholder="https://example.com/stream.m3u8"
+          value={DEFAULT_STREAM}
+          spellcheck="false"
+          autocomplete="off"
+          required
+        />
+        <button id="hls-load" type="submit">Play</button>
+      </div>
+    </div>
+
+    <div class="presets-row">
+      <span class="preset-label">Sample:</span>
+      <button
+        id="hls-sample-btn"
+        type="button"
+        class="chip-btn"
+        data-url={DEFAULT_STREAM}
+      >
+        Taman Literasi CCTV (Live)
+      </button>
+      <button id="hls-clear-btn" type="button" class="chip-btn secondary">
+        Clear
+      </button>
+    </div>
+  </form>
+
+  <div class="player-wrapper">
+    <div class="video-container">
+      <video
+        id="hls-video"
+        controls
+        playsinline
+        muted
+        preload="auto"
+      ></video>
+      <div id="hls-overlay" class="overlay hidden" aria-live="polite">
+        <div class="spinner"></div>
+        <span id="overlay-text">Loading stream...</span>
+      </div>
+    </div>
+
+    <div class="player-meta">
+      <div class="status-group">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="hls-status" class="status-text">Ready</span>
+        <span id="live-badge" class="badge live hidden">LIVE</span>
+      </div>
+      <div class="toggles-group">
+        <label class="toggle-label" for="hls-autoplay">
+          <input id="hls-autoplay" type="checkbox" checked />
+          <span>Autoplay</span>
+        </label>
+        <label class="toggle-label" for="hls-muted">
+          <input id="hls-muted" type="checkbox" checked />
+          <span>Muted</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="hls-error" class="error-box hidden" role="alert">
+    <strong>Playback Error:</strong>
+    <p id="hls-error-text"></p>
+    <p class="error-hint">
+      Note: Client-side HLS streams must permit Cross-Origin Resource Sharing (CORS) from this domain. If the stream fails to load, ensure the stream server includes the <code>Access-Control-Allow-Origin</code> header.
+    </p>
+  </div>
+</div>
+
+<style>
+  .hls-player {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .controls-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(var(--black));
+  }
+
+  .input-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .input-row input {
+    flex: 1 1 0%;
+    min-width: 0;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: rgb(var(--bg));
+    color: rgb(var(--gray-dark));
+    box-sizing: border-box;
+  }
+
+  .input-row input:focus {
+    border-color: rgb(var(--black));
+  }
+
+  .input-row button {
+    padding: 0.65rem 1.4rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgb(var(--black));
+    color: rgb(var(--bg));
+    flex-shrink: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .input-row button:hover {
+    opacity: 0.85;
+  }
+
+  .presets-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .preset-label {
+    color: rgb(var(--gray));
+    font-weight: 500;
+  }
+
+  .chip-btn {
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 20px;
+    background: rgb(var(--surface));
+    color: rgb(var(--gray-dark));
+    padding: 0.25rem 0.75rem;
+    font-size: 0.825rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .chip-btn:hover {
+    border-color: rgb(var(--black));
+    color: rgb(var(--black));
+  }
+
+  .chip-btn.secondary {
+    color: rgb(var(--gray));
+  }
+
+  .player-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgb(var(--surface));
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgb(var(--gray-light));
+  }
+
+  .video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: #fff;
+    font-size: 0.9rem;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .overlay.hidden {
+    display: none;
+  }
+
+  .spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .player-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .status-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgb(var(--gray));
+    transition: background-color 0.2s ease;
+  }
+
+  .status-dot.active {
+    background: #10b981;
+  }
+
+  .status-dot.buffering {
+    background: #f59e0b;
+  }
+
+  .status-dot.error {
+    background: #ef4444;
+  }
+
+  .status-text {
+    color: rgb(var(--gray));
+    font-weight: 500;
+  }
+
+  .badge.live {
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: #ef4444;
+    color: #fff;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .badge.live.hidden {
+    display: none;
+  }
+
+  .toggles-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: rgb(var(--gray));
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toggle-label input[type='checkbox'] {
+    cursor: pointer;
+  }
+
+  .error-box {
+    padding: 0.85rem 1rem;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: rgb(var(--black));
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .error-box.hidden {
+    display: none;
+  }
+
+  .error-box strong {
+    color: #ef4444;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .error-box p {
+    margin: 0.25rem 0;
+  }
+
+  .error-hint {
+    color: rgb(var(--gray));
+    font-size: 0.825rem;
+    margin-top: 0.5rem !important;
+  }
+
+  @media (max-width: 480px) {
+    .input-row {
+      flex-direction: column;
+    }
+
+    .input-row button {
+      width: 100%;
+    }
+
+    .player-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  import Hls from 'hls.js';
+
+  function requireEl<T extends HTMLElement>(id: string): T {
+    const el = document.getElementById(id);
+    if (!el) {
+      throw new Error(`HLS Player markup is missing #${id}`);
+    }
+    return el as T;
+  }
+
+  const form = requireEl<HTMLFormElement>('hls-form');
+  const urlInput = requireEl<HTMLInputElement>('hls-url');
+  const video = requireEl<HTMLVideoElement>('hls-video');
+  const sampleBtn = requireEl<HTMLButtonElement>('hls-sample-btn');
+  const clearBtn = requireEl<HTMLButtonElement>('hls-clear-btn');
+  const statusText = requireEl<HTMLSpanElement>('hls-status');
+  const statusDot = requireEl<HTMLSpanElement>('status-dot');
+  const liveBadge = requireEl<HTMLSpanElement>('live-badge');
+  const errorBox = requireEl<HTMLDivElement>('hls-error');
+  const errorText = requireEl<HTMLParagraphElement>('hls-error-text');
+  const overlay = requireEl<HTMLDivElement>('hls-overlay');
+  const overlayText = requireEl<HTMLSpanElement>('overlay-text');
+  const autoplayCheckbox = requireEl<HTMLInputElement>('hls-autoplay');
+  const mutedCheckbox = requireEl<HTMLInputElement>('hls-muted');
+
+  let hlsInstance: Hls | null = null;
+
+  function setStatus(text: string, state: 'idle' | 'active' | 'buffering' | 'error') {
+    statusText.textContent = text;
+    statusDot.className = 'status-dot';
+    if (state === 'active') statusDot.classList.add('active');
+    else if (state === 'buffering') statusDot.classList.add('buffering');
+    else if (state === 'error') statusDot.classList.add('error');
+  }
+
+  function showOverlay(message: string) {
+    overlayText.textContent = message;
+    overlay.classList.remove('hidden');
+  }
+
+  function hideOverlay() {
+    overlay.classList.add('hidden');
+  }
+
+  function showError(message: string) {
+    hideOverlay();
+    setStatus('Error', 'error');
+    errorText.textContent = message;
+    errorBox.classList.remove('hidden');
+  }
+
+  function clearError() {
+    errorBox.classList.add('hidden');
+    errorText.textContent = '';
+  }
+
+  function stopCurrentPlayback() {
+    if (hlsInstance) {
+      hlsInstance.destroy();
+      hlsInstance = null;
+    }
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    liveBadge.classList.add('hidden');
+    hideOverlay();
+    setStatus('Stopped', 'idle');
+  }
+
+  function loadStream(rawUrl: string) {
+    const url = rawUrl.trim();
+    clearError();
+
+    if (!url) {
+      showError('Please enter a valid .m3u8 stream URL.');
+      return;
+    }
+
+    stopCurrentPlayback();
+    showOverlay('Connecting to stream...');
+    setStatus('Loading manifest...', 'buffering');
+
+    // Update muted state from UI
+    video.muted = mutedCheckbox.checked;
+
+    if (Hls.isSupported()) {
+      const hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+        backBufferLength: 60,
+      });
+      hlsInstance = hls;
+
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+        hls.loadSource(url);
+      });
+
+      hls.on(Hls.Events.MANIFEST_PARSED, (_event, _data) => {
+        hideOverlay();
+        setStatus('Ready', 'active');
+        if (autoplayCheckbox.checked) {
+          video.play().catch((err) => {
+            console.warn('Autoplay prevented by browser policy:', err);
+            setStatus('Ready (Press play)', 'idle');
+          });
+        }
+      });
+
+      hls.on(Hls.Events.LEVEL_LOADED, (_event, data) => {
+        if (data.details.live) {
+          liveBadge.classList.remove('hidden');
+        } else {
+          liveBadge.classList.add('hidden');
+        }
+      });
+
+      hls.on(Hls.Events.ERROR, (_event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              showError(`Network error loading stream (${data.details}). Ensure the stream URL is correct and allows cross-origin requests (CORS).`);
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              setStatus('Recovering media error...', 'buffering');
+              hls.recoverMediaError();
+              break;
+            default:
+              showError(`Fatal stream error: ${data.details}`);
+              hls.destroy();
+              hlsInstance = null;
+              break;
+          }
+        }
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Native HLS support (Safari)
+      video.src = url;
+      const onLoaded = () => {
+        hideOverlay();
+        setStatus('Ready (Native)', 'active');
+        if (autoplayCheckbox.checked) {
+          video.play().catch(() => {
+            setStatus('Ready (Press play)', 'idle');
+          });
+        }
+        video.removeEventListener('loadedmetadata', onLoaded);
+      };
+      video.addEventListener('loadedmetadata', onLoaded);
+      video.addEventListener(
+        'error',
+        () => {
+          showError('Failed to play stream via native HLS playback. Check URL and CORS headers.');
+        },
+        { once: true }
+      );
+    } else {
+      showError('HLS playback is not supported by your browser.');
+    }
+  }
+
+  // Form submission
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    loadStream(urlInput.value);
+  });
+
+  // Presets
+  sampleBtn.addEventListener('click', () => {
+    const sampleUrl = sampleBtn.dataset.url || '';
+    urlInput.value = sampleUrl;
+    loadStream(sampleUrl);
+  });
+
+  clearBtn.addEventListener('click', () => {
+    urlInput.value = '';
+    clearError();
+    stopCurrentPlayback();
+    setStatus('Ready', 'idle');
+  });
+
+  // Mute toggle
+  mutedCheckbox.addEventListener('change', () => {
+    video.muted = mutedCheckbox.checked;
+  });
+
+  // Video playback events
+  video.addEventListener('playing', () => {
+    hideOverlay();
+    setStatus('Playing', 'active');
+  });
+
+  video.addEventListener('pause', () => {
+    if (!video.ended && video.src) {
+      setStatus('Paused', 'idle');
+    }
+  });
+
+  video.addEventListener('waiting', () => {
+    setStatus('Buffering...', 'buffering');
+  });
+
+  video.addEventListener('ended', () => {
+    setStatus('Ended', 'idle');
+  });
+
+  // Initial load check: support ?url= or ?src= param
+  const urlParams = new URLSearchParams(window.location.search);
+  const streamParam = urlParams.get('url') || urlParams.get('src');
+  if (streamParam) {
+    urlInput.value = streamParam;
+    loadStream(streamParam);
+  }
+</script>
