@@ -1,7 +1,16 @@
 ---
 // Client-side HLS video player component
-const DEFAULT_STREAM =
-  'https://dki-jkt.balitower.co.id:7028/501478_JKS_SATPOLPP_TAMAN-LITERASI-C01_CCTV-01/tracks-v1/index.fmp4.m3u8';
+const SAMPLES = [
+  {
+    name: 'Taman Literasi CCTV',
+    url: 'https://dki-jkt.balitower.co.id:7028/501478_JKS_SATPOLPP_TAMAN-LITERASI-C01_CCTV-01/tracks-v1/index.fmp4.m3u8',
+  },
+  {
+    name: 'Bundaran HI CCTV',
+    url: 'https://dki-jkt.balitower.co.id:7028/502493_JKP_SATPOL-PP_SIMPANG-JL.-MH.-THAMRIN-C09_CCTV-01/tracks-v1/index.fmp4.m3u8',
+  },
+];
+const DEFAULT_STREAM = SAMPLES[0].url;
 ---
 
 <div class="hls-player">
@@ -23,14 +32,21 @@ const DEFAULT_STREAM =
     </div>
 
     <div class="presets-row">
-      <span class="preset-label">Sample:</span>
+      <span class="preset-label">Samples:</span>
       <button
         id="hls-sample-btn"
         type="button"
-        class="chip-btn"
-        data-url={DEFAULT_STREAM}
+        class="chip-btn sample-chip"
+        data-url={SAMPLES[0].url}
       >
-        Taman Literasi CCTV (Live)
+        {SAMPLES[0].name}
+      </button>
+      <button
+        type="button"
+        class="chip-btn sample-chip"
+        data-url={SAMPLES[1].url}
+      >
+        {SAMPLES[1].name}
       </button>
       <button id="hls-clear-btn" type="button" class="chip-btn secondary">
         Clear
@@ -380,7 +396,7 @@ const DEFAULT_STREAM =
   const form = requireEl<HTMLFormElement>('hls-form');
   const urlInput = requireEl<HTMLInputElement>('hls-url');
   const video = requireEl<HTMLVideoElement>('hls-video');
-  const sampleBtn = requireEl<HTMLButtonElement>('hls-sample-btn');
+  requireEl<HTMLButtonElement>('hls-sample-btn');
   const clearBtn = requireEl<HTMLButtonElement>('hls-clear-btn');
   const statusText = requireEl<HTMLSpanElement>('hls-status');
   const statusDot = requireEl<HTMLSpanElement>('status-dot');
@@ -536,10 +552,13 @@ const DEFAULT_STREAM =
   });
 
   // Presets
-  sampleBtn.addEventListener('click', () => {
-    const sampleUrl = sampleBtn.dataset.url || '';
-    urlInput.value = sampleUrl;
-    loadStream(sampleUrl);
+  const sampleChips = document.querySelectorAll<HTMLButtonElement>('.sample-chip');
+  sampleChips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const sampleUrl = chip.dataset.url || '';
+      urlInput.value = sampleUrl;
+      loadStream(sampleUrl);
+    });
   });
 
   clearBtn.addEventListener('click', () => {

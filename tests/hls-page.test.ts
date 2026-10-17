@@ -63,6 +63,12 @@ describe('src/components/hls/HLSPlayer.astro', () => {
     expect(playerSource).toContain(sample);
   });
 
+  it('includes Bundaran HI CCTV sample', () => {
+    const bundaranSample = 'https://dki-jkt.balitower.co.id:7028/502493_JKP_SATPOL-PP_SIMPANG-JL.-MH.-THAMRIN-C09_CCTV-01/tracks-v1/index.fmp4.m3u8';
+    expect(playerSource).toContain(bundaranSample);
+    expect(playerSource).toContain('Bundaran HI CCTV');
+  });
+
   it('imports hls.js and supports HLS playback with fallback', () => {
     expect(playerSource).toMatch(/import Hls from ['"]hls\.js['"]/);
     expect(playerSource).toContain('Hls.isSupported()');
