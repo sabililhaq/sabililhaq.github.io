@@ -4,6 +4,7 @@ import BlogPost from '../layouts/BlogPost.astro';
 
 export async function getStaticPaths() {
 	const reserved = new Set([
+		'404',
 		'about',
 		'blog',
 		'chat',

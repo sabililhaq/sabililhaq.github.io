@@ -38,6 +38,7 @@ const DEFAULT_STREAM = SAMPLES[0].url;
         type="button"
         class="chip-btn sample-chip"
         data-url={SAMPLES[0].url}
+        data-index="1"
       >
         {SAMPLES[0].name}
       </button>
@@ -45,6 +46,7 @@ const DEFAULT_STREAM = SAMPLES[0].url;
         type="button"
         class="chip-btn sample-chip"
         data-url={SAMPLES[1].url}
+        data-index="2"
       >
         {SAMPLES[1].name}
       </button>
@@ -384,6 +386,7 @@ const DEFAULT_STREAM = SAMPLES[0].url;
 
 <script>
   import Hls from 'hls.js';
+  import { resolveHlsRequest } from './query';
 
   function requireEl<T extends HTMLElement>(id: string): T {
     const el = document.getElementById(id);
@@ -556,13 +559,18 @@ const DEFAULT_STREAM = SAMPLES[0].url;
   sampleChips.forEach((chip) => {
     chip.addEventListener('click', () => {
       const sampleUrl = chip.dataset.url || '';
+      const sampleIndex = chip.dataset.index || '';
       urlInput.value = sampleUrl;
+      if (sampleIndex) {
+        history.replaceState(null, '', `/hls?s=${sampleIndex}`);
+      }
       loadStream(sampleUrl);
     });
   });
 
   clearBtn.addEventListener('click', () => {
     urlInput.value = '';
+    history.replaceState(null, '', '/hls');
     clearError();
     stopCurrentPlayback();
     setStatus('Ready', 'idle');
@@ -593,11 +601,22 @@ const DEFAULT_STREAM = SAMPLES[0].url;
     setStatus('Ended', 'idle');
   });
 
-  // Initial load check: support ?url= or ?src= param
-  const urlParams = new URLSearchParams(window.location.search);
-  const streamParam = urlParams.get('url') || urlParams.get('src');
-  if (streamParam) {
-    urlInput.value = streamParam;
-    loadStream(streamParam);
+  // Initial load check: resolve query param or path param
+  const clientSamples = Array.from(sampleChips).map((chip) => ({
+    name: chip.textContent?.trim() || '',
+    url: chip.dataset.url || '',
+  }));
+
+  const request = resolveHlsRequest(window.location.search, window.location.pathname, clientSamples);
+  if (request.type === 'redirect') {
+    window.location.replace(request.target);
+  } else if (request.type === 'sample') {
+    urlInput.value = request.sample.url;
+    autoplayCheckbox.checked = request.autoplay;
+    loadStream(request.sample.url);
+  } else if (request.type === 'custom') {
+    urlInput.value = request.url;
+    autoplayCheckbox.checked = request.autoplay;
+    loadStream(request.url);
   }
 </script>

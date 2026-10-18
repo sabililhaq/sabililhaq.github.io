@@ -79,6 +79,11 @@ describe('src/components/hls/HLSPlayer.astro', () => {
     expect(playerSource).toMatch(/<video[^>]*controls/);
     expect(playerSource).toMatch(/<video[^>]*playsinline/);
   });
+
+  it('wires resolveHlsRequest to support query and path sample selection', () => {
+    expect(playerSource).toContain('resolveHlsRequest');
+    expect(playerSource).toContain('data-index=');
+  });
 });
 
 describe('labs catalog integration', () => {
@@ -98,5 +103,19 @@ describe('labs catalog integration', () => {
 
     expect(slugSource).toContain("'hls'");
     expect(headerSource).toContain("'hls'");
+  });
+
+  it('provides static paths for each sample under /hls/[id]', () => {
+    const sampleRoutePath = fileURLToPath(new URL('../src/pages/hls/[id].astro', import.meta.url));
+    const sampleRouteSource = readFileSync(sampleRoutePath, 'utf-8');
+    expect(sampleRouteSource).toContain('getStaticPaths');
+    expect(sampleRouteSource).toContain('HLSPlayer');
+  });
+
+  it('provides 404 fallback redirecting /hls/* out-of-range paths to /hls', () => {
+    const notFoundPath = fileURLToPath(new URL('../src/pages/404.astro', import.meta.url));
+    const notFoundSource = readFileSync(notFoundPath, 'utf-8');
+    expect(notFoundSource).toContain("window.location.pathname.startsWith('/hls/')");
+    expect(notFoundSource).toContain("window.location.replace('/hls')");
   });
 });

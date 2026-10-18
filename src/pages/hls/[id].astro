@@ -1,0 +1,41 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import HLSPlayer from '../../components/hls/HLSPlayer.astro';
+import { SITE_TITLE } from '../../consts';
+import { HLS_SAMPLES } from '../../components/hls/query';
+
+export function getStaticPaths() {
+  return HLS_SAMPLES.map((_, index) => ({
+    params: { id: String(index + 1) },
+  }));
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`HLS Player | ${SITE_TITLE}`}
+      description="Play HTTP Live Streaming (HLS) video streams."
+    />
+    <style>
+      .about-link {
+        margin: -1rem 0 1.25rem;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1 class="page-title">HLS Player</h1>
+      <p class="about-link">
+        <a href="https://www.cloudflare.com/learning/video/what-is-http-live-streaming/">What is HLS?</a>
+      </p>
+      <HLSPlayer />
+    </main>
+    <Footer />
+  </body>
+</html>

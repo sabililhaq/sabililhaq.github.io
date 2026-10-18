@@ -1,0 +1,40 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Page Not Found | ${SITE_TITLE}`}
+      description="The requested page could not be found."
+    />
+    <script is:inline>
+      if (window.location.pathname.startsWith('/hls/')) {
+        window.location.replace('/hls');
+      }
+    </script>
+    <style>
+      .not-found {
+        padding: 2.5rem 0;
+      }
+      .not-found p {
+        color: rgb(var(--gray));
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <article class="not-found">
+        <h1 class="page-title">Page not found</h1>
+        <p>The page you are looking for doesn't exist or has been moved.</p>
+        <p><a href="/">Back to home →</a></p>
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>
