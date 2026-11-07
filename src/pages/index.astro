@@ -92,8 +92,7 @@ const featuredProjects = ['geoproximity', 'vim-dojo']
 
 			<section class="labs">
 				<h2>Playground</h2>
-				<p class="desc">Smaller experiments: a <a href="/qr">QR generator</a>,
-					<a href="/poster">map posters</a>, and <a href="/chat">bad-word chat filter</a>.</p>
+				<p class="desc">Smaller experiments: a <a href="/qr">QR generator</a>, <a href="/poster">map posters</a>, and <a href="/chat">bad-word chat filter</a>.</p>
 				<a class="more-link" href="/labs">All labs →</a>
 			</section>
 		</main>
@@ -102,50 +101,115 @@ const featuredProjects = ['geoproximity', 'vim-dojo']
 </html>
 
 <style>
-	section { margin-bottom: 2.5rem; }
-	.intro { padding-top: 1.25rem; }
-	.intro h1 { font-size: 1.5rem; margin-bottom: 0.85rem; }
-	h2 { font-size: 1.05rem; margin-bottom: 1rem; }
+	section { margin-bottom: 3rem; }
+	.intro { padding-top: 1rem; }
+	.intro h1 {
+		font-size: 1.85rem;
+		font-family: var(--font-serif);
+		font-weight: 600;
+		letter-spacing: -0.015em;
+		margin-bottom: 0.85rem;
+	}
+	h2 {
+		font-size: 1.25rem;
+		font-family: var(--font-serif);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		margin-bottom: 1.15rem;
+		padding-bottom: 0.4rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
 	.intro-links, .project-links {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem 1.25rem;
 		font-size: 0.95rem;
 	}
-	.intro-links a { box-shadow: none; }
+	.intro-links a {
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
 	.project-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1.5rem;
+		gap: 1.75rem;
 	}
-	.project-preview { display: block; border-radius: 4px; }
-	.project-preview img { object-position: center center; }
+	.project-preview {
+		display: block;
+		border-radius: 3px;
+		overflow: hidden;
+	}
+	.project-preview img {
+		object-position: center center;
+	}
 	.project-grid img {
 		display: block;
 		width: 100%;
 		height: auto;
-		aspect-ratio: 1 / 1;
+		aspect-ratio: 16 / 10;
 		object-fit: cover;
 		background: rgb(var(--surface));
 		border: 1px solid rgb(var(--gray-light));
+		border-radius: 3px;
 		box-sizing: border-box;
-		margin-bottom: 0.85rem;
+		margin-bottom: 0.75rem;
+	}
+	.project-grid h3 {
+		font-size: 1.15rem;
+		font-family: var(--font-serif);
+		font-weight: 600;
+		margin: 0 0 0.35rem;
 	}
 	.project-links { margin: 0.65rem 0 0; }
 	.desc {
 		color: rgb(var(--gray));
 		font-size: 0.95rem;
-		line-height: 1.5;
+		line-height: 1.55;
 		margin: 0.35rem 0 0;
 	}
-	.recent-posts ul { margin-bottom: 1rem; }
-	.recent-posts li a { font-weight: 700; }
-	.post-date { color: rgb(var(--gray)); font-size: 0.9rem; margin-top: 0.2rem; }
+	.recent-posts ul {
+		margin-bottom: 1.25rem;
+	}
+	.recent-posts li {
+		padding: 0.7rem 0.75rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1.25rem;
+	}
+	.recent-posts li a {
+		font-size: 1.05rem;
+		font-family: var(--font-serif);
+		font-weight: 600;
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
+	.recent-posts li a:hover {
+		color: var(--accent-dark);
+	}
+	.post-date {
+		color: rgb(var(--gray));
+		font-size: 0.88rem;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
 	.labs .desc { margin-bottom: 0.75rem; }
-	.more-link { color: rgb(var(--gray)); font-size: 0.95rem; }
-	a { text-decoration: none; }
-	a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
-	@media (max-width: 480px) {
-		.project-grid { grid-template-columns: 1fr; }
+	.more-link {
+		color: rgb(var(--gray));
+		font-size: 0.95rem;
+		text-decoration: none;
+	}
+	.more-link:hover {
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
+	@media (max-width: 580px) {
+		.project-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+		.recent-posts li {
+			flex-direction: column;
+			gap: 0.2rem;
+		}
 	}
 </style>

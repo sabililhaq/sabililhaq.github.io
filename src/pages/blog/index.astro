@@ -87,36 +87,41 @@ const mediumPosts = [...MEDIUM_POSTS].sort(
 	}
 
 	.group h2 {
-		font-size: 1.05rem;
-		font-weight: 700;
+		font-size: 1.15rem;
+		font-family: var(--font-serif);
+		font-weight: 600;
 		color: rgb(var(--black));
 		margin: 0 0 1.15rem;
-		padding-top: 0.25rem;
+		padding-top: 0.5rem;
 		border-top: 1px solid rgb(var(--gray-light));
 	}
 
 	.archive h2 {
-		font-size: 0.95rem;
+		font-size: 1.05rem;
+		font-family: var(--font-serif);
 		font-weight: 600;
 		color: rgb(var(--gray));
 	}
 
 	.archive .post-list a {
-		font-size: 1.05rem;
+		font-size: 1.08rem;
 		font-weight: 600;
 	}
 
 	.post-list a {
 		font-size: 1.15rem;
-		font-weight: 700;
+		font-family: var(--font-serif);
+		font-weight: 600;
 		color: var(--accent);
-		text-decoration: none;
-		box-shadow: 0 1px 0 0 currentColor;
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+		box-shadow: none;
 		line-height: 1.35;
 	}
 
 	.post-list a:hover,
 	.post-list a:active {
+		color: var(--accent-dark);
 		box-shadow: none;
 	}
 

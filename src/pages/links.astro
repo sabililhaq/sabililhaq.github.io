@@ -74,10 +74,11 @@ const elsewhere = [
 	h2 {
 		margin-top: 2rem;
 		margin-bottom: 1rem;
-		font-size: 1.05rem;
-		font-weight: 700;
+		font-size: 1.15rem;
+		font-family: var(--font-serif);
+		font-weight: 600;
 		color: rgb(var(--black));
-		padding-top: 0.25rem;
+		padding-top: 0.5rem;
 		border-top: 1px solid rgb(var(--gray-light));
 	}
 	h1 + h2 {
@@ -89,16 +90,20 @@ const elsewhere = [
 		margin-bottom: 0.5rem;
 	}
 	.link-list li {
-		line-height: 1.5;
+		line-height: 1.55;
 	}
 	.link-list a {
-		font-weight: 700;
+		font-family: var(--font-serif);
+		font-weight: 600;
+		font-size: 1.1rem;
 		color: var(--accent);
-		text-decoration: none;
-		box-shadow: 0 1px 0 0 currentColor;
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+		box-shadow: none;
 	}
 	.link-list a:hover,
 	.link-list a:active {
+		color: var(--accent-dark);
 		box-shadow: none;
 	}
 	.desc {
