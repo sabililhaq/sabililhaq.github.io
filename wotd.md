@@ -17,6 +17,15 @@ Docker also have caching strategy with layering.
 Idemopotency is a concept of acknowledged a retry. In software & distributed system, retry is normal thing.
 The most common example of this is a transaction. Client connection to our server is cannot always be trusted. They might do same request multiple times, intended or unintended. Idempotency acknowledge this by treat this as normal thing. In transaction case, multiple same request will result the same thing. If they want to charge customer 200$ of their balance, if it already processed once, next step will ignore this.
 
+### backpressure
+Backpressure is a distributed system flow control mechanism by a service try to tell their upstream that it is currently at its limit. 
+Common example is Kafka. Kafka message queue might have multiple producers that fires events that expected to be processed, but surpassed their limit of computation (consumer). Usually, upon full capacity, it will reject producer and tell them to retry again later.
+This is to avoid a service having too much load that might lead to increased latency and even service crash.
+For example, suppose kafka can only store 1k messages. In normal scenarios, messages flushed by consumers processing the request. But consumer currently crashed, then the messages will accumulate. Producer only know that their request being processed. In reality, request number 1001 are not even received in the kafka buffers, even worst, kafka buffer might crashed.
+
+Related concepts: throttling, rate limit
+
+
 
 # Footnotes
 - This is my personal diary. Not a references.
