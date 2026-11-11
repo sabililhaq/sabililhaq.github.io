@@ -25,7 +25,14 @@ For example, suppose kafka can only store 1k messages. In normal scenarios, mess
 
 Related concepts: throttling, rate limit
 
+## 11/11/2026 outbox pattern, cursor
+Outbox pattern is software engineering concept
 
+### cursor
+Cursor is position marker used for pagination, works on linear data.
+It basically tell the system where to continue sending data, typically returning actual data and new cursor.
+It avoids sending too much data in a single request, which might cause failures such as timeout or bandwidth issues.
+For example, a service contains 100k records. Client might request all at once. But suppose bandwidth limit is 10k entries. Instead of sending all at once, service will return first 10k data. Because the data is sorted in chronologically order, then the cursor should be the last received data. Then client is able to fetch next 10k data, no need to loop from the beginning.
 
 # Footnotes
 - This is my personal diary. Not a references.
