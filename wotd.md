@@ -34,6 +34,19 @@ It basically tell the system where to continue sending data, typically returning
 It avoids sending too much data in a single request, which might cause failures such as timeout or bandwidth issues.
 For example, a service contains 100k records. Client might request all at once. But suppose bandwidth limit is 10k entries. Instead of sending all at once, service will return first 10k data. Because the data is sorted in chronologically order, then the cursor should be the last received data. Then client is able to fetch next 10k data, no need to loop from the beginning.
 
+# 12/11/2026 compounding effect
+Compounding is a growth process is which the returns accumulate to generate additional returns over time. In mathematics, this is known as exponential growth. As time goes by, the accumulated value increases at an acceleration rate, even though the initial gains may seem insignificant.
+For example, compounding rates. Suppose an investment generates a 10% annual return. If we invest $100, in the next year, the values becomes $110. Then in the next year, the growth are 10% of the new value, rather than initial $100 value. In 10 years, the value will be approximately 2.5 times of initial investment [1].
+Above example demonstrate how relatively small interest can produce substantial growth over a long period.
+
+[1] A = P(1 + 0.1)^10 => 1.1^10 * 100 = 259
+
+### compounding v1
+Compounding effect is growth rate that is so great as the result of progress and accumulation. In mathematics, similar with quadratic equation. As the time goes, the growth is significantly increased, altough the actual growth value seems insignificant.
+For example, interest rate. Suppose investing in some stock profit is 10% a year. If we infest 100$, next year it will be 110. Then in the next year, those 10% are based on new accumulated value. In 10 years, the initial investment will be 259$ [1], which 2.5x of initial value, even with only 10%.
+
+[1] A = P(1 + 0.1)^10 => 1.1^10 * 100 = 259
+
 # Footnotes
 - This is my personal diary. Not a references.
 - Goals:
