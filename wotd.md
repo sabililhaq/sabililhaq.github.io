@@ -48,11 +48,16 @@ For example, interest rate. Suppose investing in some stock profit is 10% a year
 
 [1] A = P(1 + 0.1)^10 => 1.1^10 * 100 = 259
 
-# 13/11/2026 replication
+## 13/11/2026 replication
 ### replication
 Replication is data strategy to increase data availability by making a copy of primary source of truth. In distributed system, replication is done to avoid a major problem named single point of failure, where single component as the main system, also to distribute the read and write responsibility across databases.
 For example, globally distributed database like Amazon DynamoDB. DynamoDB implementing replication strategy by having one region as primary database, and might have multiple replica in other region. In this case, client will read nearest replica as their source of truth. Primary DB will always propagate data to every replica to ensure data consistency. Then if there is a failure in a replica, it can acts as fallback.
 Data replication comes with trade-off, often sacrifice data consistency and latency. Multiple replica needs to be updated from primary as source of truth. Imagine need to update replica across region like dynamoDB. Client in USA is updating some entry, but somewhere in different part of world might seen stale information. This is acceptable pattern known as asynchronous replication. For highly consistent system with replication, synchronous replication is implemented, with acknowledgment needed for each replication to ensure data consistency.
+
+## 14/11/2026 race condition
+A race condition is a phenomena in software where data are in inconsistent state due to a shared resources and were accessed and updated by two or more concurrent client/executor.
+For example, consider banking system. Suppose A transfer money to B, and B transfer money to C. A to B will make B balance +100, but when update is on going, B transfer money to C with same value. But because the last executed is B to C, A balance is already substract, but B does not receive anything, essentially because only first transaction of B are overwritten by latest transaction.
+Common solution to race condition is a strategy called locking. Where whoever first that want to update a record will restrict the data to other thread until all process is complete. With this, notable latency are acknowledged as trade-off.
 
 ## Footnotes
 - This is my personal diary. Not a references.
