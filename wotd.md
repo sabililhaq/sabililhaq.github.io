@@ -59,6 +59,11 @@ A race condition is a phenomena in software where data are in inconsistent state
 For example, consider banking system. Suppose A transfer money to B, and B transfer money to C. A to B will make B balance +100, but when update is on going, B transfer money to C with same value. But because the last executed is B to C, A balance is already substract, but B does not receive anything, essentially because only first transaction of B are overwritten by latest transaction.
 Common solution to race condition is a strategy called locking. Where whoever first that want to update a record will restrict the data to other thread until all process is complete. With this, notable latency are acknowledged as trade-off.
 
+## 15/11/2026 message queue
+A message queue is software component that stores messages or events which later to be consumed, acts like a communication buffer between services. The messages streamed on the message queue and later to be consumed by wanted consumer. This allows asynchronous communication pattern between services, instead of direct communication that might have timeout.
+For instance, driver search system in ride-hailing app like uber. User new request on a new driver not directly processed by a service, because high chance there is currently high demand, and no worker to pick up the task needed, which is "give driver". With message queue, th request will be stored in a buffer like stream, and can be consumeable when there is available resource.
+Message queue not only acts as a buffer, it also ensure all event are processed with acknowledgment after an event consumed.
+
 ## Footnotes
 - This is my personal diary. Not a references.
 - Goals:
