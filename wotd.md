@@ -64,6 +64,15 @@ A message queue is software component that stores messages or events which later
 For instance, driver search system in ride-hailing app like uber. User new request on a new driver not directly processed by a service, because high chance there is currently high demand, and no worker to pick up the task needed, which is "give driver". With message queue, th request will be stored in a buffer like stream, and can be consumeable when there is available resource.
 Message queue not only acts as a buffer, it also ensure all event are processed with acknowledgment after an event consumed.
 
+## 16/11/2026 cdn
+A CDN (Content Delivery Network) is a distributed service that aims to serve contents globally, provides greater accessibility and lower-latency content delivery.
+A CDN acts like a globally distributed cache, usually used to serve large-sized static content (e.g. blobs) that expected to be accessed multiple times by different users.
+
+The most common example is AWS Cloudfront. Normally Cloudfront were paired with AWS S3, for instance to serve static frontend assets such as HTML and javascript. Cloudfront distributes data to several geoghraphical points called edge locations.
+It allows users to retrieve the content faster, because of proximity as less network hop needed. It also acts as cache, where user dont need to request directly from the origin server, that generally more expensive.
+
+A CDN, like a common cache problem, comes with trade-offs. It adds complexity to the system, particularly for updated data. To ensure data correctness, specifically for highly consistent system, proper invalidations method are needed to ensure no staled data are downloaded by users. AWS Cloudfront support built-in cache invalidation upon updated data.
+
 ## Footnotes
 - This is my personal diary. Not a references.
 - Goals:
