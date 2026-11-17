@@ -73,6 +73,13 @@ It allows users to retrieve the content faster, because of proximity as less net
 
 A CDN, like a common cache problem, comes with trade-offs. It adds complexity to the system, particularly for updated data. To ensure data correctness, specifically for highly consistent system, proper invalidations method are needed to ensure no staled data are downloaded by users. AWS Cloudfront support built-in cache invalidation upon updated data.
 
+## 17/11/2-26 NAT 
+NAT (Network Address Translation) is a networking concept that allows multiple devices to share single internet IP address to connect to the internet. 
+As devices growth, so do the demands for the IP addresses. Unfortunately, the number of available IP addresses are limited, specifically limited to 32 bit. NAT solve this by enable single IP address to be used by multiple devices.
+More over, NAT also gives security protection and abstraction, enable more private internet uses, especially useful for corporate or organizational uses where every internet traffic should be come and coming to a monitored entry.
+NAT works by maintaining pairs of port to privateIp, called ip tables. Traffic coming to specific device will be rerouted based on those tables.
+Most common example of NAT is AWS VPC (Virtual Private Cloud). It have public IP as internet facing address, and private IP for the edges. For example, the public IP is 52.x.x.x, all internet traffic to privateIps like 10.x.x.0 and 10.x.x.1 will communicate with internet through the public IP as the NAT IP.
+
 ## Footnotes
 - This is my personal diary. Not a references.
 - Goals:
