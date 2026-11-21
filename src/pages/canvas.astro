@@ -1,0 +1,86 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import CanvasNotepad from '../components/canvas/CanvasNotepad.astro';
+import FocusMode from '../components/FocusMode.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en" class="canvas-lab focus-mode">
+  <head>
+    <BaseHead
+      title={`Canvas | ${SITE_TITLE}`}
+      description="Drawable notepad and sketchpad."
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div data-canvas-stage>
+        <CanvasNotepad />
+      </div>
+    </main>
+    <Footer />
+    <FocusMode />
+  </body>
+</html>
+
+<style is:global>
+  html.canvas-lab,
+  html.canvas-lab body {
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  html.canvas-lab body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  html.canvas-lab body > header {
+    flex-shrink: 0;
+  }
+
+  html.canvas-lab body > main {
+    flex: 1 1 0%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  html.canvas-lab body > footer {
+    flex-shrink: 0;
+    padding: 0.75rem 1.3rem;
+  }
+
+  html.canvas-lab [data-canvas-stage] {
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ── Focus mode: collapse header + footer ──────────────────────── */
+  html.canvas-lab.focus-mode body > header,
+  html.canvas-lab.focus-mode body > footer {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    transition: max-height 0.22s ease, opacity 0.18s ease, visibility 0.18s;
+  }
+</style>

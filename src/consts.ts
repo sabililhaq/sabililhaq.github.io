@@ -191,6 +191,12 @@ export const LABS: Lab[] = [
     note: "single room, messages expire",
   },
   {
+    label: "Canvas",
+    group: "Playground",
+    url: "/canvas",
+    description: "Drawable notepad and sketchpad.",
+  },
+  {
     label: "Vim Dojo",
     group: "Practice",
     url: "/vim",

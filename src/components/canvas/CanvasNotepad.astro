@@ -1,0 +1,688 @@
+---
+/**
+ * CanvasNotepad.astro
+ * Mobile-friendly, high-DPI drawable canvas notepad with stroke smoothing,
+ * undo/redo, ruled/grid paper styles, and PNG export.
+ */
+---
+
+<div class="canvas-notepad-container" id="canvas-container" data-paper="ruled">
+  <!-- The drawing surface -->
+  <canvas id="paint-canvas"></canvas>
+
+  <!-- Floating minimal toolbar -->
+  <div class="canvas-toolbar" role="toolbar" aria-label="Drawing tools">
+    <div class="tool-group tool-modes">
+      <button
+        type="button"
+        id="tool-pen"
+        class="tool-btn active"
+        aria-label="Pen tool (P)"
+        aria-pressed="true"
+        title="Pen (P)"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+          <path d="M2 2l7.586 7.586"></path>
+          <circle cx="11" cy="11" r="2"></circle>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        id="tool-eraser"
+        class="tool-btn"
+        aria-label="Eraser tool (E)"
+        aria-pressed="false"
+        title="Eraser (E)"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
+          <path d="M22 21H7"></path>
+          <path d="m5 11 9 9"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="tool-separator" aria-hidden="true"></div>
+
+    <!-- Stroke width selector -->
+    <div class="tool-group tool-widths">
+      <button type="button" class="tool-btn width-btn" data-width="2" title="Fine width" aria-label="Fine stroke width">
+        <span class="dot dot-fine"></span>
+      </button>
+      <button type="button" class="tool-btn width-btn active" data-width="4" title="Medium width" aria-label="Medium stroke width">
+        <span class="dot dot-med"></span>
+      </button>
+      <button type="button" class="tool-btn width-btn" data-width="8" title="Broad width" aria-label="Broad stroke width">
+        <span class="dot dot-broad"></span>
+      </button>
+    </div>
+
+    <div class="tool-separator" aria-hidden="true"></div>
+
+    <!-- Color selector -->
+    <div class="tool-group tool-colors">
+      <button type="button" class="color-btn active" data-color="#1e1e1e" aria-label="Black ink" title="Black ink" style="--c: #1e1e1e;"></button>
+      <button type="button" class="color-btn" data-color="#2563eb" aria-label="Blue ink" title="Blue ink" style="--c: #2563eb;"></button>
+      <button type="button" class="color-btn" data-color="#dc2626" aria-label="Red ink" title="Red ink" style="--c: #dc2626;"></button>
+    </div>
+
+    <div class="tool-separator" aria-hidden="true"></div>
+
+    <!-- Paper style toggle -->
+    <div class="tool-group">
+      <button type="button" id="tool-paper" class="tool-btn" title="Toggle paper: Ruled / Grid / Blank" aria-label="Toggle paper background">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+          <line x1="3" x2="21" y1="9" y2="9"></line>
+          <line x1="3" x2="21" y1="15" y2="15"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="tool-separator" aria-hidden="true"></div>
+
+    <!-- History & Actions -->
+    <div class="tool-group tool-actions">
+      <button type="button" id="tool-undo" class="tool-btn" title="Undo (Cmd+Z)" aria-label="Undo" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7v6h6"></path>
+          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+        </svg>
+      </button>
+
+      <button type="button" id="tool-redo" class="tool-btn" title="Redo (Cmd+Shift+Z)" aria-label="Redo" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 7v6h-6"></path>
+          <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path>
+        </svg>
+      </button>
+
+      <button type="button" id="tool-clear" class="tool-btn" title="Clear page" aria-label="Clear page">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"></path>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+        </svg>
+      </button>
+
+      <button type="button" id="tool-download" class="tool-btn" title="Export as PNG" aria-label="Export as PNG">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" x2="12" y1="15" y2="3"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .canvas-notepad-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    background-color: var(--canvas-bg, #fbfbf9);
+  }
+
+  /* Ruled paper pattern (horizontal notepad lines) */
+  .canvas-notepad-container[data-paper="ruled"] {
+    background-image: linear-gradient(
+      to bottom,
+      transparent 27px,
+      rgba(0, 0, 0, 0.07) 28px
+    );
+    background-size: 100% 28px;
+  }
+
+  /* Grid paper pattern */
+  .canvas-notepad-container[data-paper="grid"] {
+    background-image:
+      linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Blank paper */
+  .canvas-notepad-container[data-paper="blank"] {
+    background-image: none;
+  }
+
+  #paint-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  /* ── Floating minimal toolbar ──────────────────────────────────── */
+  .canvas-toolbar {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    background: color-mix(in srgb, rgb(var(--surface, 255, 255, 255)) 92%, transparent);
+    border: 1px solid rgb(var(--gray-light, 220, 220, 220));
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    max-width: calc(100vw - 2rem);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .canvas-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tool-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .tool-separator {
+    width: 1px;
+    height: 1.25rem;
+    background-color: rgb(var(--gray-light, 220, 220, 220));
+    margin: 0 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .tool-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: rgb(var(--gray, 100, 100, 100));
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color 0.12s, color 0.12s, border-color 0.12s;
+  }
+
+  .tool-btn:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgb(var(--black, 0, 0, 0));
+  }
+
+  .tool-btn.active {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: var(--accent, #0066cc);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .tool-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Dots for stroke width */
+  .dot {
+    display: block;
+    border-radius: 999px;
+    background-color: currentColor;
+  }
+
+  .dot-fine {
+    width: 3px;
+    height: 3px;
+  }
+
+  .dot-med {
+    width: 6px;
+    height: 6px;
+  }
+
+  .dot-broad {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Color buttons */
+  .color-btn {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-color: var(--c);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 0.12s, border-color 0.12s;
+    margin: 0 0.1rem;
+    padding: 0;
+  }
+
+  .color-btn.active {
+    outline: 2px solid var(--accent, #0066cc);
+    outline-offset: 2px;
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 640px) {
+    .canvas-toolbar {
+      top: auto;
+      bottom: 1.25rem;
+      padding: 0.3rem 0.5rem;
+      gap: 0.25rem;
+      border-radius: 10px;
+    }
+
+    .tool-btn {
+      width: 2.1rem;
+      height: 2.1rem;
+      min-width: 2.1rem;
+    }
+  }
+</style>
+
+<script>
+  type Point = { x: number; y: number };
+
+  interface Stroke {
+    points: Point[];
+    color: string;
+    width: number;
+    isEraser: boolean;
+  }
+
+  const STORAGE_KEY = 'canvas_pad_strokes_v1';
+  const PAPER_STORAGE_KEY = 'canvas_pad_paper_style_v1';
+
+  const container = document.getElementById('canvas-container') as HTMLDivElement | null;
+  const canvas = document.getElementById('paint-canvas') as HTMLCanvasElement | null;
+
+  if (container && canvas) {
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    // UI elements
+    const penBtn = document.getElementById('tool-pen') as HTMLButtonElement | null;
+    const eraserBtn = document.getElementById('tool-eraser') as HTMLButtonElement | null;
+    const paperBtn = document.getElementById('tool-paper') as HTMLButtonElement | null;
+    const undoBtn = document.getElementById('tool-undo') as HTMLButtonElement | null;
+    const redoBtn = document.getElementById('tool-redo') as HTMLButtonElement | null;
+    const clearBtn = document.getElementById('tool-clear') as HTMLButtonElement | null;
+    const downloadBtn = document.getElementById('tool-download') as HTMLButtonElement | null;
+    const widthBtns = document.querySelectorAll<HTMLButtonElement>('.width-btn');
+    const colorBtns = document.querySelectorAll<HTMLButtonElement>('.color-btn');
+
+    // Drawing state
+    let isDrawing = false;
+    let isEraser = false;
+    let currentColor = '#1e1e1e';
+    let currentWidth = 4;
+    let activeStroke: Stroke | null = null;
+    let strokes: Stroke[] = [];
+    let redoStack: Stroke[] = [];
+    let dpr = window.devicePixelRatio || 1;
+
+    // Paper modes: ruled -> grid -> blank -> ruled
+    const paperModes = ['ruled', 'grid', 'blank'] as const;
+    let paperModeIndex = 0;
+
+    // Load saved paper mode
+    try {
+      const savedPaper = localStorage.getItem(PAPER_STORAGE_KEY);
+      if (savedPaper && paperModes.includes(savedPaper as any)) {
+        paperModeIndex = paperModes.indexOf(savedPaper as any);
+        container.setAttribute('data-paper', savedPaper);
+      }
+    } catch {
+      // Storage unavailable
+    }
+
+    // Load saved strokes
+    try {
+      const savedStrokes = localStorage.getItem(STORAGE_KEY);
+      if (savedStrokes) {
+        strokes = JSON.parse(savedStrokes);
+      }
+    } catch {
+      // Storage unavailable
+    }
+
+    function updateActionButtons(): void {
+      if (undoBtn) undoBtn.disabled = strokes.length === 0;
+      if (redoBtn) redoBtn.disabled = redoStack.length === 0;
+    }
+
+    function saveStrokesDebounced(): void {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(strokes));
+      } catch {
+        // quota exceeded or private mode
+      }
+    }
+
+    // Resize canvas with devicePixelRatio
+    function resizeCanvas(): void {
+      if (!canvas || !container || !ctx) return;
+      const rect = container.getBoundingClientRect();
+      dpr = window.devicePixelRatio || 1;
+
+      const displayWidth = Math.floor(rect.width);
+      const displayHeight = Math.floor(rect.height);
+
+      if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
+        canvas.width = displayWidth * dpr;
+        canvas.height = displayHeight * dpr;
+        renderAllStrokes();
+      }
+    }
+
+    // Render a single stroke path
+    function drawStroke(stroke: Stroke): void {
+      if (!ctx || stroke.points.length < 1) return;
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      if (stroke.isEraser) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.strokeStyle = 'rgba(0,0,0,1)';
+        ctx.lineWidth = stroke.width * 2.5;
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = stroke.color;
+        ctx.lineWidth = stroke.width;
+      }
+
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const points = stroke.points;
+      if (points.length === 1) {
+        ctx.fillStyle = stroke.isEraser ? 'rgba(0,0,0,1)' : stroke.color;
+        ctx.beginPath();
+        ctx.arc(points[0].x, points[0].y, (stroke.isEraser ? stroke.width * 2.5 : stroke.width) / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+
+        for (let i = 1; i < points.length - 1; i++) {
+          const midX = (points[i].x + points[i + 1].x) / 2;
+          const midY = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+        }
+
+        const last = points[points.length - 1];
+        ctx.lineTo(last.x, last.y);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    // Redraw all strokes from scratch
+    function renderAllStrokes(): void {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const stroke of strokes) {
+        drawStroke(stroke);
+      }
+      updateActionButtons();
+    }
+
+    // Pointer event coordinate translation
+    function getPointerPos(e: PointerEvent): Point {
+      const rect = canvas!.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    }
+
+    function onPointerDown(e: PointerEvent): void {
+      if (!e.isPrimary) return;
+      canvas?.setPointerCapture(e.pointerId);
+      isDrawing = true;
+
+      const p = getPointerPos(e);
+      activeStroke = {
+        points: [p],
+        color: currentColor,
+        width: currentWidth,
+        isEraser: isEraser,
+      };
+      strokes.push(activeStroke);
+      redoStack = [];
+
+      drawStroke(activeStroke);
+      updateActionButtons();
+    }
+
+    function onPointerMove(e: PointerEvent): void {
+      if (!isDrawing || !activeStroke) return;
+      const p = getPointerPos(e);
+      activeStroke.points.push(p);
+
+      // Incremental render of the latest segment
+      if (!ctx) return;
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      if (activeStroke.isEraser) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.strokeStyle = 'rgba(0,0,0,1)';
+        ctx.lineWidth = activeStroke.width * 2.5;
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = activeStroke.color;
+        ctx.lineWidth = activeStroke.width;
+      }
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const pts = activeStroke.points;
+      const len = pts.length;
+      if (len >= 3) {
+        const xc = (pts[len - 2].x + pts[len - 1].x) / 2;
+        const yc = (pts[len - 2].y + pts[len - 1].y) / 2;
+        const prevXc = (pts[len - 3].x + pts[len - 2].x) / 2;
+        const prevYc = (pts[len - 3].y + pts[len - 2].y) / 2;
+        ctx.beginPath();
+        ctx.moveTo(prevXc, prevYc);
+        ctx.quadraticCurveTo(pts[len - 2].x, pts[len - 2].y, xc, yc);
+        ctx.stroke();
+      } else if (len === 2) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        ctx.lineTo(pts[1].x, pts[1].y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function onPointerUp(e: PointerEvent): void {
+      if (!isDrawing) return;
+      isDrawing = false;
+      activeStroke = null;
+      try {
+        canvas?.releasePointerCapture(e.pointerId);
+      } catch {
+        // pointer capture already lost
+      }
+      saveStrokesDebounced();
+      updateActionButtons();
+    }
+
+    // Attach canvas pointer listeners
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerUp);
+
+    // Tool switching
+    function setEraser(eraser: boolean): void {
+      isEraser = eraser;
+      if (penBtn) {
+        penBtn.classList.toggle('active', !isEraser);
+        penBtn.setAttribute('aria-pressed', String(!isEraser));
+      }
+      if (eraserBtn) {
+        eraserBtn.classList.toggle('active', isEraser);
+        eraserBtn.setAttribute('aria-pressed', String(isEraser));
+      }
+    }
+
+    penBtn?.addEventListener('click', () => setEraser(false));
+    eraserBtn?.addEventListener('click', () => setEraser(true));
+
+    // Width buttons
+    widthBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        widthBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentWidth = Number(btn.getAttribute('data-width')) || 4;
+      });
+    });
+
+    // Color buttons
+    colorBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        colorBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentColor = btn.getAttribute('data-color') || '#1e1e1e';
+        setEraser(false);
+      });
+    });
+
+    // Paper style toggle
+    paperBtn?.addEventListener('click', () => {
+      paperModeIndex = (paperModeIndex + 1) % paperModes.length;
+      const mode = paperModes[paperModeIndex];
+      container.setAttribute('data-paper', mode);
+      try {
+        localStorage.setItem(PAPER_STORAGE_KEY, mode);
+      } catch {
+        // storage unavailable
+      }
+    });
+
+    // Undo / Redo
+    function undo(): void {
+      if (strokes.length === 0) return;
+      const popped = strokes.pop();
+      if (popped) redoStack.push(popped);
+      renderAllStrokes();
+      saveStrokesDebounced();
+    }
+
+    function redo(): void {
+      if (redoStack.length === 0) return;
+      const popped = redoStack.pop();
+      if (popped) strokes.push(popped);
+      renderAllStrokes();
+      saveStrokesDebounced();
+    }
+
+    undoBtn?.addEventListener('click', undo);
+    redoBtn?.addEventListener('click', redo);
+
+    // Clear
+    clearBtn?.addEventListener('click', () => {
+      if (strokes.length === 0) return;
+      strokes = [];
+      redoStack = [];
+      renderAllStrokes();
+      saveStrokesDebounced();
+    });
+
+    // Export PNG
+    downloadBtn?.addEventListener('click', () => {
+      if (!canvas) return;
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = canvas.width;
+      exportCanvas.height = canvas.height;
+      const eCtx = exportCanvas.getContext('2d');
+      if (!eCtx) return;
+
+      // Fill paper background
+      eCtx.fillStyle = '#fbfbf9';
+      eCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+      const paperMode = container.getAttribute('data-paper');
+      if (paperMode === 'ruled') {
+        const step = 28 * dpr;
+        eCtx.strokeStyle = 'rgba(0, 0, 0, 0.07)';
+        eCtx.lineWidth = 1 * dpr;
+        for (let y = step; y < exportCanvas.height; y += step) {
+          eCtx.beginPath();
+          eCtx.moveTo(0, y);
+          eCtx.lineTo(exportCanvas.width, y);
+          eCtx.stroke();
+        }
+      } else if (paperMode === 'grid') {
+        const step = 24 * dpr;
+        eCtx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+        eCtx.lineWidth = 1 * dpr;
+        for (let x = step; x < exportCanvas.width; x += step) {
+          eCtx.beginPath();
+          eCtx.moveTo(x, 0);
+          eCtx.lineTo(x, exportCanvas.height);
+          eCtx.stroke();
+        }
+        for (let y = step; y < exportCanvas.height; y += step) {
+          eCtx.beginPath();
+          eCtx.moveTo(0, y);
+          eCtx.lineTo(exportCanvas.width, y);
+          eCtx.stroke();
+        }
+      }
+
+      // Draw user drawing on top
+      eCtx.drawImage(canvas, 0, 0);
+
+      const a = document.createElement('a');
+      a.download = `note-${new Date().toISOString().slice(0, 10)}.png`;
+      a.href = exportCanvas.toDataURL('image/png');
+      a.click();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      const isInput = ['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName);
+      if (isInput) return;
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+      } else if (e.key.toLowerCase() === 'p') {
+        setEraser(false);
+      } else if (e.key.toLowerCase() === 'e') {
+        setEraser(true);
+      }
+    });
+
+    // Initial setup and observer
+    window.addEventListener('resize', resizeCanvas);
+    const observer = new ResizeObserver(() => resizeCanvas());
+    observer.observe(container);
+
+    resizeCanvas();
+    updateActionButtons();
+  }
+</script>
